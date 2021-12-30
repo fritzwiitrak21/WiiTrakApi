@@ -63,5 +63,7 @@ namespace WiiTrakApi.Models
         public List<ServiceProviderModel>? ServiceProviders { get; set; }
 
         public List<DriverModel>? Drivers { get; set; }
+
+        public List<TechnicianModel>? Technicians { get; set; }
     }
 }

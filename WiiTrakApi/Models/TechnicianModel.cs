@@ -24,8 +24,13 @@ namespace WiiTrakApi.Models
         public string ProfilePic { get; set; } = string.Empty;
 
         [ForeignKey(nameof(SystemOwnerModel))]
-        public Guid SystemOwnerId { get; set; }
+        public Guid? SystemOwnerId { get; set; }
 
         public SystemOwnerModel? SystemOwner { get; set; }
+
+        [ForeignKey(nameof(CompanyModel))]
+        public Guid? CompanyId { get; set; }
+
+        public CompanyModel? Company { get; set; }
     }
 }

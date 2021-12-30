@@ -22,9 +22,9 @@ namespace WiiTrakApi.DTOs
 
         public string ModelNumber { get; set; } = string.Empty;
 
-        public string ManufacturedDate { get; set; } = string.Empty;
+        public DateTime ManufacturedDate { get; set; }
 
-        public string InstalledDate { get; set; } = string.Empty;
+        public DateTime InstalledDate { get; set; }
 
         public Guid AssetId { get; set; }
     }
