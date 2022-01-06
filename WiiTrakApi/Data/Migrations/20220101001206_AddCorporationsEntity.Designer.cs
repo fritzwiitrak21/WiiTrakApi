@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WiiTrakApi.Data;
 
@@ -11,9 +12,10 @@ using WiiTrakApi.Data;
 namespace WiiTrakApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220101001206_AddCorporationsEntity")]
+    partial class AddCorporationsEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,7 +361,7 @@ namespace WiiTrakApi.Migrations
                     b.ToTable("Provisions");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.RepairIssueModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.RepairModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -368,21 +370,12 @@ namespace WiiTrakApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Issue")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("RepairIssues");
+                    b.ToTable("Repairs");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.ServiceProviderModel", b =>
@@ -705,76 +698,6 @@ namespace WiiTrakApi.Migrations
                     b.HasIndex("SystemOwnerId");
 
                     b.ToTable("TrackingDevices");
-                });
-
-            modelBuilder.Entity("WiiTrakApi.Models.WorkOrderModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("CartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DriverId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsAssigned")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsProvisioning")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsTrackingDeviceIssue")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Issue")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("PicUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("StoreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SubContractorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TechnicianId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WorkOrderNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WorkOrders");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.AssetModel", b =>

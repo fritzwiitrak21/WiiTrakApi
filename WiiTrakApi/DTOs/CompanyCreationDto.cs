@@ -2,8 +2,6 @@
 {
     public class CompanyCreationDto
     {
-        public DateTime CreatedAt { get; set; }
-
         public string Name { get; set; } = string.Empty;
 
         public string StreetAddress1 { get; set; } = string.Empty;

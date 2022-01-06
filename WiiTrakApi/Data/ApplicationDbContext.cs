@@ -55,15 +55,18 @@ namespace WiiTrakApi.Data
         // public DbSet<AppUser> AppUsers { get; set; } = default!;
         public DbSet<SystemOwnerModel> SystemOwners { get; set; } = default!;
         public DbSet<CompanyModel> Companies { get; set; } = default!;
+        public DbSet<CorporationModel> Corporations { get; set; } = default!;
         public DbSet<AssetModel> Assets { get; set; } = default!;
         public DbSet<TrackingDeviceModel> TrackingDevices { get; set; } = default!;
-        public DbSet<PickupModel> Pickups { get; set; } = default!;
-        public DbSet<ProvisionModel> Provisions { get; set; } = default!;
-        public DbSet<RepairModel> Repairs { get; set; } = default!;
         public DbSet<ServiceProviderModel> ServiceProviders { get; set; } = default!;
         public DbSet<StoreModel> Stores { get; set; } = default!;
         public DbSet<TechnicianModel> Technicians { get; set; } = default!;
         public DbSet<DriverModel> Drivers { get; set; } = default!;
         public DbSet<DriverStore> DriverStores { get; set; } = default!;
+        public DbSet<PickupModel> Pickups { get; set; } = default!;
+        public DbSet<ProvisionModel> Provisions { get; set; } = default!;
+        public DbSet<WorkOrderModel> WorkOrders { get; set; } = default!;
+        public DbSet<RepairIssueModel> RepairIssues { get; set; } = default!;
+
     }
 }

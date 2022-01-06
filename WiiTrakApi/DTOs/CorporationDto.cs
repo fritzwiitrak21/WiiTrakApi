@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using WiiTrakApi.Models;
+﻿using WiiTrakApi.Models;
 
 namespace WiiTrakApi.DTOs
 {
-    public class CompanyDto
+    public class CorporationDto
     {
         public Guid Id { get; set; }
 
@@ -34,18 +32,8 @@ namespace WiiTrakApi.DTOs
 
         public string PhoneSecondary { get; set; } = string.Empty;
 
-        public Guid SystemOwnerId { get; set; }
+        public Guid CompanyId { get; set; }
 
-        public Guid? ParentId { get; set; } = null;
-
-        public bool IsInactive { get; set; }
-
-        public bool CannotHaveChildren { get; set; }
-
-        public List<ServiceProviderDto>? ServiceProviders { get; set; }
-
-        public List<DriverDto>? Drivers { get; set; }
-
-        public List<CorporationModel>? Corporations { get; set; }
+        public List<StoreModel> Stores { get; set; }
     }
 }

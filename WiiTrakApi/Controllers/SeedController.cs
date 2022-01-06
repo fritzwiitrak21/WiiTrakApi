@@ -48,6 +48,8 @@ namespace WiiTrakApi.Controllers
             //await SeedDrivers();
             //await SeedTechnicians();
             //await SeedDriverStores();
+
+            //await SeedRepairIssues();
             return Ok();
         }
 
@@ -625,6 +627,27 @@ namespace WiiTrakApi.Controllers
             await _dbContext.DriverStores.AddRangeAsync(driverStores);
             await _dbContext.SaveChangesAsync();
 
+        }
+
+        public async Task SeedRepairIssues()
+        {
+            if (_dbContext.RepairIssues.Any()) return;
+
+            string[] repairIssues = new[]
+            {
+                "Broke Wheel", "Broke Flap","Damaged Child Seat","Damaged Safety Belt"
+            };
+
+            foreach (var issue in repairIssues)
+            {
+                _dbContext.RepairIssues.Add( new RepairIssueModel
+                    {
+                        CreatedAt = DateTime.Now,
+                        Issue = issue
+                    });
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 

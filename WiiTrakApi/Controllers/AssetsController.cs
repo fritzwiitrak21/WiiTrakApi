@@ -72,7 +72,7 @@ namespace WiiTrakApi.Controllers
 
 
 
-            // Returns assets with outside geofence status
+            // Returns assets with outside geofence and picked up statuses
             var result = await _repository.GetAssetsByDriverIdAsync(driverId);
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);

@@ -2,8 +2,6 @@
 {
     public class CompanyUpdateDto
     {
-        public DateTime? UpdatedAt { get; set; }
-
         public string Name { get; set; } = string.Empty;
 
         public string StreetAddress1 { get; set; } = string.Empty;

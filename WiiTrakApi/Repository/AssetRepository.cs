@@ -67,7 +67,7 @@ namespace WiiTrakApi.Repository
                 foreach (var driverStore in driverStores)
                 {
                     var assets = await _dbContext.Assets
-                        .Where(x => x.StoreId == driverStore.StoreId && x.Status == AssetStatus.OutsideGeofence)
+                        .Where(x => x.StoreId == driverStore.StoreId && (x.Status == AssetStatus.OutsideGeofence || x.Status == AssetStatus.PickedUp))
                         .Include(x => x.Store)
                         .Include(x => x.TrackingDevice)
                         .AsNoTracking()
@@ -149,7 +149,6 @@ namespace WiiTrakApi.Repository
             catch (Exception ex)
             {
                 return (false, ex.Message);
-
             }
         }
 

@@ -31,6 +31,8 @@ builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 builder.Services.AddScoped<ITechnicianRepository, TechnicianRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ITrackingDeviceRepository, TrackingDeviceRepository>();
+builder.Services.AddScoped<IRepairIssueRepository, RepairIssueRepository>();
+builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 
 builder.Services.AddScoped<IBackgroundJobService, BackgroundJobService>();
 

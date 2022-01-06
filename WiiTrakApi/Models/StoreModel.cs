@@ -62,6 +62,11 @@ namespace WiiTrakApi.Models
 
         public ServiceProviderModel? ServiceProvider { get; set; }
 
+        [ForeignKey(nameof(CorporationModel))]
+        public Guid? CorporationId { get; set; }
+
+        public CorporationModel? Corporation { get; set; }
+
         public List<AssetModel>? Assets { get; set; }
 
         public IList<DriverStore>? DriverStores { get; set; }

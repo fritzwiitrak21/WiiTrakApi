@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WiiTrakApi.Models
 {
-    [Table(name: "Companies")]
-    public class CompanyModel: EntityModel
+    [Table(name: "Corporations")]
+    public class CorporationModel: EntityModel
     {
         [MaxLength(128)]
         [Required(ErrorMessage = "{0} is required.")]
@@ -49,23 +48,12 @@ namespace WiiTrakApi.Models
         [Phone(ErrorMessage = "Phone number is invalid.")]
         public string PhoneSecondary { get; set; } = string.Empty;
 
-        public Guid? ParentId { get; set; } = null;
+        [ForeignKey(nameof(CompanyModel))]
+        public Guid CompanyId { get; set; }
 
-        public bool IsInactive { get; set; }
+        public CompanyModel? Company { get; set; }
 
-        public bool CannotHaveChildren{ get; set; }
+        public List<StoreModel> Stores { get; set; }
 
-        [ForeignKey(nameof(SystemOwnerModel))]
-        public Guid SystemOwnerId { get; set; }
-
-        public SystemOwnerModel? SystemOwner { get; set; }
-
-        public List<ServiceProviderModel>? ServiceProviders { get; set; }
-
-        public List<DriverModel>? Drivers { get; set; }
-
-        public List<TechnicianModel>? Technicians { get; set; }
-
-        public List<CorporationModel>? Corporations { get; set; }
     }
 }
