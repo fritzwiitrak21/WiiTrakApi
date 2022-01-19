@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 
 namespace WiiTrakApi.Repository.Contracts
@@ -9,6 +10,8 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetAllDriversAsync();
 
+        Task<(bool IsSuccess, DriverReportDto? Report, string? ErrorMessage)> GetDriverReportById(Guid Id);
+
         Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByConditionAsync(Expression<Func<DriverModel, bool>> expression);
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> DriverExistsAsync(Guid id);
@@ -18,5 +21,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateDriverAsync(DriverModel driver);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteDriverAsync(Guid id);
+
+        Task<bool> SaveAsync();
     }
 }

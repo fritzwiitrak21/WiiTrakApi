@@ -57,6 +57,27 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("report/{id:guid}")]
+        public async Task<IActionResult> GetCompanyReport(Guid id)
+        {
+            var result = await _repository.GetCompanyReportById(id);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var reportDto = result.Report;
+            return Ok(reportDto);
+        }
+
+        [HttpGet("corporate/{corporateId:guid}")]
+        public async Task<IActionResult> GetCompaniesByCorporateId(Guid corporateId)
+        {
+            var result = await _repository.GetPrimaryCompaniesByCorporateIdAsync(corporateId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
+            return Ok(dtoList);
+        }
+       
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CompanyDto>> CreateCompany([FromBody] CompanyCreationDto companyCreation)

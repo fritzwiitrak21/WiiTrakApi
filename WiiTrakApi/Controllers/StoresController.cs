@@ -64,10 +64,34 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("Corporate/{corporateId:guid}")]
+        public async Task<IActionResult> GetStoresByCorporateId(Guid corporateId)
+        {
+            var result = await _repository.GetStoresByCorporateId(corporateId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            return Ok(dtoList);
+        }
+
+        [HttpGet("Company/{companyId:guid}")]
+        public async Task<IActionResult> GetStoresByCompanyId(Guid companyId)
+        {
+            var result = await _repository.GetStoresByCompanyId(companyId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            return Ok(dtoList);
+        }
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<StoreDto>> CreateStore([FromBody] StoreCreationDto storeCreation)
         {
+            // TODO
+            // company Id to one-to-many
+            // Corporate Id to one-to-many
+
             var store = _mapper.Map<StoreModel>(storeCreation);
             store.CreatedAt = DateTime.UtcNow;
 

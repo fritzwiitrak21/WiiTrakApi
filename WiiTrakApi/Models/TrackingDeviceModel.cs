@@ -27,10 +27,10 @@ namespace WiiTrakApi.Models
         public string ModelNumber { get; set; } = string.Empty;
         
 
-        [ForeignKey(nameof(AssetModel))]
-        public Guid AssetId { get; set; }
+        [ForeignKey(nameof(CartModel))]
+        public Guid CartId { get; set; }
 
-        public AssetModel? Asset { get; set; }
+        public CartModel? Cart { get; set; }
 
 
         [ForeignKey(nameof(SystemOwnerModel))]

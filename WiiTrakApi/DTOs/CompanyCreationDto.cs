@@ -18,6 +18,8 @@
 
         public string ProfilePicUrl { get; set; } = string.Empty;
 
+        public string LogoUrl { get; set; } = string.Empty;
+
         public string Email { get; set; } = string.Empty;
 
         public string PhonePrimary { get; set; } = string.Empty;

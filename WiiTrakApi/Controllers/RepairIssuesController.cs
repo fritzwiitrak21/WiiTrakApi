@@ -28,7 +28,7 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetRepairIssueByIdAsync(id);
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dto = _mapper.Map<AssetDto>(result.RepairIssue);
+            var dto = _mapper.Map<CartDto>(result.RepairIssue);
             return Ok(dto);
         }
 

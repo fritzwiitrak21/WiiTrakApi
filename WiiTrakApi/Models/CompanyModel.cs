@@ -38,7 +38,7 @@ namespace WiiTrakApi.Models
         public string ProfilePicUrl { get; set; } = string.Empty;
 
         [Url(ErrorMessage = "{0} is invalid.")]
-        public string CompanyLogoUrl { get; set; } = string.Empty;
+        public string LogoUrl { get; set; } = string.Empty;
 
         [EmailAddress(ErrorMessage = "Email is invalid.")]
         public string Email { get; set; } = string.Empty;
@@ -56,7 +56,7 @@ namespace WiiTrakApi.Models
         public bool CannotHaveChildren{ get; set; }
 
         [ForeignKey(nameof(SystemOwnerModel))]
-        public Guid SystemOwnerId { get; set; }
+        public Guid? SystemOwnerId { get; set; }
 
         public SystemOwnerModel? SystemOwner { get; set; }
 
@@ -64,8 +64,10 @@ namespace WiiTrakApi.Models
 
         public List<DriverModel>? Drivers { get; set; }
 
+        public List<StoreModel>? Stores { get; set; }
+
         public List<TechnicianModel>? Technicians { get; set; }
 
-        public List<CorporationModel>? Corporations { get; set; }
+        public List<CompanyCorporateModel>? CompanyCorporates { get; set; }
     }
 }

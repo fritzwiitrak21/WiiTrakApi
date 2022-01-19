@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
+using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -132,6 +133,11 @@ namespace WiiTrakApi.Repository
         public async Task<bool> SaveAsync()
         {
             return await _dbContext.SaveChangesAsync() >= 0;
+        }
+
+        public Task<(bool IsSuccess, DriverReportDto? Report, string? ErrorMessage)> GetDriverReportById(Guid Id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

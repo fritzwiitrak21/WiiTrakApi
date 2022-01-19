@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using WiiTrakApi.Models;
 
 namespace WiiTrakApi.DTOs
 {   
@@ -39,5 +40,11 @@ namespace WiiTrakApi.DTOs
         public double Latitude { get; set; }
 
         public Guid ServiceProviderId { get; set; }
+
+        public Guid CompanyId { get; set; }
+
+        public Guid? CorporateId { get; set; }
+
+        //public List<CartDto>? Carts { get; set; }
     }
 }

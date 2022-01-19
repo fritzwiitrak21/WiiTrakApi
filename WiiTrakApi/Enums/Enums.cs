@@ -1,21 +1,22 @@
 ﻿namespace WiiTrakApi.Enums
 {
-   public enum AssetCondition
+   public enum CartCondition
     {
         Good,
         Damage,
         DamageBeyondRepair
     }
 
-    public enum AssetStatus
+    public enum CartStatus
     {
         InsideGeofence,
         OutsideGeofence,
         PickedUp,
-        Lost
+        Lost,
+        Trashed
     }
 
-    public enum AssetOrderedFrom
+    public enum CartOrderedFrom
     {
         Manufacture,
         Seller,

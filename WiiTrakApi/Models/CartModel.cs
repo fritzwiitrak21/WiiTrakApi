@@ -4,19 +4,19 @@ using WiiTrakApi.Enums;
 
 namespace WiiTrakApi.Models
 {
-    [Table(name: "Assets")]
-    public class AssetModel : EntityModel
+    [Table(name: "Carts")]
+    public class CartModel : EntityModel
     {    
         [MaxLength(128)]
         public string ManufacturerName { get; set; } = string.Empty;
 
         public DateTime DateManufactured { get; set; }
 
-        public AssetOrderedFrom OrderedFrom { get; set; }
+        public CartOrderedFrom OrderedFrom { get; set; }
 
-        public AssetCondition Condition { get; set; }
+        public CartCondition Condition { get; set; }
 
-        public AssetStatus Status { get; set; }
+        public CartStatus Status { get; set; }
 
         public string PicUrl { get; set; } = string.Empty;
 
@@ -32,5 +32,8 @@ namespace WiiTrakApi.Models
         public StoreModel? Store { get; set; }
 
         public TrackingDeviceModel? TrackingDevice { get; set; }
+
+        public List<CartHistoryModel> CartHistory { get; set; }
+
     }
 }

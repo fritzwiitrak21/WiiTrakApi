@@ -1,6 +1,9 @@
-﻿namespace WiiTrakApi.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WiiTrakApi.Models
 {
-    public class DriverStore
+    [Table(name: "DriverStores")]
+    public class DriverStoreModel
     {
         public Guid DriverId { get; set; }
 

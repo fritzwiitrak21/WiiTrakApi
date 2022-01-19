@@ -18,5 +18,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceAsync(TrackingDeviceModel trackingDevice);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteTrackingDeviceAsync(Guid id);
+
+        Task<bool> SaveAsync();
     }
 }

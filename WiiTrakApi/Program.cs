@@ -24,7 +24,7 @@ builder.Services.ConfigureAddDbContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 // Add repositories
-builder.Services.AddScoped<IAssetRepository, AssetRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 builder.Services.AddScoped<IServiceProviderRepository, ServiceProviderRepository>();
 builder.Services.AddScoped<IStoreRepository, StoreRepository>();
@@ -33,6 +33,7 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ITrackingDeviceRepository, TrackingDeviceRepository>();
 builder.Services.AddScoped<IRepairIssueRepository, RepairIssueRepository>();
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
+builder.Services.AddScoped<ICorporateRepository, CorporateRepository>();
 
 builder.Services.AddScoped<IBackgroundJobService, BackgroundJobService>();
 

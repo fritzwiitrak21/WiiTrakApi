@@ -3,19 +3,19 @@ using WiiTrakApi.Models;
 
 namespace WiiTrakApi.DTOs
 {
-    public record AssetUpdateDto
+    public record CartCreationDto
     {
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public string ManufacturerName { get; set; } = string.Empty;
 
         public DateTime DateManufactured { get; set; }
 
-        public AssetOrderedFrom OrderedFrom { get; set; }
+        public CartOrderedFrom OrderedFrom { get; set; }
 
-        public AssetCondition Condition { get; set; }
+        public CartCondition Condition { get; set; }
 
-        public AssetStatus Status { get; set; }
+        public CartStatus Status { get; set; }
 
         public string PicUrl { get; set; } = string.Empty;
 

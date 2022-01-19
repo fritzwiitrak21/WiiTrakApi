@@ -28,6 +28,8 @@ namespace WiiTrakApi.DTOs
 
         public string ProfilePicUrl { get; set; } = string.Empty;
 
+        public string LogoUrl { get; set; } = string.Empty;
+
         public string Email { get; set; } = string.Empty;
 
         public string PhonePrimary { get; set; } = string.Empty;
@@ -46,6 +48,6 @@ namespace WiiTrakApi.DTOs
 
         public List<DriverDto>? Drivers { get; set; }
 
-        public List<CorporationModel>? Corporations { get; set; }
+        public List<CorporateModel>? Corporates { get; set; }
     }
 }

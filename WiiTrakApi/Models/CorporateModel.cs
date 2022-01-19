@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WiiTrakApi.Models
 {
-    [Table(name: "Corporations")]
-    public class CorporationModel: EntityModel
+    [Table(name: "Corporates")]
+    public class CorporateModel: EntityModel
     {
         [MaxLength(128)]
         [Required(ErrorMessage = "{0} is required.")]
@@ -37,7 +37,7 @@ namespace WiiTrakApi.Models
         public string ProfilePicUrl { get; set; } = string.Empty;
 
         [Url(ErrorMessage = "{0} is invalid.")]
-        public string CompanyLogoUrl { get; set; } = string.Empty;
+        public string LogoUrl { get; set; } = string.Empty;
 
         [EmailAddress(ErrorMessage = "Email is invalid.")]
         public string Email { get; set; } = string.Empty;
@@ -48,12 +48,8 @@ namespace WiiTrakApi.Models
         [Phone(ErrorMessage = "Phone number is invalid.")]
         public string PhoneSecondary { get; set; } = string.Empty;
 
-        [ForeignKey(nameof(CompanyModel))]
-        public Guid CompanyId { get; set; }
+        public List<StoreModel>? Stores { get; set; }
 
-        public CompanyModel? Company { get; set; }
-
-        public List<StoreModel> Stores { get; set; }
-
+        public List<CompanyCorporateModel>? CompanyCorporates { get; set; }
     }
 }

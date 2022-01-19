@@ -58,17 +58,23 @@ namespace WiiTrakApi.Models
         public bool IsSignatureRequired { get; set; }
 
         [ForeignKey(nameof(ServiceProviderModel))]
-        public Guid ServiceProviderId { get; set; }
+        public Guid? ServiceProviderId { get; set; }
 
         public ServiceProviderModel? ServiceProvider { get; set; }
 
-        [ForeignKey(nameof(CorporationModel))]
-        public Guid? CorporationId { get; set; }
+        [ForeignKey(nameof(CompanyModel))]
+        public Guid? CompanyId { get; set; }
 
-        public CorporationModel? Corporation { get; set; }
+        public CompanyModel? Company { get; set; }
 
-        public List<AssetModel>? Assets { get; set; }
 
-        public IList<DriverStore>? DriverStores { get; set; }
+        [ForeignKey(nameof(CorporateModel))]
+        public Guid? CorporateId { get; set; }
+
+        public CorporateModel? Corporate { get; set; }
+
+        public List<CartModel>? Carts { get; set; }
+
+        public IList<DriverStoreModel>? DriverStores { get; set; }
     }
 }

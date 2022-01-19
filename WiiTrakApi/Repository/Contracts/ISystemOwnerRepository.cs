@@ -18,5 +18,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateSystemOwnerAsync(SystemOwnerModel systemOwner);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteSystemOwnerAsync(Guid id);
+
+        Task<bool> SaveAsync();
     }
 }

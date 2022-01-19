@@ -18,5 +18,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateWorkOrderAsync(WorkOrderModel workOrder);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteWorkOrderAsync(Guid id);
+
+        Task<bool> SaveAsync();
     }
 }

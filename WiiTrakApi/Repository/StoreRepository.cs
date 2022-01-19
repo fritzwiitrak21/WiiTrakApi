@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
+using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -18,6 +20,7 @@ namespace WiiTrakApi.Repository
         public async Task<(bool IsSuccess, StoreModel? Store, string? ErrorMessage)> GetStoreByIdAsync(Guid id)
         {
             var store = await _dbContext.Stores
+                .Include(x => x.Carts)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -33,7 +36,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 var stores = await _dbContext.Stores
-                    .Include(x => x.Assets)
+                    //.Include(x => x.Carts)
                     .Select(x => x)
                     .AsNoTracking()
                     .ToListAsync();
@@ -63,6 +66,53 @@ namespace WiiTrakApi.Repository
                 if (stores.Any())
                 {
                     return (true, stores, null);
+                }
+                return (false, null, "No stores found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetStoreReportById(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCorporateId(Guid corporateId)
+        {
+            try
+            {
+                var corporate =
+                    await _dbContext.Corporates
+                        .Include(x => x.Stores)
+                        .FirstOrDefaultAsync(x => x.Id == corporateId);
+
+                if (corporate is not null && corporate.Stores.Any())
+                {
+                    return (true, corporate.Stores, null);
+                }
+                return (false, null, "No stores found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCompanyId(Guid companyId)
+        {
+            try
+            {
+                var company =
+                    await _dbContext.Companies
+                        .Include(x => x.Stores)
+                        .FirstOrDefaultAsync(x => x.Id == companyId);
+
+                if (company is not null && company.Stores.Any())
+                {
+                    return (true, company.Stores, null);
                 }
                 return (false, null, "No stores found");
             }

@@ -15,10 +15,10 @@ namespace WiiTrakApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure one-to-one relationships
-            modelBuilder.Entity<AssetModel>()
+            modelBuilder.Entity<CartModel>()
              .HasOne(a => a.TrackingDevice)
-             .WithOne(b => b.Asset)
-             .HasForeignKey<TrackingDeviceModel>(b => b.AssetId);
+             .WithOne(b => b.Cart)
+             .HasForeignKey<TrackingDeviceModel>(b => b.CartId);
 
             // Configure one-to-many relationships
             modelBuilder.Entity<CompanyModel>()
@@ -29,6 +29,16 @@ namespace WiiTrakApi.Data
             modelBuilder.Entity<ServiceProviderModel>()
                 .HasOne(p => p.Company)
                 .WithMany(b => b.ServiceProviders)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<StoreModel>()
+                .HasOne(p => p.Company)
+                .WithMany(b => b.Stores)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StoreModel>()
+                .HasOne(p => p.Corporate)
+                .WithMany(b => b.Stores)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<StoreModel>()
@@ -47,7 +57,8 @@ namespace WiiTrakApi.Data
               .OnDelete(DeleteBehavior.ClientSetNull);
 
             // Configure many-to-many relationships
-            modelBuilder.Entity<DriverStore>().HasKey(x => new { x.DriverId, x.StoreId });
+            modelBuilder.Entity<DriverStoreModel>().HasKey(x => new { x.DriverId, x.StoreId });
+            modelBuilder.Entity<CompanyCorporateModel>().HasKey(x => new { x.CompanyId, x.CorporateId });
 
             base.OnModelCreating(modelBuilder);
         }
@@ -55,18 +66,18 @@ namespace WiiTrakApi.Data
         // public DbSet<AppUser> AppUsers { get; set; } = default!;
         public DbSet<SystemOwnerModel> SystemOwners { get; set; } = default!;
         public DbSet<CompanyModel> Companies { get; set; } = default!;
-        public DbSet<CorporationModel> Corporations { get; set; } = default!;
-        public DbSet<AssetModel> Assets { get; set; } = default!;
+        public DbSet<CorporateModel> Corporates { get; set; } = default!;
+        public DbSet<CompanyCorporateModel> CompanyCorporates { get; set; } = default!;
+        public DbSet<CartModel> Carts { get; set; } = default!;
+        public DbSet<CartHistoryModel> CartHistory { get; set; } = default!;
         public DbSet<TrackingDeviceModel> TrackingDevices { get; set; } = default!;
         public DbSet<ServiceProviderModel> ServiceProviders { get; set; } = default!;
         public DbSet<StoreModel> Stores { get; set; } = default!;
         public DbSet<TechnicianModel> Technicians { get; set; } = default!;
         public DbSet<DriverModel> Drivers { get; set; } = default!;
-        public DbSet<DriverStore> DriverStores { get; set; } = default!;
-        public DbSet<PickupModel> Pickups { get; set; } = default!;
-        public DbSet<ProvisionModel> Provisions { get; set; } = default!;
+        public DbSet<DriverStoreModel> DriverStores { get; set; } = default!;
+        public DbSet<DeliveryTicketModel> DeliveryTickets { get; set; } = default!;
         public DbSet<WorkOrderModel> WorkOrders { get; set; } = default!;
         public DbSet<RepairIssueModel> RepairIssues { get; set; } = default!;
-
     }
 }

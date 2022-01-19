@@ -14,9 +14,9 @@ namespace WiiTrakApi.Helpers
             CreateMap<DriverModel, DriverCreationDto>().ReverseMap();
             CreateMap<DriverModel, DriverUpdateDto>().ReverseMap();
 
-            CreateMap<AssetModel, AssetDto>().ReverseMap();
-            CreateMap<AssetModel, AssetCreationDto>().ReverseMap();
-            CreateMap<AssetModel, AssetUpdateDto>().ReverseMap();
+            CreateMap<CartModel, CartDto>().ReverseMap();
+            CreateMap<CartModel, CartCreationDto>().ReverseMap();
+            CreateMap<CartModel, CartUpdateDto>().ReverseMap();
 
             CreateMap<ServiceProviderModel, ServiceProviderDto>().ReverseMap();
             CreateMap<ServiceProviderModel, ServiceProviderCreationDto>().ReverseMap();
@@ -38,9 +38,17 @@ namespace WiiTrakApi.Helpers
             CreateMap<CompanyModel, CompanyUpdateDto>().ReverseMap();
             CreateMap<CompanyModel, CompanyCreationDto>().ReverseMap();
 
+            CreateMap<CorporateModel, CorporateDto>().ReverseMap();
+            CreateMap<CorporateModel, CorporateUpdateDto>().ReverseMap();
+            CreateMap<CorporateModel, CorporateCreationDto>().ReverseMap();
+
+            CreateMap<DeliveryTicketModel, DeliveryTicketDto>().ReverseMap();
+            CreateMap<DeliveryTicketModel, DeliveryTicketUpdateDto>().ReverseMap();
+            CreateMap<DeliveryTicketModel, DeliveryTicketCreationDto>().ReverseMap();
+
             CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
-            CreateMap<RepairIssueModel, RepairIssueUpdateDto>().ReverseMap();
-            CreateMap<RepairIssueModel, RepairIssueCreationDto>().ReverseMap();
+            CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
+            CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
 
             CreateMap<SystemOwnerModel, SystemOwnerDto>().ReverseMap();
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 
 namespace WiiTrakApi.Repository.Contracts
@@ -11,6 +12,10 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, List<CompanyModel>? Companies, string? ErrorMessage)> GetCompaniesByConditionAsync(Expression<Func<CompanyModel, bool>> expression);
 
+        Task<(bool IsSuccess, List<CompanyModel>? Companies, string? ErrorMessage)> GetPrimaryCompaniesByCorporateIdAsync(Guid corporateId);
+
+        Task<(bool IsSuccess, CompanyReportDto? Report, string? ErrorMessage)> GetCompanyReportById(Guid id);
+
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CompanyExistsAsync(Guid id);
 
         Task<(bool IsSuccess, string? ErrorMessage)> CreateCompanyAsync(CompanyModel company);
@@ -18,5 +23,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateCompanyAsync(CompanyModel company);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteCompanyAsync(Guid id);
+
+        Task<bool> SaveAsync();
     }
 }

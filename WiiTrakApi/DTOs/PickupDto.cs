@@ -5,7 +5,7 @@ namespace WiiTrakApi.DTOs
 {
     public record PickupDto 
     {
-        public Guid AssetId { get; set; }
+        public Guid CartId { get; set; }
 
         public DateTime PickedUpAt { get; set; }
 
@@ -17,7 +17,7 @@ namespace WiiTrakApi.DTOs
 
         public Guid DriverId { get; set; } = Guid.Empty;
 
-        public AssetCondition Condition { get; set; }
+        public CartCondition Condition { get; set; }
 
         public double PickupLongitude { get; set; }
 

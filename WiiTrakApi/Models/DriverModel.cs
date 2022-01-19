@@ -28,6 +28,6 @@ namespace WiiTrakApi.Models
 
         public CompanyModel? Company { get; set; }
 
-        public IList<DriverStore>? DriverStores { get; set; }
+        public IList<DriverStoreModel>? DriverStores { get; set; }
     }
 }

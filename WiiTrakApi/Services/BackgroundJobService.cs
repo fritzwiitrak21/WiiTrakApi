@@ -7,15 +7,15 @@ namespace WiiTrakApi.Services
 {
     public class BackgroundJobService : IBackgroundJobService
     {
-        private readonly IAssetRepository _assetRepository;
+        private readonly ICartRepository _cartRepository;
         private readonly IStoreRepository _storeRepository;
         private readonly ITrackingDeviceRepository _trackingDeviceRepository;
 
-        public BackgroundJobService(IAssetRepository assetRepository, 
+        public BackgroundJobService(ICartRepository cartRepository, 
             IStoreRepository storeRepository, 
             ITrackingDeviceRepository trackingDeviceRepository)
         {
-            _assetRepository = assetRepository;
+            _cartRepository = cartRepository;
             _storeRepository = storeRepository;
             _trackingDeviceRepository = trackingDeviceRepository;
         }
@@ -337,30 +337,30 @@ namespace WiiTrakApi.Services
 
         private async Task SetStatusAndGeolocation(StoreModel store, GeoLocationPoint[] locations)
         {
-            AssetModel asset1;
-            AssetModel asset2;
-            AssetModel asset3;
+            CartModel cart1;
+            CartModel cart2;
+            CartModel cart3;
 
             TrackingDeviceModel? device1 = null;
             TrackingDeviceModel? device2 = null;
             TrackingDeviceModel? device3 = null;
 
-            if (store.Assets is null) return;
-            asset1 = store.Assets[0];
-            asset2 = store.Assets[1];
-            asset3 = store.Assets[2];
+            if (store.Carts is null) return;
+            cart1 = store.Carts[0];
+            cart2 = store.Carts[1];
+            cart3 = store.Carts[2];
 
-            asset1.Status = AssetStatus.OutsideGeofence;
-            asset2.Status = AssetStatus.OutsideGeofence;
-            asset3.Status = AssetStatus.OutsideGeofence;
+            cart1.Status = CartStatus.OutsideGeofence;
+            cart2.Status = CartStatus.OutsideGeofence;
+            cart3.Status = CartStatus.OutsideGeofence;
 
-            await _assetRepository.UpdateAssetAsync(asset1);
-            await _assetRepository.UpdateAssetAsync(asset2);
-            await _assetRepository.UpdateAssetAsync(asset3);
+            await _cartRepository.UpdateCartAsync(cart1);
+            await _cartRepository.UpdateCartAsync(cart2);
+            await _cartRepository.UpdateCartAsync(cart3);
 
 
             var result1 =
-                await _trackingDeviceRepository.GetTrackingDevicesByConditionAsync(x => x.AssetId == asset1.Id);
+                await _trackingDeviceRepository.GetTrackingDevicesByConditionAsync(x => x.CartId == cart1.Id);
             if (result1.IsSuccess)
             {
                 device1 = result1.TrackingDevices.First();
@@ -370,7 +370,7 @@ namespace WiiTrakApi.Services
             }
 
             var result2 =
-                await _trackingDeviceRepository.GetTrackingDevicesByConditionAsync(x => x.AssetId == asset2.Id);
+                await _trackingDeviceRepository.GetTrackingDevicesByConditionAsync(x => x.CartId == cart2.Id);
             if (result2.IsSuccess)
             {
                 device2 = result2.TrackingDevices.First();
@@ -380,7 +380,7 @@ namespace WiiTrakApi.Services
             }
 
             var result3 =
-                await _trackingDeviceRepository.GetTrackingDevicesByConditionAsync(x => x.AssetId == asset3.Id);
+                await _trackingDeviceRepository.GetTrackingDevicesByConditionAsync(x => x.CartId == cart3.Id);
             if (result3.IsSuccess)
             {
                 device3 = result3.TrackingDevices.First();

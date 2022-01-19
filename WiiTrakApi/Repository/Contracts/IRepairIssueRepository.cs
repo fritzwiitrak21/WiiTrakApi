@@ -14,5 +14,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateRepairIssueAsync(RepairIssueModel repairIssue);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteRepairIssueAsync(Guid id);
+
+        Task<bool> SaveAsync();
     }
 }

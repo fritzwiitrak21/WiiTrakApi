@@ -29,6 +29,6 @@ namespace WiiTrakApi.DTOs
 
         public DateTime InstalledDate { get; set; } 
      
-        public Guid AssetId { get; set; }
+        public Guid CartId { get; set; }
     }
 }

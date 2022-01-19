@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
+using WiiTrakApi.DTOs;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -71,6 +73,29 @@ namespace WiiTrakApi.Repository
             }
         }
 
+        public async Task<(bool IsSuccess, List<CompanyModel>? Companies, string? ErrorMessage)> GetPrimaryCompaniesByCorporateIdAsync(Guid corporateId)
+        {
+            try
+            {
+                var companyCorporates = await _dbContext.CompanyCorporates
+                    .Where(x => x.CorporateId == corporateId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var companies = companyCorporates.Select(x => x.Company).ToList();
+
+                if (companies.Any())
+                {
+                    return (true, companies, null);
+                }
+                return (false, null, "No companies found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
         public async Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CompanyExistsAsync(Guid id)
         {
             try
@@ -81,6 +106,76 @@ namespace WiiTrakApi.Repository
             catch (Exception ex)
             {
                 return (false, false, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, CompanyReportDto? Report, string? ErrorMessage)> GetCompanyReportById(Guid id)
+        {
+            try
+            {
+                var report = new CompanyReportDto();
+
+                var companyStores = await _dbContext.Stores.Where(x => x.CompanyId == id).ToListAsync();
+
+
+                var carts = new List<CartModel>();
+
+                foreach (var store in companyStores)
+                {
+                    var storeCarts = await _dbContext.Stores
+                        .Include(x => x.Carts)
+                        .FirstOrDefaultAsync(x => x.Id == store.Id);
+                    carts.AddRange(storeCarts.Carts);
+                }
+
+                int totalStores = companyStores.Count();
+                int totalCarts = carts.Count();
+                int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
+                int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
+                int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
+                int totalCartsLost = carts.Count(x => x.Status == CartStatus.Lost);
+
+                int cartsOnVehicleToday = 0;
+                int cartsDeliveredToday = 0;
+                int cartsNeedingRepairToday = 0;
+                int cartsLostToday = 0;
+
+
+                cartsOnVehicleToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                    x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                    x.Status == CartStatus.PickedUp);
+
+                cartsDeliveredToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                   x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                   x.Status == CartStatus.InsideGeofence);
+
+                cartsNeedingRepairToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                   x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                   x.Condition == CartCondition.Damage);
+
+                cartsLostToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                  x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                  x.Status == CartStatus.Lost);
+
+                report.CompanyId = id;
+
+                report.TotalStores = totalStores;
+                report.TotalCarts = totalCarts;
+                report.TotalCartsAtStore = totalCartsAtStore;
+                report.TotalCartsLost = totalCartsLost;
+                report.TotalCartsNeedingRepair = totalCartsNeedingRepair;
+                report.TotalCartsOutsideStore = totalCartsOutsideStore;
+
+                report.CartsDeliveredToday = cartsDeliveredToday;
+                report.CartsLostToday = cartsLostToday;
+                report.CartsNeedingRepairToday = cartsNeedingRepairToday;
+                report.CartsOnVehicleToday = cartsOnVehicleToday;
+
+                return (true, report, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
             }
         }
 
@@ -133,5 +228,6 @@ namespace WiiTrakApi.Repository
         {
             return await _dbContext.SaveChangesAsync() >= 0;
         }
+       
     }
 }

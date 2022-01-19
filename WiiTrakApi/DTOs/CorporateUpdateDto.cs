@@ -1,6 +1,6 @@
 ﻿namespace WiiTrakApi.DTOs
 {
-    public class CorporationUpdateDto
+    public class CorporateUpdateDto
     {
         public DateTime? UpdatedAt { get; set; }
 
@@ -19,6 +19,8 @@
         public string PostalCode { get; set; } = string.Empty;
 
         public string ProfilePicUrl { get; set; } = string.Empty;
+
+        public string LogoUrl { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
 
