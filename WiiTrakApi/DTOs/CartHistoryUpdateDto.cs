@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using WiiTrakApi.Enums;
+﻿using WiiTrakApi.Enums;
 
-namespace WiiTrakApi.Models
+namespace WiiTrakApi.DTOs
 {
-    [Table(name: "CartHistory")]
-    public class CartHistoryModel: EntityModel
+    public class CartHistoryUpdateDto
     {
         public DateTime? PickedUpAt { get; set; }
 
@@ -30,9 +28,6 @@ namespace WiiTrakApi.Models
 
         public double PickupLatitude { get; set; }
 
-        [ForeignKey(nameof(CartModel))]
         public Guid CartId { get; set; }
-
-        public CartModel? Cart { get; set; }
     }
 }

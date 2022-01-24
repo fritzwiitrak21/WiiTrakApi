@@ -53,6 +53,30 @@ namespace WiiTrakApi.Repository
             }
         }
 
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid driverId)
+        {
+            try
+            {
+                var driverStores = await _dbContext.DriverStores
+                    .Include(x => x.Store)
+                    .Where(x => x.DriverId == driverId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var stores = driverStores.Select(x => x.Store).ToList();
+
+                if (stores is not null && stores.Any())
+                {
+                    return (true, stores, null);
+                }
+                return (false, null, "No stores found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
         public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByConditionAsync(Expression<Func<StoreModel, bool>> expression)
         {
             try

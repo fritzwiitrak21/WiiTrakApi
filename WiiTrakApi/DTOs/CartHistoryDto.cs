@@ -6,6 +6,12 @@ namespace WiiTrakApi.DTOs
 {
     public class CartHistoryDto
     {
+        public Guid Id { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
         public DateTime? PickedUpAt { get; set; }
 
         public DateTime? DroppedOffAt { get; set; }
@@ -23,6 +29,8 @@ namespace WiiTrakApi.DTOs
         public CartStatus Status { get; set; }
 
         public bool IsDelivered { get; set; }
+
+        public Guid? DeliveryTicketId { get; set; } = Guid.Empty;
 
         public double PickupLongitude { get; set; }
 

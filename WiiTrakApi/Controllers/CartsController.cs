@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
+using WiiTrakApi.Repository;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Controllers
@@ -14,6 +16,7 @@ namespace WiiTrakApi.Controllers
         private readonly ILogger<CartsController> _logger;
         private readonly IMapper _mapper;
         private readonly ICartRepository _repository;
+        private readonly ICartHistoryRepository _cartHistoryRepository;
 
         string[] _cartImgUrls = new[]
         {
@@ -28,11 +31,12 @@ namespace WiiTrakApi.Controllers
 
         public CartsController(ILogger<CartsController> logger,
             IMapper mapper,
-            ICartRepository repository)
+            ICartRepository repository, ICartHistoryRepository cartHistoryRepository)
         {
             _logger = logger;
             _mapper = mapper;
             _repository = repository;
+            _cartHistoryRepository = cartHistoryRepository;
         }
 
         [HttpGet("{id:guid}", Name = "GetCart")]
@@ -154,18 +158,30 @@ namespace WiiTrakApi.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCart(Guid id, CartUpdateDto cartUpdate)
         {
-
-            // TODO update cart history
-            // update isDelivered
-            // 
+            // update cart history
+            var cartHistory = _mapper.Map<CartHistoryModel>(cartUpdate.CartHistory);
+            cartHistory.CreatedAt = DateTime.Now;
+            await _cartHistoryRepository.CreateCartHistoryAsync(cartHistory);
 
             var result = await _repository.GetCartByIdAsync(id);
+            var cart = result.Cart;
 
-            if (!result.IsSuccess || result.Cart is null) return NotFound(result.ErrorMessage);
-            _mapper.Map(cartUpdate, result.Cart);
-            result.Cart.UpdatedAt = DateTime.UtcNow;
+            if (!result.IsSuccess || cart is null) return NotFound(result.ErrorMessage);
 
-            var updateResult = await _repository.UpdateCartAsync(result.Cart);
+
+            cart.BarCode = cartUpdate.BarCode;
+            cart.Condition = cartUpdate.Condition;
+            cart.Status = cartUpdate.Status;
+            cart.DateManufactured = cartUpdate.DateManufactured;
+            cart.IsProvisioned = cartUpdate.IsProvisioned;
+            cart.ManufacturerName = cartUpdate.ManufacturerName;
+            cart.OrderedFrom = cartUpdate.OrderedFrom;
+            cart.PicUrl = cartUpdate.PicUrl;
+            cart.StoreId = cartUpdate.StoreId;
+
+            cart.UpdatedAt = DateTime.UtcNow;
+
+            var updateResult = await _repository.UpdateCartAsync(cart);
             if (updateResult.IsSuccess) return NoContent();
 
             ModelState.AddModelError("", $"Something went wrong when updating the record.");

@@ -50,6 +50,10 @@ namespace WiiTrakApi.Helpers
             CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
             CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
 
+            CreateMap<CartHistoryModel, CartHistoryDto>().ReverseMap();
+            CreateMap<CartHistoryModel, CartHistoryCreationDto>().ReverseMap();
+            CreateMap<CartHistoryModel, CartHistoryUpdateDto>().ReverseMap();
+
             CreateMap<SystemOwnerModel, SystemOwnerDto>().ReverseMap();
 
         }
