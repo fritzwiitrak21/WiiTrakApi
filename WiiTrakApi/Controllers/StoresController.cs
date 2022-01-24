@@ -84,6 +84,16 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("Driver/{driverId:guid}")]
+        public async Task<IActionResult> GetStoresByDriverId(Guid driverId)
+        {
+            var result = await _repository.GetStoresByDriverId(driverId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            return Ok(dtoList);
+        }
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<StoreDto>> CreateStore([FromBody] StoreCreationDto storeCreation)

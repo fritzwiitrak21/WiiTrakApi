@@ -1,0 +1,207 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Linq.Expressions;
+using WiiTrakApi.Data;
+using WiiTrakApi.Enums;
+using WiiTrakApi.Models;
+using WiiTrakApi.Repository.Contracts;
+
+namespace WiiTrakApi.Repository
+{
+    public class CartHistoryRepository: ICartHistoryRepository
+    {
+        private readonly ApplicationDbContext _dbContext;
+
+        public CartHistoryRepository(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<(bool IsSuccess, CartHistoryModel? CartHistory, string? ErrorMessage)> GetCartHistoryByIdAsync(Guid id)
+        {
+            var cartHistory = await _dbContext.CartHistory
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (cartHistory is not null)
+            {
+                return (true, cartHistory, null);
+            }
+            return (false, null, "No cart history found");
+        }
+
+        public async Task<(bool IsSuccess, List<CartHistoryModel>? CartHistory, string? ErrorMessage)> GetAllCartHistoryAsync()
+        {
+            try
+            {
+                var cartHistory = await _dbContext.CartHistory
+                    .Select(x => x)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                if (cartHistory.Any())
+                {
+                    return (true, cartHistory, null);
+                }
+                return (false, null, "No cart history found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, List<CartHistoryModel>? CartHistory, string? ErrorMessage)> GetCartHistoryByCartIdAsync(Guid cartId)
+        {
+            try
+            {
+                var cartHistory = await _dbContext.CartHistory
+                    .Where(x => x.CartId == cartId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+
+                if (cartHistory.Any())
+                {
+                    return (true, cartHistory, null);
+                }
+
+                return (false, null, "No cart history found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, List<CartHistoryModel>? CartHistory, string? ErrorMessage)> GetCartHistoryByStoreIdAsync(Guid storeId)
+        {
+            try
+            {
+                var cartHistory = await _dbContext.CartHistory
+                    .Where(x => x.StoreId == storeId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+
+                if (cartHistory.Any())
+                {
+                    return (true, cartHistory, null);
+                }
+
+                return (false, null, "No cart history found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, List<CartHistoryModel>? CartHistory, string? ErrorMessage)> GetCartHistoryByServiceProviderIdAsync(Guid serviceProviderId)
+        {
+            try
+            {
+                var cartHistory = await _dbContext.CartHistory
+                    .Where(x => x.ServiceProviderId == serviceProviderId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+
+                if (cartHistory.Any())
+                {
+                    return (true, cartHistory, null);
+                }
+
+                return (false, null, "No cart history found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, List<CartHistoryModel>? CartHistory, string? ErrorMessage)> GetCartHistoryByConditionAsync(Expression<Func<CartHistoryModel, bool>> expression)
+        {
+            try
+            {
+                var cartHistory = await _dbContext.CartHistory
+                    .Where(expression)
+                    .Select(x => x)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                if (cartHistory.Any())
+                {
+                    return (true, cartHistory, null);
+                }
+                return (false, null, "No cart history found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CartHistoryExistsAsync(Guid id)
+        {
+            try
+            {
+                var exists = await _dbContext.CartHistory.AnyAsync(x => x.Id.Equals(id));
+                return (true, exists, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, false, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCartHistoryAsync(CartHistoryModel cartHistory)
+        {
+            try
+            {
+                await _dbContext.CartHistory.AddAsync(cartHistory);
+                await _dbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateCartHistoryAsync(CartHistoryModel cartHistory)
+        {
+            try
+            {
+                _dbContext.CartHistory.Update(cartHistory);
+                await _dbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, string? ErrorMessage)> DeleteCartHistoryAsync(Guid id)
+        {
+            try
+            {
+                var recordToDelete = await _dbContext.CartHistory.FirstOrDefaultAsync(x => x.Id == id);
+                if (recordToDelete is null) return (false, "Cart history not found");
+                _dbContext.CartHistory.Remove(recordToDelete);
+                await _dbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<bool> SaveAsync()
+{
+            return await _dbContext.SaveChangesAsync() >= 0;
+        }
+    }
+}

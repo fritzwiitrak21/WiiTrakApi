@@ -4,6 +4,12 @@ namespace WiiTrakApi.DTOs
 {
     public class WorkOrderDto
     {
+        public Guid Id { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
         public int WorkOrderNumber { get; set; } 
 
         public string Issue { get; set; } = string.Empty;

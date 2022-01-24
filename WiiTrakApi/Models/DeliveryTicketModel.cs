@@ -1,25 +1,26 @@
-﻿using WiiTrakApi.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using WiiTrakApi.Enums;
 
 namespace WiiTrakApi.Models
 {
     public class DeliveryTicketModel: EntityModel
     {
-        public Guid CartId { get; set; }
+        public long DeliveryTicketNumber { get; set; }
 
-        public DateTime PickedUpAt { get; set; }
+        public int NumberOfCarts { get; set; }
 
-        public DateTime DroppedOffAt { get; set; }
+        [MaxLength(128)]
+        public string Grid { get; set; } = string.Empty;
+
+        [Url(ErrorMessage = "{0} is invalid.")]
+        public string PicUrl { get; set; } = string.Empty;
+
+        public DateTime DeliveredAt { get; set; }
 
         public Guid ServiceProviderId { get; set; } = Guid.Empty;
 
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
-
-        public CartCondition Condition { get; set; }
-
-        public double PickupLongitude { get; set; }
-
-        public double PickupLatitude { get; set; }
     }
 }
