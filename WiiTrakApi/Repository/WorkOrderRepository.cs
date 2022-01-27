@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NuGet.ContentModel;
 using System.Linq;
 using System.Linq.Expressions;
@@ -8,7 +9,7 @@ using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
 {
-    public class WorkOrderRepository: IWorkOrderRepository
+    public class WorkOrderRepository : IWorkOrderRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -48,6 +49,20 @@ namespace WiiTrakApi.Repository
             {
                 return (false, null, ex.Message);
             }
+        }
+
+        public async Task<(bool IsSuccess, int WorkOrderNumber, string? ErrorMessage)> GetWorkOrderNumberAsync()
+        {
+            bool anyExists = await _dbContext.WorkOrders.AnyAsync();
+            if (!anyExists)
+            {
+                return (true, 1, null);
+            }
+
+            var maxTicketNumber = await _dbContext.WorkOrders
+                .MaxAsync(x => x.WorkOrderNumber);
+
+            return (true, (maxTicketNumber + 1), null);
         }
 
         public async Task<(bool IsSuccess, List<WorkOrderModel>? WorkOrders, string? ErrorMessage)> GetWorkOrdersByConditionAsync(Expression<Func<WorkOrderModel, bool>> expression)
