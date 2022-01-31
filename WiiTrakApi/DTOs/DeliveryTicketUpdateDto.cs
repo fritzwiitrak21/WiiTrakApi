@@ -14,6 +14,10 @@ namespace WiiTrakApi.DTOs
 
         public DateTime DeliveredAt { get; set; }
 
+        public bool SignOffRequired { get; set; }
+
+        public bool ApprovedByStore { get; set; }
+
         public Guid ServiceProviderId { get; set; } = Guid.Empty;
 
         public Guid StoreId { get; set; } = Guid.Empty;

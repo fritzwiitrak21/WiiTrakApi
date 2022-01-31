@@ -15,6 +15,10 @@ namespace WiiTrakApi.Models
         [Url(ErrorMessage = "{0} is invalid.")]
         public string PicUrl { get; set; } = string.Empty;
 
+        public bool SignOffRequired { get; set; }
+
+        public bool ApprovedByStore { get; set; }
+
         public DateTime DeliveredAt { get; set; }
 
         public Guid ServiceProviderId { get; set; } = Guid.Empty;
