@@ -19,6 +19,8 @@ namespace WiiTrakApi.DTOs
 
         public string PicUrl { get; set; } = string.Empty;
 
+        public string SignaturePicUrl { get; set; } = string.Empty;
+
         public string StoreName { get; set; }
 
         public string StoreNumber { get; set; }
