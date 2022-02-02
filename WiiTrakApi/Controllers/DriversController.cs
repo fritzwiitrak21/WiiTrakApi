@@ -51,7 +51,7 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("{companyId:guid}")]
+        [HttpGet("Customer/{companyId:guid}")]
         public async Task<IActionResult> GetDriversByCustomerId(Guid companyId)
         {
             var result = 
@@ -62,7 +62,7 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("Customer/{companyId:guid}")]
+        [HttpGet("Company/{companyId:guid}")]
         [EnableQuery]
         public async Task<IActionResult> GetDriversByCompanyId(Guid companyId)
         {
