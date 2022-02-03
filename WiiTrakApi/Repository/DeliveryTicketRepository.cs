@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
+using WiiTrakApi.DTOs;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -25,6 +27,32 @@ namespace WiiTrakApi.Repository
             if (deliveryTicket is not null)
             {
                 return (true, deliveryTicket, null);
+            }
+            return (false, null, "No delivery ticket found");
+        }
+
+        public async Task<(bool IsSuccess, DeliveryTicketSummaryDto? DeliveryTicketSummary, string? ErrorMessage)> GetDeliveryTicketSummaryByIdAsync(Guid id)
+        {
+            var deliveryTicket = await _dbContext.DeliveryTickets
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            var cartHistory = await _dbContext.CartHistory
+                .Where(x => x.DeliveryTicketId == id)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var summary = new DeliveryTicketSummaryDto
+            {
+                Delivered = cartHistory.Count(x => x.IsDelivered),
+                Lost = cartHistory.Count(x => x.Status == CartStatus.Lost),
+                Damaged = cartHistory.Count(x => x.Condition == CartCondition.Damage),
+                Trashed = cartHistory.Count(x => x.Condition == CartCondition.DamageBeyondRepair)
+            };
+
+            if (summary is not null)
+            {
+                return (true, summary, null);
             }
             return (false, null, "No delivery ticket found");
         }

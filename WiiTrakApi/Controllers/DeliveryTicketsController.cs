@@ -137,7 +137,14 @@ namespace WiiTrakApi.Controllers
 
             return Ok(dtoList);
         }
-        
+
+        [HttpGet("Summary/{id:guid}")]
+        public async Task<IActionResult> GetDeliveryTicketSummaryById(Guid id)
+        {
+            var result = await _repository.GetDeliveryTicketSummaryByIdAsync(id);
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            return Ok(result.DeliveryTicketSummary);
+        }
 
         [HttpPost]
         public async Task<ActionResult<DeliveryTicketDto>> CreateDeliveryTicket([FromBody] DeliveryTicketCreationDto deliveryTicketCreation)

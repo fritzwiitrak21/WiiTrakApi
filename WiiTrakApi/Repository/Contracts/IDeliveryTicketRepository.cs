@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 
 namespace WiiTrakApi.Repository.Contracts
@@ -6,6 +7,8 @@ namespace WiiTrakApi.Repository.Contracts
     public interface IDeliveryTicketRepository
     {
         Task<(bool IsSuccess, DeliveryTicketModel? DeliveryTicket, string? ErrorMessage)> GetDeliveryTicketByIdAsync(Guid id);
+
+        Task<(bool IsSuccess, DeliveryTicketSummaryDto? DeliveryTicketSummary, string? ErrorMessage)> GetDeliveryTicketSummaryByIdAsync(Guid id);
 
         Task<(bool IsSuccess, long DeliveryTicketNumber, string? ErrorMessage)> GetDeliveryTicketNumberAsync(Guid serviceProviderId);
 
