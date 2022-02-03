@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WiiTrakApi.Data;
 
@@ -11,9 +12,10 @@ using WiiTrakApi.Data;
 namespace WiiTrakApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220130225805_AddPropertiesToDeliveryTicketModel")]
+    partial class AddPropertiesToDeliveryTicketModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -345,10 +347,6 @@ namespace WiiTrakApi.Migrations
 
                     b.Property<bool>("SignOffRequired")
                         .HasColumnType("bit");
-
-                    b.Property<string>("SignaturePicUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("StoreId")
                         .HasColumnType("uniqueidentifier");

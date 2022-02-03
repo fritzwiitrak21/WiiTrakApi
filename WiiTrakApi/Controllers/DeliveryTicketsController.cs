@@ -152,6 +152,13 @@ namespace WiiTrakApi.Controllers
             var deliveryTicket = _mapper.Map<DeliveryTicketModel>(deliveryTicketCreation);
             deliveryTicket.CreatedAt = DateTime.UtcNow;
 
+            //
+            // TODO get store by id and check if signature is required
+            //
+            // Hardcoded for now for demo purposes. This flag should be pulled from store object
+            deliveryTicket.SignOffRequired = true;
+            deliveryTicket.ApprovedByStore = false;
+
             var deliveryTicketNumberResult = await _repository.GetDeliveryTicketNumberAsync(deliveryTicket.ServiceProviderId);
             deliveryTicket.DeliveryTicketNumber = deliveryTicketNumberResult.DeliveryTicketNumber;
 
