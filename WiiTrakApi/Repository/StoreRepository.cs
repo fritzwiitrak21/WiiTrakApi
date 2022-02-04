@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -99,9 +100,69 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetStoreReportById(Guid Id)
+        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetStoreReportById(Guid Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var report = new StoreReportDto();
+
+
+                //var carts = new List<CartModel>();
+                var carts = new List<CartModel>();
+
+                var storeCarts = await _dbContext.Stores
+                    .Include(x => x.Carts)
+                    .FirstOrDefaultAsync(x => x.Id == Id);
+                carts = storeCarts.Carts;
+                
+
+                //int totalStores = storeCarts.Count();
+                int totalCarts = carts.Count();
+                int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
+                int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
+                int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
+                int totalCartsLost = carts.Count(x => x.Status == CartStatus.Lost);
+
+                int cartsOnVehicleToday = 0;
+                int cartsDeliveredToday = 0;
+                int cartsNeedingRepairToday = 0;
+                int cartsLostToday = 0;
+
+
+                cartsOnVehicleToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                    x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                    x.Status == CartStatus.PickedUp);
+
+                cartsDeliveredToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                   x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                   x.Status == CartStatus.InsideGeofence);
+
+                cartsNeedingRepairToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                   x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                   x.Condition == CartCondition.Damage);
+
+                cartsLostToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                  x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                  x.Status == CartStatus.Lost);
+
+                report.TotalStores = 0;
+                report.TotalCarts = totalCarts;
+                report.TotalCartsAtStore = totalCartsAtStore;
+                report.TotalCartsLost = totalCartsLost;
+                report.TotalCartsNeedingRepair = totalCartsNeedingRepair;
+                report.TotalCartsOutsideStore = totalCartsOutsideStore;
+
+                report.CartsDeliveredToday = cartsDeliveredToday;
+                report.CartsLostToday = cartsLostToday;
+                report.CartsNeedingRepairToday = cartsNeedingRepairToday;
+                report.CartsOnVehicleToday = cartsOnVehicleToday;
+
+                return (true, report, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
         }
 
         public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCorporateId(Guid corporateId)
