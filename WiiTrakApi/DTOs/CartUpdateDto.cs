@@ -9,6 +9,8 @@ namespace WiiTrakApi.DTOs
 
         public DateTime DateManufactured { get; set; }
 
+        public string CartNumber { get; set; } = string.Empty;
+
         public CartOrderedFrom OrderedFrom { get; set; }
 
         public CartCondition Condition { get; set; }

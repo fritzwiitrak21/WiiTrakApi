@@ -10,6 +10,8 @@ namespace WiiTrakApi.Models
         [MaxLength(128)]
         public string ManufacturerName { get; set; } = string.Empty;
 
+        public string CartNumber { get; set; } = string.Empty;
+
         public DateTime DateManufactured { get; set; }
 
         public CartOrderedFrom OrderedFrom { get; set; }

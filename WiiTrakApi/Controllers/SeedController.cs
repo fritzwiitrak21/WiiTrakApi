@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Faker.Extensions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
@@ -13,7 +14,7 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class SeedController : ControllerBase
     {
-        private readonly ICartRepository _repository;
+        private readonly ICartRepository _cartRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly IStoreRepository _storeRepository;
         private readonly IDriverRepository _driverRepository;
@@ -22,13 +23,13 @@ namespace WiiTrakApi.Controllers
         private readonly ICorporateRepository _corporateRepository;
         private readonly ApplicationDbContext _dbContext;
 
-        public SeedController(ICartRepository repository, 
+        public SeedController(ICartRepository cartRepository, 
             IStoreRepository storeRepository,
             IDriverRepository driverRepository,
             ITechnicianRepository technicianRepository,
             ApplicationDbContext dbContext, IServiceProviderRepository serviceProviderRepository, ICompanyRepository companyRepository, ICorporateRepository corporateRepository)
         {
-            _repository = repository;
+            _cartRepository = cartRepository;
             _storeRepository = storeRepository;
             _driverRepository = driverRepository;
             _technicianRepository = technicianRepository;
@@ -54,9 +55,10 @@ namespace WiiTrakApi.Controllers
             //await SeedTechnicians();
             //await SeedDriverStores();
             //await SeedRepairIssues();
+            //await SeedCartNumbers();
             return Ok();
         }
-
+        
         public async Task SeedSystemOwner()
         {
             var sysOwner = new SystemOwnerModel
@@ -781,6 +783,17 @@ namespace WiiTrakApi.Controllers
 
             await _dbContext.SaveChangesAsync();
         }
-    }
 
+        private async Task SeedCartNumbers()
+        {
+            var carts = await _dbContext.Carts.ToListAsync();
+
+            foreach (var cart in carts)
+            {
+                cart.CartNumber = Faker.Number.RandomNumber(1111, 9999).ToString();
+                await _cartRepository.UpdateCartAsync(cart);
+            }
+
+        }
+    }
 }
