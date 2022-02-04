@@ -93,6 +93,15 @@ namespace WiiTrakApi.Controllers
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
+        [HttpGet("report/{id:guid}")]
+        public async Task<IActionResult> GetStoreReport(Guid id)
+        {
+            var result = await _repository.GetStoreReportById(id);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var reportDto = result.Report;
+            return Ok(reportDto);
+        }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
