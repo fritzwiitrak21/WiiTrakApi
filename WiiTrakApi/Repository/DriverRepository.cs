@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -135,9 +136,79 @@ namespace WiiTrakApi.Repository
             return await _dbContext.SaveChangesAsync() >= 0;
         }
 
-        public Task<(bool IsSuccess, DriverReportDto? Report, string? ErrorMessage)> GetDriverReportById(Guid Id)
+        public async Task<(bool IsSuccess, DriverReportDto? Report, string? ErrorMessage)> GetDriverReportById(Guid Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var report = new DriverReportDto();
+
+                var corporateStores = await _dbContext.DriverStores.Where(x => x.DriverId == Id).ToListAsync();
+
+
+                var carts = new List<CartModel>();
+
+                foreach (var store in corporateStores)
+                {
+                    var storeCarts = await _dbContext.Stores
+                        .Include(x => x.Carts)
+                        .FirstOrDefaultAsync(x => x.Id == store.StoreId);
+
+                    carts.AddRange(carts);
+                }
+
+                int totalStores = corporateStores.Count();
+                int totalCarts = carts.Count();
+                int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
+                int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
+                int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
+                int totalCartsGood = carts.Count(x => x.Condition == CartCondition.Good);
+                int totalCartsLost = carts.Count(x => x.Status == CartStatus.Lost);
+                int totalCartsTrashed = carts.Count(x => x.Status == CartStatus.Trashed);
+
+                int cartsOnVehicleToday = 0;
+                int cartsDeliveredToday = 0;
+                int cartsNeedingRepairToday = 0;
+                int cartsLostToday = 0;
+
+
+                cartsOnVehicleToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                    x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                    x.Status == CartStatus.PickedUp);
+
+                cartsDeliveredToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                   x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                   x.Status == CartStatus.InsideGeofence);
+
+                cartsNeedingRepairToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                   x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                   x.Condition == CartCondition.Damage);
+
+                cartsLostToday = carts.Count(x => x.UpdatedAt is not null &&
+                                                  x.UpdatedAt.Value.Date == DateTime.Now.Date &&
+                                                  x.Status == CartStatus.Lost);
+
+                report.DriverId = Id;
+
+                report.TotalStores = totalStores;
+                report.TotalCarts = totalCarts;
+                report.TotalCartsAtStore = totalCartsAtStore;
+                report.TotalCartsLost = totalCartsLost;
+                report.TotalCartsTrashed = totalCartsTrashed;
+                report.TotalCartsGood = totalCartsGood;
+                report.TotalCartsNeedingRepair = totalCartsNeedingRepair;
+                report.TotalCartsOutsideStore = totalCartsOutsideStore;
+
+                report.CartsDeliveredToday = cartsDeliveredToday;
+                report.CartsLostToday = cartsLostToday;
+                report.CartsNeedingRepairToday = cartsNeedingRepairToday;
+                report.CartsOnVehicleToday = cartsOnVehicleToday;
+
+                return (true, report, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
         }
     }
 }

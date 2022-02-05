@@ -16,6 +16,10 @@
 
         public int TotalCartsLost { get; set; }
 
+        public int TotalCartsTrashed { get; set; }
+
+        public int TotalCartsGood { get; set; }
+
         public int CartsOnVehicleToday { get; set; }
 
         public int CartsDeliveredToday { get; set; }
