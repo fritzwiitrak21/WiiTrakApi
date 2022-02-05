@@ -74,6 +74,16 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("report/{id:guid}")]
+        public async Task<IActionResult> GetDriverReport(Guid id)
+        {
+            var result = await _repository.GetDriverReportById(id);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var reportDto = result.Report;
+            return Ok(reportDto);
+        }
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<DriverDto>> CreateDriver([FromBody] DriverCreationDto driverCreation)
