@@ -48,6 +48,32 @@ namespace WiiTrakApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex}");
             }
         }
+        
+        [HttpPost("Signature"), DisableRequestSizeLimit]
+        public async Task<IActionResult> UploadSignatureAsync([FromForm] IFormFile file)
+        {
+            try
+            {
+                if (file.Length > 0)
+                {
+                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    // use guid for file name
+                    var fileExtension = Path.GetExtension(fileName);
+                    var blobFileName = $"{ Guid.NewGuid() }{ fileExtension.ToLower() }";
+
+                    string fileURL = await uploadService.UploadAsync(file.OpenReadStream(), blobFileName, file.ContentType, _imageBlobContainerName);
+                    return Ok(new { fileURL });
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
 
     }
 }
