@@ -21,7 +21,7 @@ namespace WiiTrakApi.Controllers
         }
 
 
-        [HttpGet("/ReccuringJob")]
+        [HttpGet]
         public ActionResult CreateReccuringJob()
         {
             // cron expression for every 8 hours:  0 0 0/8 ? * * *
