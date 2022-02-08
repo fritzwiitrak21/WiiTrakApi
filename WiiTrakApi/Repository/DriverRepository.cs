@@ -149,11 +149,14 @@ namespace WiiTrakApi.Repository
 
                 foreach (var store in corporateStores)
                 {
-                    var storeCarts = await _dbContext.Stores
-                        .Include(x => x.Carts)
-                        .FirstOrDefaultAsync(x => x.Id == store.StoreId);
+                    var _carts = await _dbContext.Carts
+                        .Where(x => x.StoreId == store.StoreId)
+                        .Include(x => x.Store)
+                        .Include(x => x.TrackingDevice)
+                        .AsNoTracking()
+                        .ToListAsync();
 
-                    carts.AddRange(carts);
+                    carts.AddRange(_carts);
                 }
 
                 int totalStores = corporateStores.Count();
