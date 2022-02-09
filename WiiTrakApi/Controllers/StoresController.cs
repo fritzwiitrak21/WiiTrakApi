@@ -103,6 +103,36 @@ namespace WiiTrakApi.Controllers
             return Ok(reportDto);
         }
 
+        [HttpGet("report/driver/{driverId:guid}")]
+        public async Task<IActionResult> GetAllStoreReportByDriver(Guid driverId)
+        {
+            var result = await _repository.GetAllStoreReportByDriverId(driverId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var reportDto = result.Report;
+            return Ok(reportDto);
+        }
+
+        [HttpGet("report/corporate/{corporateId:guid}")]
+        public async Task<IActionResult> GetAllStoreReportByCorporate(Guid corporateId)
+        {
+            var result = await _repository.GetAllStoreReportByCorporateId(corporateId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var reportDto = result.Report;
+            return Ok(reportDto);
+        }
+
+        [HttpGet("report/company/{companyId:guid}")]
+        public async Task<IActionResult> GetAllStoreReportByCompany(Guid companyId)
+        {
+            var result = await _repository.GetAllStoreReportByCompanyId(companyId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var reportDto = result.Report;
+            return Ok(reportDto);
+        }
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<StoreDto>> CreateStore([FromBody] StoreCreationDto storeCreation)
