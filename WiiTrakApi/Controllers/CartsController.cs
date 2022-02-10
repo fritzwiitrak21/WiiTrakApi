@@ -59,6 +59,25 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("DeliveryTicket/{deliveryTicketId:guid}")]
+        public async Task<IActionResult> GetCartsByDeliveryTicketId(Guid deliveryTicketId)
+        {
+            // Returns carts with outside geofence and picked up statuses
+            var result = await _repository.GetCartsByDeliveryTicketIdAsync(deliveryTicketId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+
+            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
+
+
+            foreach (var cart in dtoList)
+            {
+                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
+            }
+
+            return Ok(dtoList);
+        }
+
         [HttpGet("Store/{storeId:guid}")]
         public async Task<IActionResult> GetCartsByStoreId(Guid storeId)
         {
