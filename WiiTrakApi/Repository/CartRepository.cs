@@ -53,6 +53,44 @@ namespace WiiTrakApi.Repository
             }
         }
 
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId)
+        {
+            try
+            {
+                var deliveryTicket = await _dbContext.DeliveryTickets
+                    .Where(x => x.Id == deliveryTicketId)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+                var cartHistory = await _dbContext.CartHistory
+                    .Where(x => x.DeliveryTicketId == deliveryTicketId)
+                    .AsNoTracking()
+                    .ToListAsync();
+                var carts = new List<CartModel>();
+                foreach(var cart in cartHistory)
+                {
+                    var _cart = await _dbContext.Carts
+                        .Include(x => x.Store)
+                        .Include(x => x.TrackingDevice)
+                        .Where(x => x.Id == cart.CartId)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
+                    if (_cart != null)
+                    {
+                        carts.Add(_cart);
+                    }
+                }
+                if (carts.Any())
+                {
+                    return (true, carts, null);
+                }
+
+                return (false, null, "No carts found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
 
         public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid storeId)
         {
