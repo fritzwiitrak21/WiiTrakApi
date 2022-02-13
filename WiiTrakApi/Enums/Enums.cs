@@ -22,4 +22,11 @@
         Seller,
         Lessor
     }
+
+    public enum GeolocationPermissionStatus
+    {
+        None,
+        Allowed,
+        Denied
+    }
 }

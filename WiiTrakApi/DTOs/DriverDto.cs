@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 
 namespace WiiTrakApi.DTOs
@@ -21,7 +22,7 @@ namespace WiiTrakApi.DTOs
 
         public string ProfilePic { get; set; } = string.Empty;
 
-        public bool AllowsGeolocationFetch { get; set; }
+        public GeolocationPermissionStatus GeolocationPermissionStatus { get; set; }
 
         public Guid CompanyId { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿namespace WiiTrakApi.DTOs
+﻿using WiiTrakApi.Enums;
+
+namespace WiiTrakApi.DTOs
 {
     public record DriverUpdateDto
     {
@@ -14,7 +16,7 @@
 
         public string ProfilePic { get; set; } = string.Empty;
 
-        public bool AllowsGeolocationFetch { get; set; }
+        public GeolocationPermissionStatus GeolocationPermissionStatus { get; set; }
 
         public Guid ServiceProviderId { get; set; }
     }
