@@ -14,6 +14,8 @@
 
         public string ProfilePic { get; set; } = string.Empty;
 
+        public bool AllowsGeolocationFetch { get; set; }
+
         public Guid ServiceProviderId { get; set; }
     }
 }
