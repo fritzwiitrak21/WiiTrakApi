@@ -24,8 +24,6 @@ namespace WiiTrakApi.Models
         [Url(ErrorMessage = "{0} is invalid.")]
         public string ProfilePic { get; set; } = string.Empty;
 
-        public GeolocationPermissionStatus GeolocationPermissionStatus { get; set; }
-
         [ForeignKey(nameof(CompanyModel))]
         public Guid CompanyId { get; set; }
 

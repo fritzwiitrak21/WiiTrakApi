@@ -22,8 +22,6 @@ namespace WiiTrakApi.DTOs
 
         public string ProfilePic { get; set; } = string.Empty;
 
-        public GeolocationPermissionStatus GeolocationPermissionStatus { get; set; }
-
         public Guid CompanyId { get; set; }
     }
 }
