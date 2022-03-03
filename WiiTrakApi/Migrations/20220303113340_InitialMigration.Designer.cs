@@ -12,8 +12,8 @@ using WiiTrakApi.Data;
 namespace WiiTrakApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220101001206_AddCorporationsEntity")]
-    partial class AddCorporationsEntity
+    [Migration("20220303113340_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,65 @@ namespace WiiTrakApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WiiTrakApi.Models.AssetModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.CartHistoryModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Condition")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeliveryTicketId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DriverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DroppedOffAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelivered")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PickedUpAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("PickupLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PickupLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("ProvisionedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ServiceProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.ToTable("CartHistory");
+                });
+
+            modelBuilder.Entity("WiiTrakApi.Models.CartModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,6 +92,10 @@ namespace WiiTrakApi.Migrations
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("CartNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Condition")
                         .HasColumnType("int");
@@ -72,7 +134,25 @@ namespace WiiTrakApi.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Assets");
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("WiiTrakApi.Models.CompanyCorporateModel", b =>
+                {
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CorporateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CompanyId", "CorporateId");
+
+                    b.HasIndex("CorporateId");
+
+                    b.ToTable("CompanyCorporates");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.CompanyModel", b =>
@@ -89,10 +169,6 @@ namespace WiiTrakApi.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("CompanyLogoUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CountryCode")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -107,6 +183,10 @@ namespace WiiTrakApi.Migrations
 
                     b.Property<bool>("IsInactive")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LogoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -148,7 +228,7 @@ namespace WiiTrakApi.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<Guid>("SystemOwnerId")
+                    b.Property<Guid?>("SystemOwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -161,7 +241,7 @@ namespace WiiTrakApi.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.CorporationModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.CorporateModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -172,13 +252,6 @@ namespace WiiTrakApi.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CompanyLogoUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CountryCode")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -188,6 +261,10 @@ namespace WiiTrakApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -233,9 +310,61 @@ namespace WiiTrakApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.ToTable("Corporates");
+                });
 
-                    b.ToTable("Corporations");
+            modelBuilder.Entity("WiiTrakApi.Models.DeliveryTicketModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("ApprovedByStore")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeliveredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("DeliveryTicketNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("DriverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Grid")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("NumberOfCarts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PicUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("SignOffRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SignaturePicUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeliveryTickets");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.DriverModel", b =>
@@ -282,7 +411,7 @@ namespace WiiTrakApi.Migrations
                     b.ToTable("Drivers");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.DriverStore", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.DriverStoreModel", b =>
                 {
                     b.Property<Guid>("DriverId")
                         .HasColumnType("uniqueidentifier");
@@ -300,51 +429,7 @@ namespace WiiTrakApi.Migrations
                     b.ToTable("DriverStores");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.PickupModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AssetId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Condition")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("DriverId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DroppedOffAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("PickedUpAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("PickupLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PickupLongitude")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("ServiceProviderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StoreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pickups");
-                });
-
-            modelBuilder.Entity("WiiTrakApi.Models.ProvisionModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.RepairIssueModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -353,29 +438,21 @@ namespace WiiTrakApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Provisions");
-                });
-
-            modelBuilder.Entity("WiiTrakApi.Models.RepairModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Issue")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Repairs");
+                    b.ToTable("RepairIssues");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.ServiceProviderModel", b =>
@@ -432,7 +509,10 @@ namespace WiiTrakApi.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<Guid?>("CorporationId")
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CorporateId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CountryCode")
@@ -477,7 +557,7 @@ namespace WiiTrakApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ServiceProviderId")
+                    b.Property<Guid?>("ServiceProviderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("State")
@@ -509,7 +589,9 @@ namespace WiiTrakApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CorporationId");
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CorporateId");
 
                     b.HasIndex("ServiceProviderId");
 
@@ -638,7 +720,7 @@ namespace WiiTrakApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AssetId")
+                    b.Property<Guid>("CartId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -692,7 +774,7 @@ namespace WiiTrakApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssetId")
+                    b.HasIndex("CartId")
                         .IsUnique();
 
                     b.HasIndex("SystemOwnerId");
@@ -700,10 +782,91 @@ namespace WiiTrakApi.Migrations
                     b.ToTable("TrackingDevices");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.AssetModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.WorkOrderModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DriverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsAssigned")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProvisioning")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTrackingDeviceIssue")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Issue")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("PicUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SubContractorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TechnicianId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WorkOrderNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkOrders");
+                });
+
+            modelBuilder.Entity("WiiTrakApi.Models.CartHistoryModel", b =>
+                {
+                    b.HasOne("WiiTrakApi.Models.CartModel", "Cart")
+                        .WithMany("CartHistory")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+                });
+
+            modelBuilder.Entity("WiiTrakApi.Models.CartModel", b =>
                 {
                     b.HasOne("WiiTrakApi.Models.StoreModel", "Store")
-                        .WithMany("Assets")
+                        .WithMany("Carts")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -711,25 +874,32 @@ namespace WiiTrakApi.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.CompanyModel", b =>
-                {
-                    b.HasOne("WiiTrakApi.Models.SystemOwnerModel", "SystemOwner")
-                        .WithMany("Companies")
-                        .HasForeignKey("SystemOwnerId")
-                        .IsRequired();
-
-                    b.Navigation("SystemOwner");
-                });
-
-            modelBuilder.Entity("WiiTrakApi.Models.CorporationModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.CompanyCorporateModel", b =>
                 {
                     b.HasOne("WiiTrakApi.Models.CompanyModel", "Company")
-                        .WithMany("Corporations")
+                        .WithMany("CompanyCorporates")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WiiTrakApi.Models.CorporateModel", "Corporate")
+                        .WithMany("CompanyCorporates")
+                        .HasForeignKey("CorporateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Company");
+
+                    b.Navigation("Corporate");
+                });
+
+            modelBuilder.Entity("WiiTrakApi.Models.CompanyModel", b =>
+                {
+                    b.HasOne("WiiTrakApi.Models.SystemOwnerModel", "SystemOwner")
+                        .WithMany("Companies")
+                        .HasForeignKey("SystemOwnerId");
+
+                    b.Navigation("SystemOwner");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.DriverModel", b =>
@@ -742,7 +912,7 @@ namespace WiiTrakApi.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.DriverStore", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.DriverStoreModel", b =>
                 {
                     b.HasOne("WiiTrakApi.Models.DriverModel", "Driver")
                         .WithMany("DriverStores")
@@ -773,16 +943,22 @@ namespace WiiTrakApi.Migrations
 
             modelBuilder.Entity("WiiTrakApi.Models.StoreModel", b =>
                 {
-                    b.HasOne("WiiTrakApi.Models.CorporationModel", "Corporation")
+                    b.HasOne("WiiTrakApi.Models.CompanyModel", "Company")
                         .WithMany("Stores")
-                        .HasForeignKey("CorporationId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WiiTrakApi.Models.CorporateModel", "Corporate")
+                        .WithMany("Stores")
+                        .HasForeignKey("CorporateId");
 
                     b.HasOne("WiiTrakApi.Models.ServiceProviderModel", "ServiceProvider")
                         .WithMany("Stores")
-                        .HasForeignKey("ServiceProviderId")
-                        .IsRequired();
+                        .HasForeignKey("ServiceProviderId");
 
-                    b.Navigation("Corporation");
+                    b.Navigation("Company");
+
+                    b.Navigation("Corporate");
 
                     b.Navigation("ServiceProvider");
                 });
@@ -804,9 +980,9 @@ namespace WiiTrakApi.Migrations
 
             modelBuilder.Entity("WiiTrakApi.Models.TrackingDeviceModel", b =>
                 {
-                    b.HasOne("WiiTrakApi.Models.AssetModel", "Asset")
+                    b.HasOne("WiiTrakApi.Models.CartModel", "Cart")
                         .WithOne("TrackingDevice")
-                        .HasForeignKey("WiiTrakApi.Models.TrackingDeviceModel", "AssetId")
+                        .HasForeignKey("WiiTrakApi.Models.TrackingDeviceModel", "CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -816,29 +992,35 @@ namespace WiiTrakApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Asset");
+                    b.Navigation("Cart");
 
                     b.Navigation("SystemOwner");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.AssetModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.CartModel", b =>
                 {
+                    b.Navigation("CartHistory");
+
                     b.Navigation("TrackingDevice");
                 });
 
             modelBuilder.Entity("WiiTrakApi.Models.CompanyModel", b =>
                 {
-                    b.Navigation("Corporations");
+                    b.Navigation("CompanyCorporates");
 
                     b.Navigation("Drivers");
 
                     b.Navigation("ServiceProviders");
 
+                    b.Navigation("Stores");
+
                     b.Navigation("Technicians");
                 });
 
-            modelBuilder.Entity("WiiTrakApi.Models.CorporationModel", b =>
+            modelBuilder.Entity("WiiTrakApi.Models.CorporateModel", b =>
                 {
+                    b.Navigation("CompanyCorporates");
+
                     b.Navigation("Stores");
                 });
 
@@ -854,7 +1036,7 @@ namespace WiiTrakApi.Migrations
 
             modelBuilder.Entity("WiiTrakApi.Models.StoreModel", b =>
                 {
-                    b.Navigation("Assets");
+                    b.Navigation("Carts");
 
                     b.Navigation("DriverStores");
                 });
