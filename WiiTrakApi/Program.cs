@@ -3,8 +3,8 @@ using WiiTrakApi.Data;
 using WiiTrakApi.Helpers;
 using WiiTrakApi.Repository;
 using WiiTrakApi.Repository.Contracts;
-using Hangfire;
-using Hangfire.SqlServer;
+//using Hangfire;
+//using Hangfire.SqlServer;
 using System.Configuration;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
@@ -40,20 +40,20 @@ builder.Services.ConfigureAddMailSetting(builder.Configuration);
 
 
 // Add Hangfire services.
-builder.Services.AddHangfire(configuration => configuration
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-    {
-        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-        QueuePollInterval = TimeSpan.Zero,
-        UseRecommendedIsolationLevel = true,
-        DisableGlobalLocks = true
-    }));
+//builder.Services.AddHangfire(configuration => configuration
+//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+//    .UseSimpleAssemblyNameTypeSerializer()
+//    .UseRecommendedSerializerSettings()
+//    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+//    {
+//        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+//        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+//        QueuePollInterval = TimeSpan.Zero,
+//        UseRecommendedIsolationLevel = true,
+//        DisableGlobalLocks = true
+//    }));
 
-builder.Services.AddHangfireServer();
+//builder.Services.AddHangfireServer();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -81,6 +81,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseHangfireDashboard();
+//app.UseHangfireDashboard();
 
 app.Run();

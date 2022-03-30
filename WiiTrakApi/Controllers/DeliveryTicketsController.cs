@@ -149,7 +149,6 @@ namespace WiiTrakApi.Controllers
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
-
             // get store name and number
             foreach (var dto in dtoList)
             {
