@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -88,7 +89,21 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                //UsersModel usersModel = new UsersModel();
+                //usersModel.Id = technician.Id;
+                //usersModel.FirstName=technician.FirstName;
+                //usersModel.LastName = technician.LastName;
+                //usersModel.Email= technician.Email;
+                //usersModel.AssignedRole = (int)Role.Technician;
+                //usersModel.CreatedAt=
+                //usersModel.PasswordLastUpdatedAt= DateTime.UtcNow;
+                //usersModel.IsActive = true;
+                //usersModel.IsFirstLogin = true;
+                
+
+
                 await _dbContext.Technicians.AddAsync(technician);
+                //await _dbContext.Users.AddAsync(usersModel);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }

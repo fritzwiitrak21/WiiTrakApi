@@ -29,7 +29,10 @@
         public Guid? ParentId { get; set; } = null;
 
         public bool IsInactive { get; set; }
+        public Guid SystemOwnerId { get; set; }
 
         public bool CannotHaveChildren { get; set; }
+      
+        
     }
 }

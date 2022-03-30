@@ -4,11 +4,13 @@ using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
+using WiiTrakApi.Cores;
 using WiiTrakApi.Repository.Contracts;
+using Microsoft.Data.SqlClient;
 
 namespace WiiTrakApi.Repository
 {
-    public class CompanyRepository: ICompanyRepository
+    public class CompanyRepository : ICompanyRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -77,12 +79,49 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var companyCorporates = await _dbContext.CompanyCorporates
-                    .Where(x => x.CorporateId == corporateId)
+                //var companyCorporates = await _dbContext.CompanyCorporates
+                //    .Where(x => x.CorporateId == corporateId)
+                //    .AsNoTracking()
+                //    .ToListAsync();
+
+
+                //var companies = companyCorporates.Select(x => x.Company).ToList();
+
+                string sqlquery = "Exec SpGetCompaniesByCorporateId @CorporateId";
+
+                List<SqlParameter> parms;
+
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@CorporateId", Value = corporateId },
+                };
+
+                var companies = await _dbContext.Companies.FromSqlRaw<CompanyModel>(sqlquery, parms.ToArray()).ToListAsync();
+
+
+
+                if (companies.Any())
+                {
+                    return (true, companies, null);
+                }
+                return (false, null, "No companies found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+        public async Task<(bool IsSuccess, List<CompanyModel>? Companies, string? ErrorMessage)> GetCompaniesBySystemOwnerId(Guid systemownerId)
+        {
+            try
+            {
+                var companies = await _dbContext.Companies
+                    .Where(x => x.SystemOwnerId == systemownerId)
                     .AsNoTracking()
                     .ToListAsync();
 
-                var companies = companyCorporates.Select(x => x.Company).ToList();
+                
 
                 if (companies.Any())
                 {
@@ -179,11 +218,35 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCompanyAsync(CompanyModel company)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCompanyAsync( CompanyModel company)
         {
             try
             {
                 await _dbContext.Companies.AddAsync(company);
+                
+
+                #region Adding Company details to users table
+                UsersModel user = new UsersModel();
+                user.Id = company.Id;
+                user.FirstName = company.Name;
+                user.Password = Core.CreatePassword();
+                user.Email = company.Email;
+                user.AssignedRole = company.ParentId == null ? (int)Role.PrimeCompany : (int)Role.SubContractor;
+                user.CreatedAt =
+                user.PasswordLastUpdatedAt = DateTime.UtcNow;
+                user.IsActive = true;
+                user.IsFirstLogin = true;
+                
+                await _dbContext.Users.AddAsync(user);
+                #endregion
+
+                if (company.ParentId != null && company.SystemOwner == null)
+                {
+                    var ParrentCompany = await _dbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
+                    company.SystemOwnerId = ParrentCompany.SystemOwnerId;
+
+                }
+
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }
@@ -228,6 +291,6 @@ namespace WiiTrakApi.Repository
         {
             return await _dbContext.SaveChangesAsync() >= 0;
         }
-       
+
     }
 }

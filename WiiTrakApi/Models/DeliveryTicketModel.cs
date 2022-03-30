@@ -3,8 +3,10 @@ using WiiTrakApi.Enums;
 
 namespace WiiTrakApi.Models
 {
-    public class DeliveryTicketModel: EntityModel
+   
+    public class DeliveryTicketModel : EntityModel
     {
+       
         public long DeliveryTicketNumber { get; set; }
 
         public int NumberOfCarts { get; set; }
@@ -29,5 +31,7 @@ namespace WiiTrakApi.Models
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
+
+        public string Signee { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
@@ -9,7 +10,7 @@ using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
 {
-    public class DeliveryTicketRepository: IDeliveryTicketRepository
+    public class DeliveryTicketRepository : IDeliveryTicketRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -36,6 +37,7 @@ namespace WiiTrakApi.Repository
             var deliveryTicket = await _dbContext.DeliveryTickets
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
+
 
             var cartHistory = await _dbContext.CartHistory
                 .Where(x => x.DeliveryTicketId == id)
@@ -115,10 +117,48 @@ namespace WiiTrakApi.Repository
             }
         }
 
+        public async Task<(bool IsSuccess, List<DeliveryTicketModel>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsByPrimaryIdAsync(Guid Id,Enums.Role role)
+        {
+            try
+            {
+                List<DeliveryTicketModel> list =  new List<DeliveryTicketModel>();
+                string sqlquery = "Exec SpGetDeliveryTickets @Id,@Role";
+
+                List<SqlParameter> parms;
+                
+                
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =Id  },
+                    new SqlParameter { ParameterName = "@Role", Value =(int)role }
+
+                };
+
+                list = await _dbContext.DeliveryTickets.FromSqlRaw<DeliveryTicketModel>(sqlquery, parms.ToArray()).ToListAsync();
+
+                
+
+                if (list.Any())
+                {
+                    return (true, list, null);
+                }
+                return (false, null, "No delivery tickets found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateDeliveryTicketAsync(DeliveryTicketModel deliveryTicket)
         {
             try
             {
+                var storedetails = await _dbContext.Stores
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
+                deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
+
                 await _dbContext.DeliveryTickets.AddAsync(deliveryTicket);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

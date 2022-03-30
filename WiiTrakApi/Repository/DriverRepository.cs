@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Enums;
+using WiiTrakApi.Cores;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
 {
-    public class DriverRepository: IDriverRepository
+    public class DriverRepository : IDriverRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -91,6 +92,25 @@ namespace WiiTrakApi.Repository
             try
             {
                 await _dbContext.Drivers.AddAsync(driver);
+
+
+                #region Adding Driver details to users table
+                UsersModel user = new UsersModel();
+                user.Id = driver.Id;
+                user.FirstName = driver.FirstName;
+                user.LastName = driver.LastName;
+                user.Password = Core.CreatePassword();
+                user.Email = driver.Email;
+                user.AssignedRole = (int)Role.Driver;
+                user.CreatedAt =
+                user.PasswordLastUpdatedAt = DateTime.UtcNow;
+                user.IsActive = true;
+                user.IsFirstLogin = true;
+
+                await _dbContext.Users.AddAsync(user);
+                #endregion
+
+               
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }
@@ -213,5 +233,7 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+
+
     }
 }

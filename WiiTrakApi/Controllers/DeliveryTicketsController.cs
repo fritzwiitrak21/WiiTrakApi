@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
+using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -85,6 +86,7 @@ namespace WiiTrakApi.Controllers
                 var driverResult = await _driverRepository.GetDriverByIdAsync(dto.DriverId);
 
                 dto.DriverName = driverResult.Driver != null ? $"{ driverResult.Driver.FirstName } { driverResult.Driver.LastName }" : "";
+                dto.DriverNumber = driverResult.Driver != null ? driverResult.Driver.DriverNumber : 0;
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
@@ -108,6 +110,7 @@ namespace WiiTrakApi.Controllers
                 var driverResult = await _driverRepository.GetDriverByIdAsync(dto.DriverId);
 
                 dto.DriverName = driverResult.Driver != null ? $"{ driverResult.Driver.FirstName } { driverResult.Driver.LastName }" : "";
+                dto.DriverNumber = driverResult.Driver != null ? driverResult.Driver.DriverNumber : 0;
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
@@ -137,7 +140,31 @@ namespace WiiTrakApi.Controllers
 
             return Ok(dtoList);
         }
+               
+        [HttpGet("DeliveryTickets/{Id:guid}/{Role:int}")]
+        public async Task<IActionResult> GetDeliveryTicketsByPrimaryId(Guid Id, int Role)
+        {
+            var result = await _repository
+                .GetDeliveryTicketsByPrimaryIdAsync(Id, (Role)Role);
 
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
+
+            // get store name and number
+            foreach (var dto in dtoList)
+            {
+                var storeResult = await _storeRepository.GetStoreByIdAsync(dto.StoreId);
+                var driverResult = await _driverRepository.GetDriverByIdAsync(dto.DriverId);
+
+                dto.DriverName = driverResult.Driver != null ? $"{ driverResult.Driver.FirstName } { driverResult.Driver.LastName }" : "";
+                dto.DriverNumber = driverResult.Driver != null ?  driverResult.Driver.DriverNumber  : 0;
+                dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
+                dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
+            }
+
+            return Ok(dtoList);
+        }
+             
         [HttpGet("Summary/{id:guid}")]
         public async Task<IActionResult> GetDeliveryTicketSummaryById(Guid id)
         {
@@ -156,8 +183,8 @@ namespace WiiTrakApi.Controllers
             // TODO get store by id and check if signature is required
             //
             // Hardcoded for now for demo purposes. This flag should be pulled from store object
-            deliveryTicket.SignOffRequired = true;
-            deliveryTicket.ApprovedByStore = false;
+            //deliveryTicket.SignOffRequired = true;
+            //deliveryTicket.ApprovedByStore = false;
 
             var deliveryTicketNumberResult = await _repository.GetDeliveryTicketNumberAsync(deliveryTicket.ServiceProviderId);
             deliveryTicket.DeliveryTicketNumber = deliveryTicketNumberResult.DeliveryTicketNumber;

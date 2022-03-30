@@ -20,6 +20,27 @@ namespace WiiTrakApi.Models
 
         [Phone(ErrorMessage = "Phone number is invalid.")]
         public string Phone { get; set; } = string.Empty;
+        [MaxLength(128)]
+        [Required(ErrorMessage = "{0} is required.")]
+        public string StreetAddress1 { get; set; } = string.Empty;
+
+        public string StreetAddress2 { get; set; } = string.Empty;
+
+        [MaxLength(128)]
+        [Required(ErrorMessage = "{0} is required.")]
+        public string City { get; set; } = string.Empty;
+
+        [MaxLength(128)]
+        [Required(ErrorMessage = "{0} is required.")]
+        public string State { get; set; } = string.Empty;
+
+        [MaxLength(128)]
+        [Required(ErrorMessage = "{0} is required.")]
+        public string CountryCode { get; set; } = string.Empty;
+
+        [MaxLength(128)]
+        [Required(ErrorMessage = "{0} is required.")]
+        public string PostalCode { get; set; } = string.Empty;
 
         [Url(ErrorMessage = "{0} is invalid.")]
         public string ProfilePic { get; set; } = string.Empty;
@@ -30,5 +51,9 @@ namespace WiiTrakApi.Models
         public CompanyModel? Company { get; set; }
 
         public IList<DriverStoreModel>? DriverStores { get; set; }
+        public bool IsSuspended { get; set; } 
+        public bool IsActive { get; set; } 
+
+        public int DriverNumber { get; set; }
     }
 }

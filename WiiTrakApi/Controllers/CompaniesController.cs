@@ -76,7 +76,16 @@ namespace WiiTrakApi.Controllers
             var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
             return Ok(dtoList);
         }
-       
+        [HttpGet("systemowner/{systemownerId:guid}")]
+        public async Task<IActionResult> GetCompaniesBySystemOwnerId(Guid systemownerId)
+        {
+            var result = await _repository.GetCompaniesBySystemOwnerId(systemownerId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
+            return Ok(dtoList);
+        }
+
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -84,13 +93,14 @@ namespace WiiTrakApi.Controllers
         {
             var company = _mapper.Map<CompanyModel>(companyCreation);
             company.CreatedAt = DateTime.UtcNow;
+           
 
             //
             //
             // TODO get sysowner id from db
             //
             //
-            company.SystemOwnerId = Guid.Parse("b3109973-ff0a-4f51-e8eb-08d9c2ef5353");
+            //company.SystemOwnerId = Guid.Parse("b3109973-ff0a-4f51-e8eb-08d9c2ef5353");
 
             var createResult = await _repository.CreateCompanyAsync(company);
             if (!createResult.IsSuccess)

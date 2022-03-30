@@ -60,6 +60,8 @@ namespace WiiTrakApi.Helpers
 
             CreateMap<SystemOwnerModel, SystemOwnerDto>().ReverseMap();
 
+            CreateMap<UsersModel, UserDto>().ReverseMap();
+
         }
     }
 }

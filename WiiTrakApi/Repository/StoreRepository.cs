@@ -5,6 +5,7 @@ using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
+using WiiTrakApi.Cores;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
@@ -445,6 +446,23 @@ namespace WiiTrakApi.Repository
             try
             {
                 await _dbContext.Stores.AddAsync(store);
+
+                #region Adding Driver details to users table
+                UsersModel user = new UsersModel();
+                user.Id = store.Id;
+                user.FirstName = store.StoreName;
+                user.Password = Core.CreatePassword();
+                user.Email = store.Email;
+                user.AssignedRole = (int)Role.Driver;
+                user.CreatedAt =
+                user.PasswordLastUpdatedAt = DateTime.UtcNow;
+                user.IsActive = true;
+                user.IsFirstLogin = true;
+
+                await _dbContext.Users.AddAsync(user);
+                #endregion
+
+               
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }

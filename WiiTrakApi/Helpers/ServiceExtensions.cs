@@ -2,6 +2,10 @@
 using WiiTrakApi.Data;
 using WiiTrakApi.Repository.Contracts;
 using WiiTrakApi.Repository;
+using WiiTrakApi.Services;
+using WiiTrakApi.Services.Contracts;
+using WiiTrakApi.DTOs;
+using Microsoft.Extensions.Configuration;
 
 namespace WiiTrakApi.Helpers
 {
@@ -24,6 +28,11 @@ namespace WiiTrakApi.Helpers
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
+        public static void ConfigureAddMailSetting(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<MailSettingsDto>(configuration.GetSection("MailSettings"));
+           
+        }
 
         public static void AddRepositories(this IServiceCollection services)
         {
@@ -39,6 +48,8 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<ICorporateRepository, CorporateRepository>();
             services.AddScoped<IDeliveryTicketRepository, DeliveryTicketRepository>();
             services.AddScoped<ICartHistoryRepository, CartHistoryRepository>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<IEmailService, EmailService>();
         }
     }
 }

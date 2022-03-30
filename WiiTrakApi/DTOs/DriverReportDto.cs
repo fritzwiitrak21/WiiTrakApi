@@ -27,5 +27,6 @@
         public int CartsNeedingRepairToday { get; set; }
 
         public int CartsLostToday { get; set; }
+
     }
 }

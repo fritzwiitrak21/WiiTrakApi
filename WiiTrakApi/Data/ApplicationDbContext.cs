@@ -51,14 +51,21 @@ namespace WiiTrakApi.Data
                 .WithMany(b => b.Drivers)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
+           
+
             modelBuilder.Entity<TechnicianModel>()
               .HasOne(p => p.SystemOwner)
               .WithMany(b => b.Technicians)
               .OnDelete(DeleteBehavior.ClientSetNull);
 
+           
+
             // Configure many-to-many relationships
             modelBuilder.Entity<DriverStoreModel>().HasKey(x => new { x.DriverId, x.StoreId });
             modelBuilder.Entity<CompanyCorporateModel>().HasKey(x => new { x.CompanyId, x.CorporateId });
+            
+
+
 
             base.OnModelCreating(modelBuilder);
         }
@@ -79,5 +86,8 @@ namespace WiiTrakApi.Data
         public DbSet<DeliveryTicketModel> DeliveryTickets { get; set; } = default!;
         public DbSet<WorkOrderModel> WorkOrders { get; set; } = default!;
         public DbSet<RepairIssueModel> RepairIssues { get; set; } = default!;
+
+        public DbSet<UsersModel> Users { get; set; } = default!;
+
     }
 }

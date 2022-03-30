@@ -8,6 +8,9 @@ using Hangfire.SqlServer;
 using System.Configuration;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
+using WiiTrakApi.DTOs;
+using Microsoft.Extensions.Configuration;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,13 @@ builder.Services.AddRepositories();
 
 builder.Services.AddScoped<IBackgroundJobService, BackgroundJobService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
+
+builder.Services.ConfigureAddMailSetting(builder.Configuration);
+
+
+
+
+
 
 
 // Add Hangfire services.
@@ -74,4 +84,3 @@ app.MapControllers();
 app.UseHangfireDashboard();
 
 app.Run();
-

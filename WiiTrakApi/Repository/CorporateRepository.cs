@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -77,16 +78,32 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var companyCorporates = await _dbContext.CompanyCorporates
-                    .Where(x => x.CompanyId == companyId)
-                    .AsNoTracking()
-                    .ToListAsync();
+                //var companyCorporates = await _dbContext.CompanyCorporates
+                //    .Where(x => x.CompanyId == companyId)
+                //    .AsNoTracking()
+                //    .ToListAsync();
 
-                var corporations = companyCorporates.Select(x => x.Corporate).ToList();
+                //var corporations = companyCorporates.Select(x => x.Corporate).ToList();
 
-                if (corporations.Any())
+                string sqlquery = "Exec SpGetCorporatesByCompanyId @CompanyId";
+
+                List<SqlParameter> parms;
+
+
+                parms = new List<SqlParameter>
                 {
-                    return (true, corporations, null);
+                    
+                     new SqlParameter { ParameterName = "@CompanyId", Value = companyId },
+                    
+                };
+
+                var corporates = await _dbContext.Corporates.FromSqlRaw<CorporateModel>(sqlquery, parms.ToArray()).ToListAsync();
+
+
+
+                if (corporates.Any())
+                {
+                    return (true, corporates, null);
                 }
                 return (false, null, "No corporates found");
             }
