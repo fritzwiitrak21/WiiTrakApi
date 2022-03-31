@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using WiiTrakApi.Models;
+using WiiTrakApi.SPModels;
+using WiiTrakApi.DTOs;
+
 
 namespace WiiTrakApi.Data
 {
@@ -64,7 +67,8 @@ namespace WiiTrakApi.Data
             modelBuilder.Entity<DriverStoreModel>().HasKey(x => new { x.DriverId, x.StoreId });
             modelBuilder.Entity<CompanyCorporateModel>().HasKey(x => new { x.CompanyId, x.CorporateId });
             
-
+            modelBuilder.Entity<SpGetDriverAssignedStoresByCompany>().HasNoKey();
+            modelBuilder.Entity<SpGetDriverAssignedStoresBySystemOwner>().HasNoKey();
 
 
             base.OnModelCreating(modelBuilder);
@@ -88,6 +92,9 @@ namespace WiiTrakApi.Data
         public DbSet<RepairIssueModel> RepairIssues { get; set; } = default!;
 
         public DbSet<UsersModel> Users { get; set; } = default!;
+        public DbSet<SpGetDriverAssignedStoresByCompany> SpGetDriverAssignedStoresByCompany { get; set; }
+        public DbSet<SpGetDriverAssignedStoresBySystemOwner> SpGetDriverAssignedStoresBySystemOwner { get; set; }
+
 
     }
 }

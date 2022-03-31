@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
+using WiiTrakApi.SPModels;
 
 namespace WiiTrakApi.Helpers
 {
@@ -61,6 +62,10 @@ namespace WiiTrakApi.Helpers
             CreateMap<SystemOwnerModel, SystemOwnerDto>().ReverseMap();
 
             CreateMap<UsersModel, UserDto>().ReverseMap();
+            CreateMap<DriverStoreModel, DriverStoreDto>().ReverseMap();
+            CreateMap<DriverStoreModel, DriverStoreDetailsDto>().ReverseMap();
+            CreateMap<DriverStoreDetailsDto, SpGetDriverAssignedStoresByCompany>().ReverseMap();
+            CreateMap<DriverStoreDetailsDto, SpGetDriverAssignedStoresBySystemOwner>().ReverseMap();
 
         }
     }

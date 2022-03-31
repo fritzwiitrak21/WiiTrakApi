@@ -46,12 +46,13 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+
         [HttpGet("{Username}")]
         public async Task<ActionResult> GetUsersDetailsByUserName(string Username)
         {
             var forgot = new ForgotPasswordDto();
             forgot.Username = Username;
-           
+
 
             var result = await _repository.GetUsersDetailsByUserNameAsync(forgot);
 
@@ -68,10 +69,10 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.GetUserDetailByIdAsync(id);
 
             if (!result.IsSuccess || result.User is null) return NotFound(result.ErrorMessage);
-            
+
             result.User.Password = Core.EncryptText(reset.NewPassword);
             result.User.UpdatedAt =
-            result.User.PasswordLastUpdatedAt =  DateTime.UtcNow;
+            result.User.PasswordLastUpdatedAt = DateTime.UtcNow;
             result.User.IsFirstLogin = false;
 
             var updateResult = await _repository.UpdateUserPasswordAsync(result.User);
@@ -80,6 +81,26 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", $"Something went wrong when updating the record.");
             return StatusCode(500, ModelState);
         }
+        //[HttpPut("{id:guid}")]
+        //public async Task<ActionResult> ChangeUserPassword(Guid id,ChangePasswordDto change)
+        //{
+        //    var result = await _repository.GetUserDetailByIdAsync(id);
+
+        //    if (!result.IsSuccess || result.User is null) return NotFound(result.ErrorMessage);
+
+        //    result.User.Password = Core.EncryptText(change.NewPassword);
+        //    result.User.UpdatedAt =
+        //    result.User.PasswordLastUpdatedAt = DateTime.UtcNow;
+        //    result.User.IsFirstLogin = false;
+
+        //    var updateResult = await _repository.UpdateUserPasswordAsync(result.User);
+        //    if (updateResult.IsSuccess) return NoContent(); 
+
+        //    ModelState.AddModelError("", $"Something went wrong when updating the record.");
+        //    return StatusCode(500, ModelState); 
+
+        //}
+
 
 
     }

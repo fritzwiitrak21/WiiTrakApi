@@ -50,6 +50,7 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<ICartHistoryRepository, CartHistoryRepository>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IDriverStoresRepository, DriverStoresRepository>();
         }
     }
 }

@@ -8,15 +8,17 @@ namespace WiiTrakApi.Models
     {
        
         public long DeliveryTicketNumber { get; set; }
-
+        [Required]
+        [Range(1, 300, ErrorMessage ="Value should be above or equal to 1")] 
         public int NumberOfCarts { get; set; }
 
         [MaxLength(128)]
         public string Grid { get; set; } = string.Empty;
 
+        [Required]
         [Url(ErrorMessage = "{0} is invalid.")]
         public string PicUrl { get; set; } = string.Empty;
-
+        [Required]
         [Url(ErrorMessage = "{0} is invalid.")]
         public string SignaturePicUrl { get; set; } = string.Empty;
 
@@ -31,7 +33,9 @@ namespace WiiTrakApi.Models
         public Guid StoreId { get; set; } = Guid.Empty;
 
         public Guid DriverId { get; set; } = Guid.Empty;
-
+        [Required]
         public string Signee { get; set; } = string.Empty;
+
+
     }
 }

@@ -14,5 +14,6 @@ namespace WiiTrakApi.Models
         public StoreModel? Store { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; }
     }
 }
