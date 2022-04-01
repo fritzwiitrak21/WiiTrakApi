@@ -30,8 +30,8 @@ namespace WiiTrakApi.Controllers
             _mapper = mapper;
             _repository = repository;
         }
-        
-        [HttpGet("GetDriverStoresByCompanyId")]
+
+        [HttpGet("Company/{CompanyId:guid}/{DriverId:guid}")]
         public async Task<ActionResult> GetDriverStoresByCompanyId(Guid CompanyId,Guid DriverId)
         {
             var result = await _repository.GetDriverStoresByCompanyIdAsync(DriverId,CompanyId);
@@ -42,7 +42,7 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("GetDriverStoresBySystemOwnerId")]
+        [HttpGet("SytemOwner/{SystemOwnerId:guid}/{DriverId:guid}")]
         public async Task<ActionResult> GetDriverStoresBySystemOwnerId(Guid SystemOwnerId,Guid DriverId)
         {
             var result = await _repository.GetDriverStoresBySystemOwnerIdAsync(DriverId, SystemOwnerId);
@@ -54,9 +54,9 @@ namespace WiiTrakApi.Controllers
         }
 
         [HttpPut("{DriverId:guid}")]
-        public async Task<IActionResult> UpdateDeliveryTicket(Guid DriverId,Guid StoreId,bool IsActive)
+        public async Task<IActionResult> UpdateDeliveryTicket(Guid DriverId,DriverStoreDetailsDto driverStoreDetailsDto)
         {
-            var result = await _repository.UpdateDriverStoresAsync(DriverId, StoreId, IsActive);
+            var result = await _repository.UpdateDriverStoresAsync(DriverId, driverStoreDetailsDto.Id, driverStoreDetailsDto.IsActive);
             if (result.IsSuccess) return NoContent();
 
             ModelState.AddModelError("", $"Something went wrong when updating the record.");

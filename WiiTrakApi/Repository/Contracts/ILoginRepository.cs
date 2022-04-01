@@ -10,8 +10,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, UsersModel? Users, string? ErrorMessage)> GetUsersDetailsByLoginAsync(LoginDto login);
         Task<(bool IsSuccess, UsersModel? Users, string? ErrorMessage)> GetUsersDetailsByUserNameAsync(ForgotPasswordDto forgot);
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateUserPasswordAsync(UsersModel user);
-        //Task<(bool IsSuccess, UsersModel? Users, string? ErrorMessage)> ChangeUserPasswordAsync(ChangePasswordDto changePassword);
-
+        Task<(bool IsSuccess, string? ErrorMessage)> ChangeUserPasswordAsync(UsersModel user);
 
 
     }

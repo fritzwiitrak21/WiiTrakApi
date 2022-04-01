@@ -31,12 +31,12 @@ namespace WiiTrakApi.DTOs
     public class ChangePasswordDto
     {
         [Required]
-        public string OldPassword { get; set; }
+        public string CurrentPassword { get; set; }
         [Required]
         
         public string NewPassword { get;set; }
         [Required]
         [Compare("NewPassword")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmNewPassword { get; set; }
     }
 }

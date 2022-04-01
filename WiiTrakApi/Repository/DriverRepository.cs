@@ -124,6 +124,35 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Update Driver details to users table
+                UsersModel user = new UsersModel();
+                user.Id = driver.Id;
+                user.FirstName = driver.FirstName;
+                user.LastName = driver.LastName;
+                
+                user.Email = driver.Email;
+                user.AssignedRole = (int)Role.Driver;
+                user.UpdatedAt = DateTime.UtcNow;
+                var isactive = true;
+                if (driver.IsActive == false)
+                {
+                    isactive = false;
+                }
+                else if (driver.IsSuspended == true && driver.IsActive == true)
+                {
+                    isactive = false;
+                }
+                else
+                {
+                    isactive = true;
+                }
+
+                user.IsActive = isactive;
+
+
+                _dbContext.Users.Update(user);
+               
+                #endregion
                 _dbContext.Drivers.Update(driver);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

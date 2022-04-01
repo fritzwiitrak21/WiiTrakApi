@@ -10,7 +10,7 @@ using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
 {
-    public class StoreRepository: IStoreRepository
+    public class StoreRepository : IStoreRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -61,7 +61,7 @@ namespace WiiTrakApi.Repository
             {
                 var driverStores = await _dbContext.DriverStores
                     .Include(x => x.Store)
-                    .Where(x => x.DriverId == driverId)
+                    .Where(x => x.DriverId == driverId && x.IsActive == true)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -115,7 +115,7 @@ namespace WiiTrakApi.Repository
                     .Include(x => x.Carts)
                     .FirstOrDefaultAsync(x => x.Id == Id);
                 carts = storeCarts.Carts;
-                
+
 
                 //int totalStores = storeCarts.Count();
                 int totalCarts = carts.Count();
@@ -462,7 +462,7 @@ namespace WiiTrakApi.Repository
                 await _dbContext.Users.AddAsync(user);
                 #endregion
 
-               
+
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }

@@ -13,7 +13,7 @@ namespace WiiTrakApi.Repository
     public class LoginRepository : ILoginRepository
     {
         private readonly ApplicationDbContext _dbContext;
-       
+        
         public LoginRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -128,7 +128,20 @@ namespace WiiTrakApi.Repository
                 return (false, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, string? ErrorMessage)> ChangeUserPasswordAsync(UsersModel user)
+        {
+            try
+            {
+                _dbContext.Users.Update(user);
+                await _dbContext.SaveChangesAsync();
 
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
 
     }
 }
