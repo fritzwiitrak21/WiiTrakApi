@@ -42,7 +42,7 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("SytemOwner/{SystemOwnerId:guid}/{DriverId:guid}")]
+        [HttpGet("SystemOwner/{SystemOwnerId:guid}/{DriverId:guid}")]
         public async Task<ActionResult> GetDriverStoresBySystemOwnerId(Guid SystemOwnerId,Guid DriverId)
         {
             var result = await _repository.GetDriverStoresBySystemOwnerIdAsync(DriverId, SystemOwnerId);

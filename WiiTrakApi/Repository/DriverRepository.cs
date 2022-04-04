@@ -6,6 +6,7 @@ using WiiTrakApi.Enums;
 using WiiTrakApi.Cores;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
+using Microsoft.Data.SqlClient;
 
 namespace WiiTrakApi.Repository
 {
@@ -74,6 +75,35 @@ namespace WiiTrakApi.Repository
             }
         }
 
+        public async Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversBySystemOwnerAsync(Guid Id)
+        {
+            try
+            {
+                var drivers = new List<DriverModel>();
+                string sqlquery = "Exec SpGetDriversBySystemOwner @Id";
+
+                List<SqlParameter> parms;
+
+
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =Id  }
+                };
+
+                drivers = await _dbContext.Drivers.FromSqlRaw<DriverModel>(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (drivers.Any())
+                {
+                    return (true, drivers, null);
+                }
+                return (false, null, "No drivers found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
         public async Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> DriverExistsAsync(Guid id)
         {
             try
@@ -124,15 +154,9 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+
                 #region Update Driver details to users table
-                UsersModel user = new UsersModel();
-                user.Id = driver.Id;
-                user.FirstName = driver.FirstName;
-                user.LastName = driver.LastName;
-                
-                user.Email = driver.Email;
-                user.AssignedRole = (int)Role.Driver;
-                user.UpdatedAt = DateTime.UtcNow;
+               
                 var isactive = true;
                 if (driver.IsActive == false)
                 {
@@ -147,12 +171,22 @@ namespace WiiTrakApi.Repository
                     isactive = true;
                 }
 
-                user.IsActive = isactive;
+                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
+                List<SqlParameter> parms;
 
-                _dbContext.Users.Update(user);
-               
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = driver.Id},
+                     new SqlParameter { ParameterName = "@FirstName", Value = driver.FirstName },
+                     new SqlParameter { ParameterName = "@LastName", Value = driver.LastName },
+                     new SqlParameter { ParameterName = "@IsActive", Value = isactive },
+                     new SqlParameter { ParameterName = "@Email", Value = driver.Email }
+                };
+
+                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
+
                 _dbContext.Drivers.Update(driver);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

@@ -52,8 +52,9 @@ namespace WiiTrakApi.Models
 
         public IList<DriverStoreModel>? DriverStores { get; set; }
         public bool IsSuspended { get; set; } 
-        public bool IsActive { get; set; } 
+        public bool IsActive { get; set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int DriverNumber { get; set; }
     }
 }

@@ -74,6 +74,16 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("SystemOwner/{SystemOwnerId:guid}")]
+        public async Task<IActionResult> GetDriversBySystemOwnerId(Guid SystemOwnerId)
+        {
+            var result = await _repository.GetDriversBySystemOwnerAsync(SystemOwnerId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<DriverDto>>(result.Drivers);
+            return Ok(dtoList);
+        }
+
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetDriverReport(Guid id)
         {

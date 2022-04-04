@@ -270,6 +270,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                cart.Status = CartStatus.PickedUp;//need to change for pahase 2
                 _dbContext.Carts.Update(cart);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
