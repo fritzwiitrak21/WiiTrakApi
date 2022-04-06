@@ -51,6 +51,7 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDriverStoresRepository, DriverStoresRepository>();
+            services.AddScoped<ISystemOwnerRepository, SystemOwnerRepository>();
         }
     }
 }
