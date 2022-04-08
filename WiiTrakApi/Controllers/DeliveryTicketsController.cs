@@ -203,10 +203,11 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> UpdateDeliveryTicket(Guid id, DeliveryTicketUpdateDto companyUpdate)
         {
             var result = await _repository.GetDeliveryTicketByIdAsync(id);
-
+            var Delivereddate = result.DeliveryTicket.DeliveredAt;
             if (!result.IsSuccess || result.DeliveryTicket is null) return NotFound(result.ErrorMessage);
             _mapper.Map(companyUpdate, result.DeliveryTicket);
             result.DeliveryTicket.UpdatedAt = DateTime.UtcNow;
+            result.DeliveryTicket.DeliveredAt = Delivereddate;
 
             var updateResult = await _repository.UpdateDeliveryTicketAsync(result.DeliveryTicket);
             if (updateResult.IsSuccess) return NoContent();
