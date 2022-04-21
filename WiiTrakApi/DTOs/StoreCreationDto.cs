@@ -3,6 +3,7 @@
     public record StoreCreationDto
     {
         public DateTime CreatedAt { get; set; }
+        
 
         public string StoreName { get; set; } = string.Empty;
 
@@ -33,7 +34,10 @@
         public double Latitude { get; set; }
 
         public Guid ServiceProviderId { get; set; }
+        public Guid CompanyId { get; set; }
+        public Guid CorporateId { get;set; }
 
         public bool IsSignatureRequired { get; set; }
+        public bool IsActive { get; set; }
     }
 }

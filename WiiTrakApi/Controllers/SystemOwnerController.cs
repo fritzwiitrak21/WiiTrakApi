@@ -29,6 +29,13 @@ namespace WiiTrakApi.Controllers
 
 
         }
+        [HttpGet("{EmailId}")]
+        public async Task<IActionResult> CheckEmailId(string EmailId)
+        {
+            var result = await _repository.CheckEmailIdAsync(EmailId);
+            if (!result.IsExists) return NotFound(result.ErrorMessage);
+            return Ok(result.ErrorMessage);
+        }
 
     }
 

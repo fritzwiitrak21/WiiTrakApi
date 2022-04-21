@@ -12,12 +12,14 @@ using WiiTrakApi.Cores;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WiiTrakApi.Controllers
 {
+    //[Authorize]
     [Route("api/email")]
     [ApiController]
-
+    
     public class EmailController : ControllerBase
     {
         private readonly IEmailService MailService;

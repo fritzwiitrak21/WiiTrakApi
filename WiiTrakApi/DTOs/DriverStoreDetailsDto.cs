@@ -11,6 +11,7 @@ namespace WiiTrakApi.DTOs
 
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
+        public bool DriverStoresIsActive { get; set; }
         public string StoreName { get; set; } = string.Empty;
 
         public string StoreNumber { get; set; } = string.Empty;

@@ -20,5 +20,6 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteSystemOwnerAsync(Guid id);
 
         Task<bool> SaveAsync();
+        Task<(bool IsExists, string? ErrorMessage)> CheckEmailIdAsync(string EmailId);
     }
 }

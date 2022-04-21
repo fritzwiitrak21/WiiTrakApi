@@ -57,6 +57,17 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("ParentCompany/{subcompanyId:guid}")]
+        public async Task<IActionResult> GetParentCompany(Guid subcompanyId)
+        {
+            var result =
+                await _repository.GetParentCompanyAsync(subcompanyId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dto = _mapper.Map<CompanyDto>(result.Company);
+            return Ok(dto);
+        }
+
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetCompanyReport(Guid id)
         {

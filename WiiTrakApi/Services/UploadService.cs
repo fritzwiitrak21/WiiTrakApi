@@ -4,14 +4,14 @@ using WiiTrakApi.Services.Contracts;
 
 namespace WiiTrakApi.Services
 {
-    public class UploadService: IUploadService
+    public class UploadService : IUploadService
     {
         private readonly string _storageConnectionString;
         public UploadService(IConfiguration configuration)
         {
             _storageConnectionString = configuration.GetConnectionString("AzureStorage");
         }
-        public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, string containerName)
+        public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType, string containerName, bool IsCoords = false)
         {
             var container = new BlobContainerClient(_storageConnectionString, containerName);
             var createResponse = await container.CreateIfNotExistsAsync();
@@ -19,8 +19,14 @@ namespace WiiTrakApi.Services
                 await container.SetAccessPolicyAsync(PublicAccessType.Blob);
             var blob = container.GetBlobClient(fileName);
             await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+
+            if (IsCoords)
+                fileStream.Position = 0;
+
             await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType });
             return blob.Uri.ToString();
         }
+
+
     }
 }

@@ -7,7 +7,7 @@ using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Cores;
 using WiiTrakApi.Repository.Contracts;
-
+using Microsoft.Data.SqlClient;
 namespace WiiTrakApi.Repository
 {
     public class StoreRepository : IStoreRepository
@@ -65,7 +65,7 @@ namespace WiiTrakApi.Repository
                     .AsNoTracking()
                     .ToListAsync();
 
-                var stores = driverStores.Select(x => x.Store).ToList();
+                var stores = driverStores.Select(x => x.Store).Where(s=> s.IsActive==true).ToList();
 
                 if (stores is not null && stores.Any())
                 {
@@ -447,13 +447,13 @@ namespace WiiTrakApi.Repository
             {
                 await _dbContext.Stores.AddAsync(store);
 
-                #region Adding Driver details to users table
+                #region Adding Store details to users table
                 UsersModel user = new UsersModel();
                 user.Id = store.Id;
                 user.FirstName = store.StoreName;
                 user.Password = Core.CreatePassword();
                 user.Email = store.Email;
-                user.AssignedRole = (int)Role.Driver;
+                user.AssignedRole = (int)Role.Store;
                 user.CreatedAt =
                 user.PasswordLastUpdatedAt = DateTime.UtcNow;
                 user.IsActive = true;
@@ -476,6 +476,21 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Update store details to users table
+                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = store.Id},
+                     new SqlParameter { ParameterName = "@FirstName", Value = store.StoreName },
+                     new SqlParameter { ParameterName = "@LastName", Value = store.StoreNumber },
+                     new SqlParameter { ParameterName = "@IsActive", Value = store.IsActive },
+                     new SqlParameter { ParameterName = "@Email", Value = store.Email }
+                };
+                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                #endregion
                 _dbContext.Stores.Update(store);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -483,7 +498,6 @@ namespace WiiTrakApi.Repository
             catch (Exception ex)
             {
                 return (false, ex.Message);
-
             }
         }
 
