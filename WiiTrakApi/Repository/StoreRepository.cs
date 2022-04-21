@@ -65,7 +65,7 @@ namespace WiiTrakApi.Repository
                     .AsNoTracking()
                     .ToListAsync();
 
-                var stores = driverStores.Select(x => x.Store).ToList();
+                var stores = driverStores.Select(x => x.Store).Where(s=> s.IsActive==true).ToList();
 
                 if (stores is not null && stores.Any())
                 {
