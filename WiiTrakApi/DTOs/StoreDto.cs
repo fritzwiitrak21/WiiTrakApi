@@ -43,9 +43,10 @@ namespace WiiTrakApi.DTOs
 
         public Guid CompanyId { get; set; }
 
-        public Guid? CorporateId { get; set; }
+        public Guid CorporateId { get; set; }
 
         public bool IsSignatureRequired { get; set; }
+        public bool IsActive { get; set; }
 
         //public List<CartDto>? Carts { get; set; }
     }

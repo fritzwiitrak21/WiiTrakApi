@@ -74,7 +74,20 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        
 
+        public async Task<(bool IsSuccess, CompanyModel? Company, string? ErrorMessage)> GetParentCompanyAsync(Guid subcompanyId)
+        {
+            var company = await _dbContext.Companies
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == subcompanyId);
+
+            if (company is not null)
+            {
+                return (true, (CompanyModel)company, null);
+            }
+            return (false, null, "No company found");
+        }
         public async Task<(bool IsSuccess, List<CompanyModel>? Companies, string? ErrorMessage)> GetPrimaryCompaniesByCorporateIdAsync(Guid corporateId)
         {
             try

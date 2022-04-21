@@ -10,6 +10,7 @@ using WiiTrakApi.Cores;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.AspNetCore.OData.Query;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WiiTrakApi.Controllers
 {
@@ -20,14 +21,16 @@ namespace WiiTrakApi.Controllers
         private readonly ILogger<LoginController> _logger;
         private readonly IMapper _mapper;
         private readonly ILoginRepository _repository;
+        private readonly IAuthenticateRepository _authenticateRepository;
 
         public LoginController(ILogger<LoginController> logger,
            IMapper mapper,
-           ILoginRepository repository)
+           ILoginRepository repository, IAuthenticateRepository AuthenticateRepository)
         {
             _logger = logger;
             _mapper = mapper;
             _repository = repository;
+            _authenticateRepository = AuthenticateRepository;
         }
 
 
@@ -40,9 +43,19 @@ namespace WiiTrakApi.Controllers
             login.Password = Password;
 
             var result = await _repository.GetUsersDetailsByLoginAsync(login);
+            //if (result.Users != null)
+            //{
+            //    var token = _authenticateRepository.Login(login);
+
+            //    var tokenstring = new JwtSecurityTokenHandler().WriteToken(token);
+            //}
+            
+           
+            
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<UserDto>(result.Users);
+            //dtoList.token = tokenstring;
             return Ok(dtoList);
         }
 
@@ -81,6 +94,7 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", $"Something went wrong when updating the record.");
             return StatusCode(500, ModelState);
         }
+
         [HttpPut("changepassword/{id:guid}")]
         public async Task<ActionResult> ChangeUserPassword(Guid id, ChangePasswordDto change)
         {

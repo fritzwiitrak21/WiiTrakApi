@@ -34,5 +34,8 @@
         public double Latitude { get; set; }
 
         public Guid ServiceProviderId { get; set; }
+        public Guid CompanyId { get; set; }
+        public Guid CorporateId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

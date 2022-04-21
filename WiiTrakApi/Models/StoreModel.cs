@@ -67,11 +67,11 @@ namespace WiiTrakApi.Models
 
         public CompanyModel? Company { get; set; }
 
-
         [ForeignKey(nameof(CorporateModel))]
         public Guid? CorporateId { get; set; }
-
         public CorporateModel? Corporate { get; set; }
+
+        public bool IsActive { get; set; }
 
         public List<CartModel>? Carts { get; set; }
 
