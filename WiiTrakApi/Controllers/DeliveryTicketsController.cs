@@ -66,7 +66,7 @@ namespace WiiTrakApi.Controllers
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
-
+            dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
         }
 
@@ -90,7 +90,7 @@ namespace WiiTrakApi.Controllers
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
-
+            dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
         }
 
@@ -114,7 +114,7 @@ namespace WiiTrakApi.Controllers
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
-
+            dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
         }
 
@@ -137,7 +137,7 @@ namespace WiiTrakApi.Controllers
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
-
+            dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
         }
                
@@ -160,7 +160,7 @@ namespace WiiTrakApi.Controllers
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
             }
-
+            dtoList= dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
         }
              
@@ -177,13 +177,6 @@ namespace WiiTrakApi.Controllers
         {
             var deliveryTicket = _mapper.Map<DeliveryTicketModel>(deliveryTicketCreation);
             deliveryTicket.CreatedAt = DateTime.UtcNow;
-
-            //
-            // TODO get store by id and check if signature is required
-            //
-            // Hardcoded for now for demo purposes. This flag should be pulled from store object
-            //deliveryTicket.SignOffRequired = true;
-            //deliveryTicket.ApprovedByStore = false;
 
             var deliveryTicketNumberResult = await _repository.GetDeliveryTicketNumberAsync(deliveryTicket.ServiceProviderId);
             deliveryTicket.DeliveryTicketNumber = deliveryTicketNumberResult.DeliveryTicketNumber;
