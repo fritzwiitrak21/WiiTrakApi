@@ -26,5 +26,7 @@ namespace WiiTrakApi.DTOs
 
         public Guid DriverId { get; set; } = Guid.Empty;
         public string Signee { get; set; } = string.Empty;
+        //public bool IsActive { get; set; }
+        //public Guid UpdatedBy { get; set; }
     }
 }
