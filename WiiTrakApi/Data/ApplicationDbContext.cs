@@ -90,8 +90,10 @@ namespace WiiTrakApi.Data
         public DbSet<DeliveryTicketModel> DeliveryTickets { get; set; } = default!;
         public DbSet<WorkOrderModel> WorkOrders { get; set; } = default!;
         public DbSet<RepairIssueModel> RepairIssues { get; set; } = default!;
-
         public DbSet<UsersModel> Users { get; set; } = default!;
+        public DbSet<NotificationModel> Notification { get; set; } = default!;
+        public DbSet<CountyCodeModel> CountyCode { get; set; } = default!;
+
         public DbSet<SpGetDriverAssignedStoresByCompany> SpGetDriverAssignedStoresByCompany { get; set; }
         public DbSet<SpGetDriverAssignedStoresBySystemOwner> SpGetDriverAssignedStoresBySystemOwner { get; set; }
 

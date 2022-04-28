@@ -74,7 +74,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<CorporateModel>? Corporates, string? ErrorMessage)> GetCorporatesByCompanyId(Guid companyId)
+        public async Task<(bool IsSuccess, List<CorporateModel>? Corporates, string? ErrorMessage)> GetCorporatesByCompanyIdAsync(Guid companyId)
         {
             try
             {
@@ -100,6 +100,34 @@ namespace WiiTrakApi.Repository
                 var corporates = await _dbContext.Corporates.FromSqlRaw<CorporateModel>(sqlquery, parms.ToArray()).ToListAsync();
 
 
+
+                if (corporates.Any())
+                {
+                    return (true, corporates, null);
+                }
+                return (false, null, "No corporates found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, List<CorporateModel>? Corporates, string? ErrorMessage)> GetCorporatesBySystemOwnerIdAsync(Guid SystemOwnerId)
+        {
+            try
+            {
+                string sqlquery = "Exec SpGetCorporatesBySystemOwnerId @SystemOwnerId";
+
+                List<SqlParameter> parms;
+                parms = new List<SqlParameter>
+                {
+
+                     new SqlParameter { ParameterName = "@SystemOwnerId", Value = SystemOwnerId },
+
+                };
+
+                var corporates = await _dbContext.Corporates.FromSqlRaw<CorporateModel>(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (corporates.Any())
                 {

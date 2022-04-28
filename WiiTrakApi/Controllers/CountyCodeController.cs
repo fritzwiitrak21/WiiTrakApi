@@ -1,0 +1,36 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using WiiTrakApi.DTOs;
+using WiiTrakApi.Models;
+using WiiTrakApi.Repository.Contracts;
+
+namespace WiiTrakApi.Controllers
+{
+    [Route("api/countycode")]
+    [ApiController]
+    public class CountyCodeController : ControllerBase
+    {
+        private readonly ILogger<CountyCodeController> _logger;
+        private readonly IMapper _mapper;
+        private readonly ICountyCodeRepository _repository;
+
+        public CountyCodeController(ILogger<CountyCodeController> logger, IMapper mapper, ICountyCodeRepository repository)
+        {
+            _logger = logger;
+            _mapper = mapper;
+            _repository = repository;
+        }
+
+        [HttpGet]
+        [EnableQuery]
+        public async Task<IActionResult> GetCountyList()
+        {
+            var result = await _repository.GetCountyListAsync();
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtolist = _mapper.Map<List<CountyCodeDto>>(result.CountyList);
+            return Ok(dtolist);
+        }
+    }
+}

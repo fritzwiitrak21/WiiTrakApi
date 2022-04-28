@@ -92,18 +92,10 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                //var companyCorporates = await _dbContext.CompanyCorporates
-                //    .Where(x => x.CorporateId == corporateId)
-                //    .AsNoTracking()
-                //    .ToListAsync();
-
-
-                //var companies = companyCorporates.Select(x => x.Company).ToList();
-
+              
                 string sqlquery = "Exec SpGetCompaniesByCorporateId @CorporateId";
 
                 List<SqlParameter> parms;
-
 
                 parms = new List<SqlParameter>
                 {
@@ -111,8 +103,6 @@ namespace WiiTrakApi.Repository
                 };
 
                 var companies = await _dbContext.Companies.FromSqlRaw<CompanyModel>(sqlquery, parms.ToArray()).ToListAsync();
-
-
 
                 if (companies.Any())
                 {

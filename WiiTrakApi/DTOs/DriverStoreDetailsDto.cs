@@ -31,7 +31,6 @@ namespace WiiTrakApi.DTOs
         public string State { get; set; } = string.Empty;
 
         public string CountryCode { get; set; } = string.Empty;
-
         public string PostalCode { get; set; } = string.Empty;
         public string AssignedDriver { get; set; } = string.Empty;
     }
