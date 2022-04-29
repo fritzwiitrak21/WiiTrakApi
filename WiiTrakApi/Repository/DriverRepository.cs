@@ -60,7 +60,7 @@ namespace WiiTrakApi.Repository
                 var drivers = await _dbContext.Drivers
                     .Where(expression)
                     .Select(x => x)
-                    .AsNoTracking()
+                    .AsNoTracking().OrderBy(x=>x.FirstName)
                     .ToListAsync();
 
                 if (drivers.Any())

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
+using WiiTrakApi.SPModels;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
@@ -31,7 +32,7 @@ namespace WiiTrakApi.Repository
             return (false, null, "No notifications found");
         }
 
-        public async Task<(bool IsSuccess, List<NotificationModel>? Notification, string? ErrorMessage)> GetNotificationAsync(Guid Id)
+        public async Task<(bool IsSuccess, List<SpGetNotification>? Notification, string? ErrorMessage)> GetNotificationAsync(Guid Id)
         {
             string sqlquery = "Exec SpGetNotification @Id";
 
@@ -41,8 +42,8 @@ namespace WiiTrakApi.Repository
                 {
                      new SqlParameter { ParameterName = "@Id", Value = Id },
                 };
-
-            var notifications = await _dbContext.Notification.FromSqlRaw<NotificationModel>(sqlquery, parms.ToArray()).ToListAsync();
+            
+            var notifications = await _dbContext.SpGetNotifications.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
             if (notifications is not null)
             {
@@ -57,6 +58,29 @@ namespace WiiTrakApi.Repository
             {
                 await _dbContext.Notification.AddAsync(Notification);
                 await _dbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateNotifiedTimeAsync(Guid Id)
+        {
+            try
+            {
+                string sqlquery = "Exec SpUpdateNotifiedTime @Id";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = Id }
+                };
+
+                var DriverStores = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+
                 return (true, null);
             }
             catch (Exception ex)

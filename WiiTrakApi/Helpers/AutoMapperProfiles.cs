@@ -70,6 +70,8 @@ namespace WiiTrakApi.Helpers
 
             CreateMap<NotificationModel, NotificationDto>().ReverseMap();
             CreateMap<CountyCodeModel, CountyCodeDto>().ReverseMap();
+
+            CreateMap<NotificationDto, SpGetNotification>().ReverseMap();
         }
     }
 }

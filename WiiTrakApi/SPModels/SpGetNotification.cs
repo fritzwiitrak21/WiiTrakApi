@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-namespace WiiTrakApi.DTOs
+﻿namespace WiiTrakApi.SPModels
 {
-    public class NotificationDto
+    public class SpGetNotification
     {
         public Guid Id { get; set; }
         public DateTime? UpdatedAt { get; set; }

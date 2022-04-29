@@ -39,5 +39,8 @@
 
         public bool IsSignatureRequired { get; set; }
         public bool IsActive { get; set; }
+        public string CountyCode { get; set; } = string.Empty;
+        public string ServiceFrequency { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
     }
 }

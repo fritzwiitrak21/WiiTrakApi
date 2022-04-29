@@ -33,13 +33,29 @@ namespace WiiTrakApi.Controllers
             return Ok(dtolist);
         }
 
-        [HttpGet("{id:guid}", Name = "GetNotification")]
+        [HttpGet("{Id:guid}", Name = "GetNotification")]
         public async Task<IActionResult> GetNotification(Guid Id)
         {
-            var result = await _repository.GetNotificationAsync(Id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtolist = _mapper.Map<List<NotificationDto>>(result.Notification);
-            return Ok(dtolist);
+            try
+            {
+                var result = await _repository.GetNotificationAsync(Id);
+                if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+                var dtolist = _mapper.Map<List<NotificationDto>>(result.Notification);
+                return Ok(dtolist);
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateNotifiedTime(NotificationDto dto)
+        {
+            var result = await _repository.UpdateNotifiedTimeAsync(dto.Id);
+            if (result.IsSuccess) return NoContent();
+
+            ModelState.AddModelError("", $"Something went wrong when updating the record.");
+            return StatusCode(500, ModelState);
         }
     }
 }

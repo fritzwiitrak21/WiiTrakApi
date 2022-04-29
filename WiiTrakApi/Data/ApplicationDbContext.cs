@@ -69,6 +69,7 @@ namespace WiiTrakApi.Data
             
             modelBuilder.Entity<SpGetDriverAssignedStoresByCompany>().HasNoKey();
             modelBuilder.Entity<SpGetDriverAssignedStoresBySystemOwner>().HasNoKey();
+            modelBuilder.Entity<SpGetNotification>().HasNoKey();
 
 
             base.OnModelCreating(modelBuilder);
@@ -96,6 +97,7 @@ namespace WiiTrakApi.Data
 
         public DbSet<SpGetDriverAssignedStoresByCompany> SpGetDriverAssignedStoresByCompany { get; set; }
         public DbSet<SpGetDriverAssignedStoresBySystemOwner> SpGetDriverAssignedStoresBySystemOwner { get; set; }
+        public DbSet<SpGetNotification> SpGetNotifications { get; set; }
 
 
     }
