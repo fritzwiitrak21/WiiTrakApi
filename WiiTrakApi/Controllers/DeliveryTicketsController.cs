@@ -43,7 +43,7 @@ namespace WiiTrakApi.Controllers
             dto.DriverName = driverResult.Driver != null ? $"{ driverResult.Driver.FirstName } { driverResult.Driver.LastName }" : "";
             dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
             dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
-
+            
             return Ok(dto);
         }
 
@@ -89,6 +89,11 @@ namespace WiiTrakApi.Controllers
                 dto.DriverNumber = driverResult.Driver != null ? driverResult.Driver.DriverNumber : 0;
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
+                dto.StreetAddress1 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress1 }" : "";
+                dto.StreetAddress2 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress2 }" : "";
+                dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
+                dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
+                dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
             }
             dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
@@ -113,6 +118,11 @@ namespace WiiTrakApi.Controllers
                 dto.DriverNumber = driverResult.Driver != null ? driverResult.Driver.DriverNumber : 0;
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
+                dto.StreetAddress1 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress1 }" : "";
+                dto.StreetAddress2 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress2 }" : "";
+                dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
+                dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
+                dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
             }
             dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
@@ -159,6 +169,11 @@ namespace WiiTrakApi.Controllers
                 dto.DriverNumber = driverResult.Driver != null ?  driverResult.Driver.DriverNumber  : 0;
                 dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
                 dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
+                dto.StreetAddress1 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress1 }" : "";
+                dto.StreetAddress2 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress2 }" : "";
+                dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
+                dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
+                dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
             }
             dtoList= dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);

@@ -60,16 +60,17 @@ namespace WiiTrakApi.Controllers
                                 var brush = new SolidBrush(color);
                                 var width = img.Width;
                                 var height = img.Height;
-                                var datepoint = new Point(5, img.Height - 45);
-                                var latpoint = new Point(5, img.Height - 22);
-                                var longpoint = new Point(width / 2, img.Height - 22);
+                                var datepoint = new Point(5, img.Height - 55);
+                                var latpoint = new Point(5, img.Height - 38);
+                                var longpoint = new Point(5, img.Height - 22);
 
-                                Rectangle rect = new Rectangle(0, height - 48, width, height - 48);
+                                Rectangle rect = new Rectangle(0, height - 58, width, height - 58);
 
                                 graphic.FillRectangle(new SolidBrush(backcolor), rect);
                                 graphic.DrawString(Date, font, brush, datepoint);
-                                graphic.DrawString("Coord: " + Latitude + "," + Longitude, Coordfont, brush, latpoint);
-                                
+                                graphic.DrawString("LAT: " + Latitude , Coordfont, brush, latpoint);
+                                graphic.DrawString("LONG: " + Longitude, Coordfont, brush, longpoint);
+
                                 img.Save(watermarkedStream, ImageFormat.Png);
                             }
                         }
