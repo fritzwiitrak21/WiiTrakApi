@@ -35,8 +35,8 @@ namespace WiiTrakApi.Models
         public Guid DriverId { get; set; } = Guid.Empty;
         [Required]
         public string Signee { get; set; } = string.Empty;
-        //public bool IsActive { get; set; }
-        //public Guid UpdatedBy { get; set; } = Guid.Empty;
+        public bool IsActive { get; set; }
+        public Guid? UpdatedBy { get; set; } = Guid.Empty;
 
     }
 }

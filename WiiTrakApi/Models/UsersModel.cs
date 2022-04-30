@@ -3,10 +3,10 @@
 namespace WiiTrakApi.Models
 {
     [Table(name: "Users")]
-    public class UsersModel :EntityModel
+    public class UsersModel : EntityModel
     {
-      
-       
+
+
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
 
@@ -21,7 +21,7 @@ namespace WiiTrakApi.Models
 
         public bool IsActive { get; set; }
 
-       
+
 
     }
 }

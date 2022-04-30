@@ -142,7 +142,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, list, null);
                 }
-                return (false, null, "No delivery tickets found");
+                return (false, null, "No delivery  tickets found");
             }
             catch (Exception ex)
             {

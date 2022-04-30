@@ -53,10 +53,10 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpPut("{DriverId:guid}")]
-        public async Task<IActionResult> UpdateDeliveryTicket(Guid DriverId,DriverStoreDetailsDto driverStoreDetailsDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateDeliveryTicket(DriverStoreDetailsDto DriverStoreDetailsDto)
         {
-            var result = await _repository.UpdateDriverStoresAsync(DriverId, driverStoreDetailsDto.Id, driverStoreDetailsDto.DriverStoresIsActive);
+            var result = await _repository.UpdateDriverStoresAsync(DriverStoreDetailsDto);
             if (result.IsSuccess) return NoContent();
 
             ModelState.AddModelError("", $"Something went wrong when updating the record.");

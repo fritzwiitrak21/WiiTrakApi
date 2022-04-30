@@ -57,7 +57,17 @@ namespace WiiTrakApi.Controllers
         [HttpGet("company/{companyId:guid}")]
         public async Task<IActionResult> GetCorporatesByCompanyId(Guid companyId)
         {
-            var result = await _repository.GetCorporatesByCompanyId(companyId);
+            var result = await _repository.GetCorporatesByCompanyIdAsync(companyId);
+
+            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var dtoList = _mapper.Map<List<CorporateDto>>(result.Corporates);
+            return Ok(dtoList);
+        }
+
+        [HttpGet("SystemOwner/{SystemOwnerId:guid}")]
+        public async Task<IActionResult> GetCorporatesBySystemOwnerId(Guid SystemOwnerId)
+        {
+            var result = await _repository.GetCorporatesBySystemOwnerIdAsync(SystemOwnerId);
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<List<CorporateDto>>(result.Corporates);

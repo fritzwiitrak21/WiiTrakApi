@@ -74,19 +74,20 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateDriverStoresAsync(Guid DriverId, Guid StoreId, bool IsActive)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDetailsDto)
         {
             try
             {
-                string sqlquery = "Exec SpAssignUnAssignDrivers @DriverId,@StoreId,@IsActive";
+                string sqlquery = "Exec SpAssignUnAssignDrivers @DriverId,@StoreId,@IsActive,@AssignedBy";
 
                 List<SqlParameter> parms;
 
                 parms = new List<SqlParameter>
                 {
-                     new SqlParameter { ParameterName = "@DriverId", Value = DriverId },
-                     new SqlParameter { ParameterName = "@StoreId", Value = StoreId },
-                     new SqlParameter { ParameterName = "@IsActive", Value = IsActive }
+                     new SqlParameter { ParameterName = "@DriverId", Value = DriverStoreDetailsDto.DriverId },
+                     new SqlParameter { ParameterName = "@StoreId", Value =  DriverStoreDetailsDto.Id },
+                     new SqlParameter { ParameterName = "@IsActive", Value = DriverStoreDetailsDto.DriverStoresIsActive },
+                     new SqlParameter { ParameterName = "@AssignedBy", Value = DriverStoreDetailsDto.AssignedBy }
                 };
 
                 var DriverStores = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());

@@ -40,9 +40,14 @@ namespace WiiTrakApi.DTOs
         public Guid DriverId { get; set; } = Guid.Empty;
 
         public string Signee { get; set; } = string.Empty;
+        public string StreetAddress1 { get; set; }
+        public string StreetAddress2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
 
         public int DriverNumber { get; set; }
-        //public bool IsActive { get; set; }
-        //public Guid UpdatedBy { get;set; }
+        public bool IsActive { get; set; }
+        public Guid? UpdatedBy { get; set; }
     }
 }
