@@ -36,5 +36,6 @@ namespace WiiTrakApi.DTOs
         public Guid DriverId { get; set; }
         public Guid AssignedBy { get; set; }
         public string AssignedDriver { get; set; } = string.Empty;
+        public string CountyCode { get; set; } = string.Empty;
     }
 }

@@ -30,6 +30,6 @@ namespace WiiTrakApi.SPModels
         public bool IsActive { get; set; }
         public bool DriverStoresIsActive { get; set; }
         public string AssignedDriver { get; set; } = string.Empty;
-
+        public string CountyCode { get; set; } = string.Empty; 
     }
 }

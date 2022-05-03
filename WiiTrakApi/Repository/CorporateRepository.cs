@@ -16,7 +16,7 @@ namespace WiiTrakApi.Repository
         public CorporateRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-        }
+        } 
 
         public async Task<(bool IsSuccess, CorporateModel? Corporate, string? ErrorMessage)> GetCorporateByIdAsync(Guid id)
         {

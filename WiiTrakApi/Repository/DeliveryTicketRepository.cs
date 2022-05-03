@@ -101,7 +101,7 @@ namespace WiiTrakApi.Repository
             {
                 var deliveryTickets = await _dbContext.DeliveryTickets
                     .Where(expression)
-                    .Select(x => x)
+                    .Select(x => x).Where(x=>x.IsActive==true)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -123,8 +123,7 @@ namespace WiiTrakApi.Repository
             {
                 List<DeliveryTicketModel> list =  new List<DeliveryTicketModel>();
                 string sqlquery = "Exec SpGetDeliveryTickets @Id,@Role";
-
-                List<SqlParameter> parms;
+                                List<SqlParameter> parms;
                 
                 
                 parms = new List<SqlParameter>
@@ -158,6 +157,7 @@ namespace WiiTrakApi.Repository
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
                 deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
+                deliveryTicket.IsActive = true;
 
                 await _dbContext.DeliveryTickets.AddAsync(deliveryTicket);
                 await _dbContext.SaveChangesAsync();
