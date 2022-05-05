@@ -49,7 +49,7 @@ namespace WiiTrakApi.DTOs
         public bool IsActive { get; set; }
         public string CountyCode { get; set; } = string.Empty;
         public string ServiceFrequency { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; } 
+        public DateTime? StartDate { get; set; } 
         //public List<CartDto>? Carts { get; set; }
     }
 }

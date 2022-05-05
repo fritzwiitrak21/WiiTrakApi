@@ -19,7 +19,7 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CorporateExistsAsync(Guid id);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> CreateCorporateAsync(CorporateModel corporate);
+        Task<(bool IsSuccess, string? ErrorMessage)> CreateCorporateAsync(CorporateModel corporate, Guid CompanyId, int RoleId);
 
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateCorporateAsync(CorporateModel corporate);
 

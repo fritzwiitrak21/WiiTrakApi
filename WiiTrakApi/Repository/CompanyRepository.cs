@@ -247,7 +247,6 @@ namespace WiiTrakApi.Repository
                 {
                     var ParrentCompany = await _dbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
                     company.SystemOwnerId = ParrentCompany.SystemOwnerId;
-
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -263,6 +262,21 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Update company details to users table
+                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = company.Id},
+                     new SqlParameter { ParameterName = "@FirstName", Value = company.Name },
+                     new SqlParameter { ParameterName = "@LastName", Value = "" },
+                     new SqlParameter { ParameterName = "@IsActive", Value = true },
+                     new SqlParameter { ParameterName = "@Email", Value = company.Email }
+                };
+                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                #endregion
                 _dbContext.Companies.Update(company);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

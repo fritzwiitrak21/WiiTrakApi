@@ -8,6 +8,10 @@ using WiiTrakApi.Models;
 using WiiTrakApi.Cores;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.Data.SqlClient;
+using System.Web;
+using System.Net;
+using System.Data;
+using System.Text;
 namespace WiiTrakApi.Repository
 {
     public class StoreRepository : IStoreRepository
@@ -65,7 +69,7 @@ namespace WiiTrakApi.Repository
                     .AsNoTracking()
                     .ToListAsync();
 
-                var stores = driverStores.Select(x => x.Store).Where(s=> s.IsActive==true).ToList();
+                var stores = driverStores.Select(x => x.Store).Where(s => s.IsActive == true).ToList();
 
                 if (stores is not null && stores.Any())
                 {
@@ -445,6 +449,15 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Get Lat Long from Address
+                string Address = store.StreetAddress1 + " " + store.StreetAddress2 + "," + store.City + "," + store.State + " " + store.PostalCode;
+                LatitudeLongitude LatLong = GetLatLong(Address);
+                if (LatLong != null)
+                {
+                    store.Latitude = LatLong.Latitude;
+                    store.Longitude = LatLong.Longitude;
+                }
+                #endregion
                 await _dbContext.Stores.AddAsync(store);
 
                 #region Adding Store details to users table
@@ -491,6 +504,15 @@ namespace WiiTrakApi.Repository
                 };
                 var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
+                #region Get Lat Long from Address
+                string Address = store.StreetAddress1+" "+store.StreetAddress2+","+store.City+","+store.State+" "+store.PostalCode;
+                LatitudeLongitude LatLong=GetLatLong(Address);
+                if (LatLong != null)
+                {
+                    store.Latitude=LatLong.Latitude;
+                    store.Longitude=LatLong.Longitude;
+                }
+                #endregion
                 _dbContext.Stores.Update(store);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -521,5 +543,63 @@ namespace WiiTrakApi.Repository
         {
             return await _dbContext.SaveChangesAsync() >= 0;
         }
+        public LatitudeLongitude GetLatLong(string Address)
+        {
+            string APIKey = "AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE";
+            string url = "https://maps.googleapis.com/maps/api/geocode/xml?address=" + Address + "&key=" + APIKey + "";
+            WebRequest request = WebRequest.Create(url);
+            LatitudeLongitude LatLong = new();
+            using (WebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                try
+                {
+
+
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+
+                    {
+
+                        DataSet dsResult = new DataSet();
+
+                        dsResult.ReadXml(reader);
+
+                        DataTable dtCoordinates = new DataTable();
+
+                        dtCoordinates.Columns.AddRange(new DataColumn[4] { new DataColumn("Id", typeof(int)),
+
+                                        new DataColumn("Address", typeof(string)),
+
+                                        new DataColumn("Latitude",typeof(string)),
+
+                                        new DataColumn("Longitude",typeof(string)) });
+
+                        foreach (DataRow row in dsResult.Tables["result"].Rows)
+
+                        {
+
+                            string geometry_id = dsResult.Tables["geometry"].Select("result_id = " + row["result_id"].ToString())[0]["geometry_id"].ToString();
+
+                            DataRow location = dsResult.Tables["location"].Select("geometry_id = " + geometry_id)[0];
+
+                            dtCoordinates.Rows.Add(row["result_id"], row["formatted_address"], location["lat"], location["lng"]);
+
+                            LatLong.Latitude =Convert.ToDouble( dtCoordinates.Rows[0]["latitude"].ToString());
+                            LatLong.Longitude = Convert.ToDouble(dtCoordinates.Rows[0]["longitude"].ToString());
+                        }
+                    }
+                    return LatLong;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+
+                }
+            }
+        }
+    }
+    public class LatitudeLongitude
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }
