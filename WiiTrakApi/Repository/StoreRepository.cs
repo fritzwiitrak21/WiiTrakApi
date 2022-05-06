@@ -12,6 +12,7 @@ using System.Web;
 using System.Net;
 using System.Data;
 using System.Text;
+using WiiTrakApi.SPModels;
 namespace WiiTrakApi.Repository
 {
     public class StoreRepository : IStoreRepository
@@ -59,23 +60,27 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid driverId)
+        public async Task<(bool IsSuccess, List<SpGetDriverAssignedStores>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid DriverId)
         {
             try
             {
-                var driverStores = await _dbContext.DriverStores
-                    .Include(x => x.Store)
-                    .Where(x => x.DriverId == driverId && x.IsActive == true)
-                    .AsNoTracking()
-                    .ToListAsync();
+                string sqlquery = "Exec SpGetDriverAssignedStores @DriverId";
 
-                var stores = driverStores.Select(x => x.Store).Where(s => s.IsActive == true).ToList();
+                List<SqlParameter> parms;
 
-                if (stores is not null && stores.Any())
+                parms = new List<SqlParameter>
                 {
-                    return (true, stores, null);
+                     new SqlParameter { ParameterName = "@DriverId", Value = DriverId },
+                     
+                };
+
+                var Stores = await _dbContext.SpGetDriverAssignedStores.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (Stores != null)
+                {
+                    return (true, Stores, null);
                 }
-                return (false, null, "No stores found");
+                return (false, null, "No Users found");
             }
             catch (Exception ex)
             {
