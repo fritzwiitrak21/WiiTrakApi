@@ -91,6 +91,7 @@ namespace WiiTrakApi.Controllers
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            dtoList = dtoList.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             return Ok(dtoList);
         }
         [HttpGet("report/{id:guid}")]

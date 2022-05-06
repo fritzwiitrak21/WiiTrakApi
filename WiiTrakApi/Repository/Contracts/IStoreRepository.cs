@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
-
+using WiiTrakApi.SPModels;
 namespace WiiTrakApi.Repository.Contracts
 {
     public interface IStoreRepository
@@ -16,7 +16,7 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCompanyId(Guid companyId);
 
-        Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid driverId);
+        Task<(bool IsSuccess, List<SpGetDriverAssignedStores>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid driverId);
 
         Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetStoreReportById(Guid Id);
 

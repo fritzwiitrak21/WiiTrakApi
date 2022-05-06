@@ -101,7 +101,7 @@ namespace WiiTrakApi.Repository
             {
                 var deliveryTickets = await _dbContext.DeliveryTickets
                     .Where(expression)
-                    .Select(x => x).Where(x=>x.IsActive==true)
+                    .Select(x => x).Where(x => x.IsActive == true)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -117,15 +117,15 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<DeliveryTicketModel>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsByPrimaryIdAsync(Guid Id,Enums.Role role)
+        public async Task<(bool IsSuccess, List<DeliveryTicketModel>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsByPrimaryIdAsync(Guid Id, Enums.Role role)
         {
             try
             {
-                List<DeliveryTicketModel> list =  new List<DeliveryTicketModel>();
+                List<DeliveryTicketModel> list = new List<DeliveryTicketModel>();
                 string sqlquery = "Exec SpGetDeliveryTickets @Id,@Role";
-                                List<SqlParameter> parms;
-                
-                
+                List<SqlParameter> parms;
+
+
                 parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@Id", Value =Id  },
@@ -135,7 +135,7 @@ namespace WiiTrakApi.Repository
 
                 list = await _dbContext.DeliveryTickets.FromSqlRaw<DeliveryTicketModel>(sqlquery, parms.ToArray()).ToListAsync();
 
-                
+
 
                 if (list.Any())
                 {
@@ -173,6 +173,12 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                
+                var storedetails = await _dbContext.Stores
+                 .AsNoTracking()
+                 .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
+                deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
+                deliveryTicket.IsActive = true; 
                 _dbContext.DeliveryTickets.Update(deliveryTicket);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

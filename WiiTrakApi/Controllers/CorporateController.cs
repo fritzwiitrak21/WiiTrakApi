@@ -76,15 +76,15 @@ namespace WiiTrakApi.Controllers
 
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CorporateDto>> CreateCorporate([FromBody] CorporateCreationDto corporateCreation)
+        [HttpPost("{companyid:guid}/{roleid:int}")]
+        public async Task<ActionResult<CorporateDto>> CreateCorporate(Guid CompanyId, int RoleId,[FromBody] CorporateCreationDto corporateCreation)
         {
             var corporate = _mapper.Map<CorporateModel>(corporateCreation);
             corporate.CreatedAt = DateTime.UtcNow;
 
            //TODO company id
 
-            var createResult = await _repository.CreateCorporateAsync(corporate);
+            var createResult = await _repository.CreateCorporateAsync(corporate,CompanyId,RoleId);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", $"Something went wrong when saving the record.");

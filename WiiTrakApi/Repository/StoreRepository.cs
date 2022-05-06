@@ -8,6 +8,11 @@ using WiiTrakApi.Models;
 using WiiTrakApi.Cores;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.Data.SqlClient;
+using System.Web;
+using System.Net;
+using System.Data;
+using System.Text;
+using WiiTrakApi.SPModels;
 namespace WiiTrakApi.Repository
 {
     public class StoreRepository : IStoreRepository
@@ -55,23 +60,27 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid driverId)
+        public async Task<(bool IsSuccess, List<SpGetDriverAssignedStores>? Stores, string? ErrorMessage)> GetStoresByDriverId(Guid DriverId)
         {
             try
             {
-                var driverStores = await _dbContext.DriverStores
-                    .Include(x => x.Store)
-                    .Where(x => x.DriverId == driverId && x.IsActive == true)
-                    .AsNoTracking()
-                    .ToListAsync();
+                string sqlquery = "Exec SpGetDriverAssignedStores @DriverId";
 
-                var stores = driverStores.Select(x => x.Store).Where(s=> s.IsActive==true).ToList();
+                List<SqlParameter> parms;
 
-                if (stores is not null && stores.Any())
+                parms = new List<SqlParameter>
                 {
-                    return (true, stores, null);
+                     new SqlParameter { ParameterName = "@DriverId", Value = DriverId },
+                     
+                };
+
+                var Stores = await _dbContext.SpGetDriverAssignedStores.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (Stores != null)
+                {
+                    return (true, Stores, null);
                 }
-                return (false, null, "No stores found");
+                return (false, null, "No Users found");
             }
             catch (Exception ex)
             {
@@ -445,6 +454,15 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Get Lat Long from Address
+                string Address = store.StreetAddress1 + " " + store.StreetAddress2 + "," + store.City + "," + store.State + " " + store.PostalCode;
+                LatitudeLongitude LatLong = GetLatLong(Address);
+                if (LatLong != null)
+                {
+                    store.Latitude = LatLong.Latitude;
+                    store.Longitude = LatLong.Longitude;
+                }
+                #endregion
                 await _dbContext.Stores.AddAsync(store);
 
                 #region Adding Store details to users table
@@ -491,6 +509,15 @@ namespace WiiTrakApi.Repository
                 };
                 var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
+                #region Get Lat Long from Address
+                string Address = store.StreetAddress1+" "+store.StreetAddress2+","+store.City+","+store.State+" "+store.PostalCode;
+                LatitudeLongitude LatLong=GetLatLong(Address);
+                if (LatLong != null)
+                {
+                    store.Latitude=LatLong.Latitude;
+                    store.Longitude=LatLong.Longitude;
+                }
+                #endregion
                 _dbContext.Stores.Update(store);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -521,5 +548,63 @@ namespace WiiTrakApi.Repository
         {
             return await _dbContext.SaveChangesAsync() >= 0;
         }
+        public LatitudeLongitude GetLatLong(string Address)
+        {
+            string APIKey = "AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE";
+            string url = "https://maps.googleapis.com/maps/api/geocode/xml?address=" + Address + "&key=" + APIKey + "";
+            WebRequest request = WebRequest.Create(url);
+            LatitudeLongitude LatLong = new();
+            using (WebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                try
+                {
+
+
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+
+                    {
+
+                        DataSet dsResult = new DataSet();
+
+                        dsResult.ReadXml(reader);
+
+                        DataTable dtCoordinates = new DataTable();
+
+                        dtCoordinates.Columns.AddRange(new DataColumn[4] { new DataColumn("Id", typeof(int)),
+
+                                        new DataColumn("Address", typeof(string)),
+
+                                        new DataColumn("Latitude",typeof(string)),
+
+                                        new DataColumn("Longitude",typeof(string)) });
+
+                        foreach (DataRow row in dsResult.Tables["result"].Rows)
+
+                        {
+
+                            string geometry_id = dsResult.Tables["geometry"].Select("result_id = " + row["result_id"].ToString())[0]["geometry_id"].ToString();
+
+                            DataRow location = dsResult.Tables["location"].Select("geometry_id = " + geometry_id)[0];
+
+                            dtCoordinates.Rows.Add(row["result_id"], row["formatted_address"], location["lat"], location["lng"]);
+
+                            LatLong.Latitude =Convert.ToDouble( dtCoordinates.Rows[0]["latitude"].ToString());
+                            LatLong.Longitude = Convert.ToDouble(dtCoordinates.Rows[0]["longitude"].ToString());
+                        }
+                    }
+                    return LatLong;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+
+                }
+            }
+        }
+    }
+    public class LatitudeLongitude
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

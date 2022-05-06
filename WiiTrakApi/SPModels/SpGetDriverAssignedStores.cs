@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using WiiTrakApi.Models;
-
-namespace WiiTrakApi.DTOs
-{   
-    public record StoreDto 
+﻿namespace WiiTrakApi.SPModels
+{
+    public class SpGetDriverAssignedStores
     {
         public Guid Id { get; set; }
 
@@ -39,7 +36,7 @@ namespace WiiTrakApi.DTOs
 
         public double Latitude { get; set; }
 
-        public Guid ServiceProviderId { get; set; }
+        public Guid? ServiceProviderId { get; set; }
 
         public Guid CompanyId { get; set; }
 
@@ -51,9 +48,6 @@ namespace WiiTrakApi.DTOs
         public string ServiceFrequency { get; set; } = string.Empty;
         public DateTime? StartDate { get; set; }
         public bool DriverStoresIsActive { get; set; }
-        //public List<CartDto>? Carts { get; set; }
-        public int Distance { get; set; }
-        
 
     }
 }

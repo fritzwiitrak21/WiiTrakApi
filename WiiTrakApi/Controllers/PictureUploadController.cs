@@ -53,18 +53,18 @@ namespace WiiTrakApi.Controllers
                         {
                             using (var graphic = Graphics.FromImage(img))
                             {
-                                var font = new Font("Arial", 16, FontStyle.Regular, GraphicsUnit.Pixel);
-                                var Coordfont = new Font("Arial", 15, FontStyle.Regular, GraphicsUnit.Pixel);
+                                var font = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Pixel);
+                                var Coordfont = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Pixel);
                                 var color = Color.Black;// FromArgb(255, 255, 255, 255);
                                 var backcolor = Color.FromArgb(100, 220, 220, 220);
                                 var brush = new SolidBrush(color);
                                 var width = img.Width;
                                 var height = img.Height;
-                                var datepoint = new Point(5, img.Height - 55);
-                                var latpoint = new Point(5, img.Height - 38);
-                                var longpoint = new Point(5, img.Height - 22);
+                                var datepoint = new Point(5, img.Height - 32);
+                                var latpoint = new Point(5, img.Height - 22);
+                                var longpoint = new Point(5, img.Height - 12);
 
-                                Rectangle rect = new Rectangle(0, height - 58, width, height - 58);
+                                Rectangle rect = new Rectangle(0, height - 33, width, height - 33);
 
                                 graphic.FillRectangle(new SolidBrush(backcolor), rect);
                                 graphic.DrawString(Date, font, brush, datepoint);

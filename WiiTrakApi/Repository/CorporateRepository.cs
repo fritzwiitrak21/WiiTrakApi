@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using WiiTrakApi.Cores;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Enums;
@@ -224,11 +225,38 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCorporateAsync(CorporateModel corporate)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCorporateAsync(CorporateModel corporate, Guid CompanyId, int RoleId)
         {
             try
             {
+                
                 await _dbContext.Corporates.AddAsync(corporate);
+                #region Adding Corporate details to users table
+                UsersModel user = new UsersModel();
+                user.Id = corporate.Id;
+                user.FirstName = corporate.Name;
+                user.Password = Core.CreatePassword();
+                user.Email = corporate.Email;
+                user.AssignedRole = (int)Role.Corporate;
+                user.CreatedAt =
+                user.PasswordLastUpdatedAt = DateTime.UtcNow;
+                user.IsActive = true;
+                user.IsFirstLogin = true;
+
+                await _dbContext.Users.AddAsync(user);
+                #endregion
+                
+                #region Adding Corporate details to CompanyCorporate table
+                if(RoleId==3 || RoleId==4)
+                {
+                    CompanyCorporateModel companycorporate = new CompanyCorporateModel();
+                    companycorporate.CorporateId = corporate.Id;
+                    companycorporate.CompanyId = CompanyId;
+                    companycorporate.CreatedAt = DateTime.UtcNow;
+                    await _dbContext.CompanyCorporates.AddAsync(companycorporate);
+                }
+                #endregion
+
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }
@@ -242,6 +270,21 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Update corporate details to users table
+                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = corporate.Id},
+                     new SqlParameter { ParameterName = "@FirstName", Value = corporate.Name },
+                     new SqlParameter { ParameterName = "@LastName", Value = "" },
+                     new SqlParameter { ParameterName = "@IsActive", Value = true },
+                     new SqlParameter { ParameterName = "@Email", Value = corporate.Email }
+                };
+                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                #endregion
                 _dbContext.Corporates.Update(corporate);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
