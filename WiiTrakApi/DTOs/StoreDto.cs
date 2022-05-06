@@ -51,5 +51,8 @@ namespace WiiTrakApi.DTOs
         public string ServiceFrequency { get; set; } = string.Empty;
         public DateTime? StartDate { get; set; } 
         //public List<CartDto>? Carts { get; set; }
+        public int Distance { get; set; }
+        
+
     }
 }
