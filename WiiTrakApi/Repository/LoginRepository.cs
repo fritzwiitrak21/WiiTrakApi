@@ -13,7 +13,7 @@ namespace WiiTrakApi.Repository
     public class LoginRepository : ILoginRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        
+
         public LoginRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -65,7 +65,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                
+
                 var Username = Core.Base64Decrypt(login.Username);
                 var Password = Core.Base64Decrypt(login.Password);
 
@@ -77,8 +77,8 @@ namespace WiiTrakApi.Repository
                 var Users = await _dbContext.Users
                             .AsNoTracking()
                             .FirstOrDefaultAsync(x => x.Email == Username && x.Password == EnPassword && x.IsActive == true);
-                
-                
+
+
 
                 if (Users != null)
                 {
@@ -96,7 +96,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                
+
 
                 var Users = await _dbContext.Users
                             .AsNoTracking()
@@ -128,21 +128,6 @@ namespace WiiTrakApi.Repository
                 return (false, ex.Message);
             }
         }
-        public async Task<(bool IsSuccess, string? ErrorMessage)> ChangeUserPasswordAsync(UsersModel user)
-        {
-            try
-            {
-                _dbContext.Users.Update(user);
-                await _dbContext.SaveChangesAsync();
-
-                return (true, null);
-            }
-            catch (Exception ex)
-            {
-                return (false, ex.Message);
-            }
-        }
-
     }
 }
 
