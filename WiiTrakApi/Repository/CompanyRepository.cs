@@ -121,7 +121,7 @@ namespace WiiTrakApi.Repository
             {
                 var companies = await _dbContext.Companies
                     .Where(x => x.SystemOwnerId == systemownerId)
-                    .AsNoTracking()
+                    .AsNoTracking().OrderBy(x=>x.Name)
                     .ToListAsync();
 
                 

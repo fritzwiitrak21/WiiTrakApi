@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WiiTrakApi.DTOs
 {
@@ -10,6 +11,7 @@ namespace WiiTrakApi.DTOs
 
         [Required]
         public string Password { get; set; }
+
     }
 
     public class ForgotPasswordDto
@@ -31,9 +33,8 @@ namespace WiiTrakApi.DTOs
     public class ChangePasswordDto
     {
         [Required]
-        public string CurrentPassword { get; set; }
-        [Required]
-        
+        public string Password { get; set; }
+        [Required]      
         public string NewPassword { get;set; }
         [Required]
         [Compare("NewPassword")]
