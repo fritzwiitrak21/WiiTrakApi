@@ -49,5 +49,8 @@ namespace WiiTrakApi.DTOs
         public int DriverNumber { get; set; }
         public bool IsActive { get; set; }
         public Guid? UpdatedBy { get; set; }
+        public string TimezoneDiff { get; set; }
+        public string TimezoneName { get; set; }
+        public DateTime? TimezoneDateTime { get; set; }
     }
 }

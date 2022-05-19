@@ -43,19 +43,9 @@ namespace WiiTrakApi.Controllers
             login.Password = Password;
 
             var result = await _repository.GetUsersDetailsByLoginAsync(login);
-            //if (result.Users != null)
-            //{
-            //    var token = _authenticateRepository.Login(login);
-
-            //    var tokenstring = new JwtSecurityTokenHandler().WriteToken(token);
-            //}
-
-
-
-
+            
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<UserDto>(result.Users);
-            //dtoList.token = tokenstring;
             return Ok(dtoList);
         }
 

@@ -43,7 +43,10 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetCart(Guid id)
         {
             var result = await _repository.GetCartByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dto = _mapper.Map<CartDto>(result.Cart);
             return Ok(dto);
         }

@@ -8,7 +8,6 @@ using WiiTrakApi.Models;
 using WiiTrakApi.Cores;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.Data.SqlClient;
-using System.Web;
 using System.Net;
 using System.Data;
 using System.Text;
@@ -26,16 +25,16 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, StoreModel? Store, string? ErrorMessage)> GetStoreByIdAsync(Guid id)
         {
-            var store = await _dbContext.Stores
-                .Include(x => x.Carts)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id);
+                var store = await _dbContext.Stores
+                    .Include(x => x.Carts)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (store is not null)
-            {
-                return (true, (StoreModel)store, null);
-            }
-            return (false, null, "No store found");
+                if (store is not null)
+                {
+                    return (true, store, null);
+                }
+                return (false, null, "No store found");
         }
 
         public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetAllStoresAsync()
@@ -71,7 +70,7 @@ namespace WiiTrakApi.Repository
                 parms = new List<SqlParameter>
                 {
                      new SqlParameter { ParameterName = "@DriverId", Value = DriverId },
-                     
+
                 };
 
                 var Stores = await _dbContext.SpGetDriverAssignedStores.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
@@ -255,8 +254,6 @@ namespace WiiTrakApi.Repository
             {
                 var report = new StoreReportDto();
 
-
-                //var carts = new List<CartModel>();
                 var carts = new List<CartModel>();
                 var corporate =
                     await _dbContext.Corporates
@@ -328,8 +325,6 @@ namespace WiiTrakApi.Repository
             {
                 var report = new StoreReportDto();
 
-
-                //var carts = new List<CartModel>();
                 var carts = new List<CartModel>();
                 var company =
                     await _dbContext.Companies
@@ -447,7 +442,7 @@ namespace WiiTrakApi.Repository
                 parms = new List<SqlParameter>
                 {
                      new SqlParameter { ParameterName = "@SystemownerId", Value = SystemownerId },
-                     
+
                 };
 
                 var Stores = await _dbContext.SPGetStoresBySystemOwnerId.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
@@ -456,7 +451,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, Stores, null);
                 }
-                
+
                 return (false, null, "No stores found");
             }
             catch (Exception ex)
@@ -489,6 +484,8 @@ namespace WiiTrakApi.Repository
                 {
                     store.Latitude = LatLong.Latitude;
                     store.Longitude = LatLong.Longitude;
+                    store.TimezoneDiff = LatLong.TimezoneDiff;
+                    store.TimezoneName= LatLong.TimezoneName;
                 }
                 #endregion
                 await _dbContext.Stores.AddAsync(store);
@@ -537,15 +534,19 @@ namespace WiiTrakApi.Repository
                 };
                 var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
+
                 #region Get Lat Long from Address
-                string Address = store.StreetAddress1+" "+store.StreetAddress2+","+store.City+","+store.State+" "+store.PostalCode;
-                LatitudeLongitude LatLong=GetLatLong(Address);
+                string Address = store.StreetAddress1 + " " + store.StreetAddress2 + "," + store.City + "," + store.State + " " + store.PostalCode;
+                LatitudeLongitude LatLong = GetLatLong(Address);
                 if (LatLong != null)
                 {
-                    store.Latitude=LatLong.Latitude;
-                    store.Longitude=LatLong.Longitude;
+                    store.Latitude = LatLong.Latitude;
+                    store.Longitude = LatLong.Longitude;
+                    store.TimezoneDiff = LatLong.TimezoneDiff;
+                    store.TimezoneName = LatLong.TimezoneName;
                 }
                 #endregion
+
                 _dbContext.Stores.Update(store);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -586,8 +587,6 @@ namespace WiiTrakApi.Repository
             {
                 try
                 {
-
-
                     using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
 
                     {
@@ -616,8 +615,28 @@ namespace WiiTrakApi.Repository
 
                             dtCoordinates.Rows.Add(row["result_id"], row["formatted_address"], location["lat"], location["lng"]);
 
-                            LatLong.Latitude =Convert.ToDouble( dtCoordinates.Rows[0]["latitude"].ToString());
+                            LatLong.Latitude = Convert.ToDouble(dtCoordinates.Rows[0]["latitude"].ToString());
                             LatLong.Longitude = Convert.ToDouble(dtCoordinates.Rows[0]["longitude"].ToString());
+
+                        }
+                        string Timestamp = DateTime.UtcNow.ToString("HHmmssffff");
+                        string url1 = "https://maps.googleapis.com/maps/api/timezone/xml?location=" + LatLong.Latitude + "," + LatLong.Longitude + "&timestamp=" + Timestamp + "&key=" + APIKey + "";
+                        WebRequest requestzone = WebRequest.Create(url1);
+                        using (WebResponse responsezone = (HttpWebResponse)requestzone.GetResponse())
+                        {
+                            using (StreamReader readerzone = new StreamReader(responsezone.GetResponseStream(), Encoding.UTF8))
+
+                            {
+                                DataSet dszoneResult = new DataSet();
+                                dszoneResult.ReadXml(readerzone);
+                                foreach (DataRow row in dszoneResult.Tables["TimeZoneResponse"].Rows)
+                                {
+                                    var raw_offset = row["raw_offset"].ToString();
+                                    var dst_offset = row["dst_offset"].ToString();
+                                    LatLong.TimezoneDiff =(Convert.ToDouble(raw_offset) + Convert.ToDouble(dst_offset)).ToString();
+                                    LatLong.TimezoneName = row["time_zone_name"].ToString();
+                                }
+                            }
                         }
                     }
                     return LatLong;
@@ -634,5 +653,7 @@ namespace WiiTrakApi.Repository
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string TimezoneDiff { get; set; }
+        public string TimezoneName { get; set; }
     }
 }

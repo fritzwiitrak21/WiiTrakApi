@@ -3,12 +3,7 @@ namespace WiiTrakApi.DTOs
 {
     public record DriverStoreDetailsDto 
     {
-       
-
         public Guid Id { get; set; }//Store Id
-
-      
-
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
         public bool DriverStoresIsActive { get; set; }

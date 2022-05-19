@@ -53,7 +53,8 @@ namespace WiiTrakApi.DTOs
         public bool DriverStoresIsActive { get; set; }
         //public List<CartDto>? Carts { get; set; }
         public int Distance { get; set; }
-        
+        public string? TimezoneDiff { get; set; } = string.Empty;
+        public string? TimezoneName { get; set; } = string.Empty;
 
     }
 }

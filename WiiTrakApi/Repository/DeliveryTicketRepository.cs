@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
