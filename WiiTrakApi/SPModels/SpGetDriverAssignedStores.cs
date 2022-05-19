@@ -48,6 +48,7 @@
         public string ServiceFrequency { get; set; } = string.Empty;
         public DateTime? StartDate { get; set; }
         public bool DriverStoresIsActive { get; set; }
-
+        public string? TimezoneDiff { get; set; } = string.Empty; 
+        public string? TimezoneName { get; set; } = string.Empty; 
     }
 }
