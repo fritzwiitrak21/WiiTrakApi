@@ -12,15 +12,13 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class DeliveryTicketsController : ControllerBase
     {
-        private readonly ILogger<DeliveryTicketsController> _logger;
         private readonly IMapper _mapper;
         private readonly IDeliveryTicketRepository _repository;
         private readonly IDriverRepository _driverRepository;
         private readonly IStoreRepository _storeRepository;
 
-        public DeliveryTicketsController(ILogger<DeliveryTicketsController> logger, IMapper mapper, IDeliveryTicketRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
+        public DeliveryTicketsController(IMapper mapper, IDeliveryTicketRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
             _driverRepository = driverRepository;
@@ -233,8 +231,38 @@ namespace WiiTrakApi.Controllers
             }
             return Ok(result.DeliveryTicketSummary);
         }
-
-        [HttpPost]
+        [HttpGet("DeliveryTickets/{Id:guid}/{Role:int}/{RecordCount:int}")]
+        public async Task<IActionResult> GetDeliveryTicketsById(Guid Id, int Role,int RecordCount)
+        {
+            DateTime ToDate, FromDate;
+            if (RecordCount == 0)
+            {
+                ToDate = DateTime.UtcNow;
+                FromDate =Convert.ToDateTime("0001-01-01");
+            }
+            else
+            {
+                 ToDate = DateTime.UtcNow;
+                 FromDate = ToDate.AddDays(-Convert.ToDouble(RecordCount));
+            }
+            var result = await _repository.GetDeliveryTicketsById(Id,(Role)Role,FromDate.ToString(),ToDate.ToString());
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            return Ok(result.DeliveryTickets);
+        }
+       // [HttpPost("GetDeliveryTicketsByIdTest")]
+        //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
+        //{
+        //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
+        //    if (!result.IsSuccess)
+        //    {
+        //        return NotFound(result.ErrorMessage);
+        //    }
+        //    return Ok(result.DeliveryTickets); 
+        //}
+            [HttpPost]
         public async Task<ActionResult<DeliveryTicketDto>> CreateDeliveryTicket([FromBody] DeliveryTicketCreationDto deliveryTicketCreation)
         {
             var deliveryTicket = _mapper.Map<DeliveryTicketModel>(deliveryTicketCreation);
@@ -246,8 +274,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateDeliveryTicketAsync(deliveryTicket);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<DeliveryTicketDto>(deliveryTicket);
@@ -272,8 +300,8 @@ namespace WiiTrakApi.Controllers
             {
                 return NoContent();
             }
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
         [HttpDelete("{id}")]
@@ -284,8 +312,8 @@ namespace WiiTrakApi.Controllers
             {
                 return NoContent();
             }
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
     }

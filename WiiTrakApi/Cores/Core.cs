@@ -3,8 +3,11 @@ using System.Security.Cryptography;
 
 namespace WiiTrakApi.Cores
 {
-    public class Core
+    public static class Core
     {
+        public static string SaveErrorMessage { get; set; } = "Something went wrong when saving the record.";
+        public static string UpdateErrorMessage { get; set; } = "Something went wrong when updating the record.";
+        public static string DeleteErrorMessage { get; set; } = "Something went wrong when deleting the record.";
         #region Cryptography
         private const string SecurityKey = "ComplexKeyHere_12121";
 
@@ -114,7 +117,11 @@ namespace WiiTrakApi.Cores
             return EncryptText(DefaultPassword);// EncryptText(sb.ToString());
         }
     }
+    public static class Numbers
+    {
+        public static int FiveHundred { get; set; } = 500;
+    }
 
 
-}
+    }
 

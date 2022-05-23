@@ -18,16 +18,13 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly ILogger<LoginController> _logger;
         private readonly IMapper _mapper;
         private readonly ILoginRepository _repository;
         private readonly IAuthenticateRepository _authenticateRepository;
 
-        public LoginController(ILogger<LoginController> logger,
-           IMapper mapper,
+        public LoginController(IMapper mapper,
            ILoginRepository repository, IAuthenticateRepository AuthenticateRepository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
             _authenticateRepository = AuthenticateRepository;
@@ -43,7 +40,7 @@ namespace WiiTrakApi.Controllers
             login.Password = Password;
 
             var result = await _repository.GetUsersDetailsByLoginAsync(login);
-            
+
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<UserDto>(result.Users);
             return Ok(dtoList);
@@ -81,8 +78,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateUserPasswordAsync(result.User);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

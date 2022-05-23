@@ -13,7 +13,6 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
-        private readonly ILogger<CartsController> _logger;
         private readonly IMapper _mapper;
         private readonly ICartRepository _repository;
         private readonly ICartHistoryRepository _cartHistoryRepository;
@@ -29,11 +28,9 @@ namespace WiiTrakApi.Controllers
 
         static Random _randomizer = new Random();
 
-        public CartsController(ILogger<CartsController> logger,
-            IMapper mapper,
+        public CartsController(IMapper mapper,
             ICartRepository repository, ICartHistoryRepository cartHistoryRepository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
             _cartHistoryRepository = cartHistoryRepository;
@@ -109,8 +106,8 @@ namespace WiiTrakApi.Controllers
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
 
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-            
-           
+
+
             foreach (var cart in dtoList)
             {
                 cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
@@ -168,8 +165,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateCartAsync(cart);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<CartDto>(cart);
@@ -206,8 +203,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateCartAsync(cart);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -217,8 +214,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.DeleteCartAsync(id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

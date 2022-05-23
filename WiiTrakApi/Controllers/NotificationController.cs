@@ -12,13 +12,11 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly ILogger<NotificationController> _logger;
         private readonly IMapper _mapper;
         private readonly INotificationRepository _repository;
 
-        public NotificationController(ILogger<NotificationController> logger, IMapper mapper, INotificationRepository repository)
+        public NotificationController(IMapper mapper, INotificationRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -42,7 +40,8 @@ namespace WiiTrakApi.Controllers
                 if (!result.IsSuccess) return NotFound(result.ErrorMessage);
                 var dtolist = _mapper.Map<List<NotificationDto>>(result.Notification);
                 return Ok(dtolist);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -54,8 +53,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.UpdateNotifiedTimeAsync(dto.Id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

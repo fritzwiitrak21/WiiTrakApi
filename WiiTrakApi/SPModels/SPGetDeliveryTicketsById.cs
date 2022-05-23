@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WiiTrakApi.Enums;
-
-namespace WiiTrakApi.DTOs
+﻿namespace WiiTrakApi.SPModels
 {
-    public class DeliveryTicketDto
+    public class SPGetDeliveryTicketsById
     {
+
         public Guid Id { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
@@ -48,9 +46,9 @@ namespace WiiTrakApi.DTOs
 
         public int DriverNumber { get; set; }
         public bool IsActive { get; set; }
+        public Guid? UpdatedBy { get; set; }
         public bool DriverStoresIsActive { get; set; }
         public bool StoresIsActive { get; set; }
-        public Guid? UpdatedBy { get; set; }
         public string TimezoneDiff { get; set; }
         public string TimezoneName { get; set; }
         public DateTime? TimezoneDateTime { get; set; }

@@ -10,14 +10,11 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class PictureUploadController : ControllerBase
     {
-        private readonly ILogger<CartsController> _logger;
         private readonly IUploadService uploadService;
         private readonly string ImageBlobContainerName;
 
-        public PictureUploadController(ILogger<CartsController> logger,
-            IUploadService uploadService, IConfiguration configuration)
+        public PictureUploadController(IUploadService uploadService, IConfiguration configuration)
         {
-            _logger = logger;
             this.uploadService = uploadService;
             ImageBlobContainerName = configuration["ImageBlobContainerName"];
         }
@@ -84,7 +81,7 @@ namespace WiiTrakApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex}");
+                return StatusCode(Cores.Numbers.FiveHundred, $"Internal server error: {ex}");
             }
 
         }
@@ -112,7 +109,7 @@ namespace WiiTrakApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex}");
+                return StatusCode(Cores.Numbers.FiveHundred, $"Internal server error: {ex}");
             }
         }
     }

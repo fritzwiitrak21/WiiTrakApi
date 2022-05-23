@@ -18,15 +18,12 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class ServiceProvidersController : ControllerBase
     {
-        private ILogger<ServiceProvidersController> _logger;
         private readonly IMapper _mapper;
         private readonly IServiceProviderRepository _repository;
 
-        public ServiceProvidersController(ILogger<ServiceProvidersController> logger, 
-            IMapper mapper,
+        public ServiceProvidersController(IMapper mapper,
             IServiceProviderRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -54,7 +51,7 @@ namespace WiiTrakApi.Controllers
         [HttpGet("{companyId:guid}")]
         public async Task<IActionResult> GetServiceProvidersByCustomerId(Guid companyId)
         {
-            var result = 
+            var result =
                 await _repository.GetServiceProvidersByConditionAsync(x => x.CompanyId == companyId);
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
@@ -72,8 +69,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateServiceProviderAsync(serviceProvider);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<ServiceProviderDto>(serviceProvider);
@@ -93,8 +90,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateServiceProviderAsync(result.ServiceProvider);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -104,8 +101,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.DeleteServiceProviderAsync(id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

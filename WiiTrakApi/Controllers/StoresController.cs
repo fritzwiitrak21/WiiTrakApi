@@ -11,15 +11,12 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class StoresController : ControllerBase
     {
-        private readonly ILogger<StoresController> _logger;
         private readonly IMapper _mapper;
         private readonly IStoreRepository _repository;
 
-        public StoresController(ILogger<StoresController> logger,
-            IMapper mapper,
+        public StoresController(IMapper mapper,
             IStoreRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -182,8 +179,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateStoreAsync(store);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<StoreDto>(store);
@@ -209,8 +206,8 @@ namespace WiiTrakApi.Controllers
                 return NoContent();
             }
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -223,8 +220,8 @@ namespace WiiTrakApi.Controllers
                 return NoContent();
             }
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }
