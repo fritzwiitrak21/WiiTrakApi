@@ -1,9 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Linq.Expressions;
 using WiiTrakApi.Data;
-using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
@@ -21,7 +18,7 @@ namespace WiiTrakApi.Repository
         public async Task<(bool IsSuccess, List<CountyCodeModel>? CountyList, string? ErrorMessage)> GetCountyListAsync()
         {
             var CountyCode = await _dbContext.CountyCode
-                                .Where(y => y.IsActive == true)
+                                .Where(y => y.IsActive)
                                 .Select(x => x)
                                 .AsNoTracking()
                                 .ToListAsync();

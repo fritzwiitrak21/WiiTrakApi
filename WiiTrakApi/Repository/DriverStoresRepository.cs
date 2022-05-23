@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using WiiTrakApi.Data;
-using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using WiiTrakApi.DTOs;
-using WiiTrakApi.Cores;
-using WiiTrakApi.Services;
-using WiiTrakApi.Controllers;
 using WiiTrakApi.SPModels;
 
 namespace WiiTrakApi.Repository
@@ -90,7 +86,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@AssignedBy", Value = DriverStoreDetailsDto.AssignedBy }
                 };
 
-                var DriverStores = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
 
                 return (true, null);
             }

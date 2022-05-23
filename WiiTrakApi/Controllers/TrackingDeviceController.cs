@@ -12,15 +12,12 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class TrackingDeviceController : ControllerBase
     {
-        private readonly ILogger<TrackingDeviceController> _logger;
         private readonly IMapper _mapper;
         private readonly ITrackingDeviceRepository _repository;
 
-        public TrackingDeviceController(ILogger<TrackingDeviceController> logger,
-            IMapper mapper,
+        public TrackingDeviceController(IMapper mapper,
             ITrackingDeviceRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -55,8 +52,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateTrackingDeviceAsync(trackingDevice);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<TrackingDeviceDto>(trackingDevice);
@@ -76,8 +73,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateTrackingDeviceAsync(result.TrackingDevice);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -87,8 +84,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.DeleteTrackingDeviceAsync(id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

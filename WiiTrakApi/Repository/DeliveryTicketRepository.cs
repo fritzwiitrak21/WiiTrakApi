@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
+using WiiTrakApi.SPModels;
 
 namespace WiiTrakApi.Repository
 {
@@ -148,7 +148,34 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<SPGetDeliveryTicketsById>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsById(Guid Id, Enums.Role role, string FromDate, string ToDate)
+        {
+            try
+            {
+                List<SqlParameter> parms;
+                string sqlquery = "Exec SPGetDeliveryTicketsById @Id,@RoleId,@FromDate,@ToDate";
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =Id  },
+                    new SqlParameter { ParameterName = "@RoleId", Value =(int)role },
+                    new SqlParameter { ParameterName = "@FromDate", Value =FromDate },
+                    new SqlParameter { ParameterName = "@ToDate", Value =ToDate }
 
+                };
+
+                var DeliveryTickets = await _dbContext.SPGetDeliveryTicketsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (DeliveryTickets != null)
+                {
+                    return (true, DeliveryTickets, null);
+                }
+                return (false, null, "No delivery  tickets found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateDeliveryTicketAsync(DeliveryTicketModel deliveryTicket)
         {
             try

@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
-using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
@@ -19,15 +11,12 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class StoresController : ControllerBase
     {
-        private readonly ILogger<StoresController> _logger;
         private readonly IMapper _mapper;
         private readonly IStoreRepository _repository;
 
-        public StoresController(ILogger<StoresController> logger,
-            IMapper mapper,
+        public StoresController(IMapper mapper,
             IStoreRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -36,7 +25,10 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetStore(Guid id)
         {
             var result = await _repository.GetStoreByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dto = _mapper.Map<StoreDto>(result.Store);
             return Ok(dto);
         }
@@ -47,7 +39,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetAllStoresAsync();
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
@@ -59,7 +54,10 @@ namespace WiiTrakApi.Controllers
             var result = await _repository
                 .GetStoresByConditionAsync(x => x.ServiceProviderId == serviceProviderId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
@@ -69,7 +67,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetStoresByCorporateId(corporateId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
@@ -79,7 +80,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetStoresByCompanyId(companyId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
@@ -88,17 +92,23 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetStoresBySystemOwnerId(SystemownerId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
-        
+
         [HttpGet("Driver/{driverId:guid}")]
         public async Task<IActionResult> GetStoresByDriverId(Guid driverId)
         {
             var result = await _repository.GetStoresByDriverId(driverId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
             dtoList = dtoList.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             return Ok(dtoList);
@@ -108,7 +118,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetStoreReportById(id);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var reportDto = result.Report;
             return Ok(reportDto);
         }
@@ -118,7 +131,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetAllStoreReportByDriverId(driverId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var reportDto = result.Report;
             return Ok(reportDto);
         }
@@ -128,7 +144,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetAllStoreReportByCorporateId(corporateId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var reportDto = result.Report;
             return Ok(reportDto);
         }
@@ -138,7 +157,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetAllStoreReportByCompanyId(companyId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var reportDto = result.Report;
             return Ok(reportDto);
         }
@@ -157,8 +179,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateStoreAsync(store);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<StoreDto>(store);
@@ -171,15 +193,21 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetStoreByIdAsync(id);
 
-            if (!result.IsSuccess || result.Store is null) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess || result.Store is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             _mapper.Map(storeUpdate, result.Store);
             result.Store.UpdatedAt = DateTime.UtcNow;
 
             var updateResult = await _repository.UpdateStoreAsync(result.Store);
-            if (updateResult.IsSuccess) return NoContent();
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -187,10 +215,13 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> DeleteStore(Guid id)
         {
             var result = await _repository.DeleteStoreAsync(id);
-            if (result.IsSuccess) return NoContent();
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

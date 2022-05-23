@@ -40,4 +40,12 @@ namespace WiiTrakApi.DTOs
         [Compare("NewPassword")]
         public string ConfirmNewPassword { get; set; }
     }
+    public class DeliveryTicketInputDto
+    {
+        public Guid Id { get; set; }
+        public int RoleId { get; set; }
+        public int RecordCount { get; set; }
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
+    }
 }

@@ -17,24 +17,19 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class DriverStoresController : ControllerBase
     {
-        private readonly ILogger<DriverStoresController> _logger;
         private readonly IMapper _mapper;
         private readonly IDriverStoresRepository _repository;
-      
 
-        public DriverStoresController(ILogger<DriverStoresController> logger,
-           IMapper mapper,
-           IDriverStoresRepository repository)
+        public DriverStoresController(IMapper mapper, IDriverStoresRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
 
         [HttpGet("Company/{CompanyId:guid}/{DriverId:guid}")]
-        public async Task<ActionResult> GetDriverStoresByCompanyId(Guid CompanyId,Guid DriverId)
+        public async Task<ActionResult> GetDriverStoresByCompanyId(Guid CompanyId, Guid DriverId)
         {
-            var result = await _repository.GetDriverStoresByCompanyIdAsync(DriverId,CompanyId);
+            var result = await _repository.GetDriverStoresByCompanyIdAsync(DriverId, CompanyId);
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
             var dtoList = _mapper.Map<List<DriverStoreDetailsDto>>(result.DriverStores);
@@ -43,7 +38,7 @@ namespace WiiTrakApi.Controllers
         }
 
         [HttpGet("SystemOwner/{SystemOwnerId:guid}/{DriverId:guid}")]
-        public async Task<ActionResult> GetDriverStoresBySystemOwnerId(Guid SystemOwnerId,Guid DriverId)
+        public async Task<ActionResult> GetDriverStoresBySystemOwnerId(Guid SystemOwnerId, Guid DriverId)
         {
             var result = await _repository.GetDriverStoresBySystemOwnerIdAsync(DriverId, SystemOwnerId);
 
@@ -59,8 +54,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.UpdateDriverStoresAsync(DriverStoreDetailsDto);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

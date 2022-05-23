@@ -13,15 +13,13 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class WorkOrderController : ControllerBase
     {
-        private readonly ILogger<WorkOrderController> _logger;
         private readonly IMapper _mapper;
         private readonly IWorkOrderRepository _repository;
         private readonly IDriverRepository _driverRepository;
         private readonly IStoreRepository _storeRepository;
 
-        public WorkOrderController(ILogger<WorkOrderController> logger, IMapper mapper, IWorkOrderRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
+        public WorkOrderController(IMapper mapper, IWorkOrderRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
             _driverRepository = driverRepository;
@@ -133,8 +131,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateWorkOrderAsync(workOrder);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<WorkOrderDto>(workOrder);
@@ -153,8 +151,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateWorkOrderAsync(result.WorkOrder);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
         [HttpDelete("{id}")]
@@ -163,8 +161,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.DeleteWorkOrderAsync(id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

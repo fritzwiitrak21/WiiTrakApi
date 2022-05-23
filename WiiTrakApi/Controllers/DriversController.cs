@@ -18,15 +18,11 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class DriversController : ControllerBase
     {
-        private readonly ILogger<DriversController> _logger;
         private readonly IMapper _mapper;
         private readonly IDriverRepository _repository;
 
-        public DriversController(ILogger<DriversController> logger,
-            IMapper mapper,
-            IDriverRepository repository)
+        public DriversController(IMapper mapper, IDriverRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -54,7 +50,7 @@ namespace WiiTrakApi.Controllers
         [HttpGet("Customer/{companyId:guid}")]
         public async Task<IActionResult> GetDriversByCustomerId(Guid companyId)
         {
-            var result = 
+            var result =
                 await _repository.GetDriversByConditionAsync(x => x.CompanyId == companyId);
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
@@ -104,8 +100,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateDriverAsync(driver);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<DriverDto>(driver);
@@ -125,8 +121,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateDriverAsync(result.Driver);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -136,8 +132,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.DeleteDriverAsync(id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
     }

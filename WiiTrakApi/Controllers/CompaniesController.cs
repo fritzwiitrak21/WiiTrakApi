@@ -13,15 +13,12 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CompaniesController : ControllerBase
     {
-        private ILogger<CompaniesController> _logger;
         private readonly IMapper _mapper;
         private readonly ICompanyRepository _repository;
 
-        public CompaniesController(ILogger<CompaniesController> logger,
-            IMapper mapper,
+        public CompaniesController(IMapper mapper,
             ICompanyRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }
@@ -49,7 +46,7 @@ namespace WiiTrakApi.Controllers
         [HttpGet("Company/{companyId:guid}")]
         public async Task<IActionResult> GetChildCompanies(Guid companyId)
         {
-            var result = 
+            var result =
                 await _repository.GetCompaniesByConditionAsync(x => x.ParentId == companyId);
 
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
@@ -104,20 +101,11 @@ namespace WiiTrakApi.Controllers
         {
             var company = _mapper.Map<CompanyModel>(companyCreation);
             company.CreatedAt = DateTime.UtcNow;
-           
-
-            //
-            //
-            // TODO get sysowner id from db
-            //
-            //
-            //company.SystemOwnerId = Guid.Parse("b3109973-ff0a-4f51-e8eb-08d9c2ef5353");
-
             var createResult = await _repository.CreateCompanyAsync(company);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<CompanyDto>(company);
@@ -137,8 +125,8 @@ namespace WiiTrakApi.Controllers
             var updateResult = await _repository.UpdateCompanyAsync(result.Company);
             if (updateResult.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
 
@@ -148,8 +136,8 @@ namespace WiiTrakApi.Controllers
             var result = await _repository.DeleteCompanyAsync(id);
             if (result.IsSuccess) return NoContent();
 
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
     }
 }

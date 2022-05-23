@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
@@ -13,15 +12,13 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class DeliveryTicketsController : ControllerBase
     {
-        private readonly ILogger<DeliveryTicketsController> _logger;
         private readonly IMapper _mapper;
         private readonly IDeliveryTicketRepository _repository;
         private readonly IDriverRepository _driverRepository;
         private readonly IStoreRepository _storeRepository;
 
-        public DeliveryTicketsController(ILogger<DeliveryTicketsController> logger, IMapper mapper, IDeliveryTicketRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
+        public DeliveryTicketsController(IMapper mapper, IDeliveryTicketRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
             _driverRepository = driverRepository;
@@ -33,7 +30,10 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetDeliveryTicket(Guid id)
         {
             var result = await _repository.GetDeliveryTicketByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dto = _mapper.Map<DeliveryTicketDto>(result.DeliveryTicket);
 
             // get store name and number
@@ -43,7 +43,13 @@ namespace WiiTrakApi.Controllers
             dto.DriverName = driverResult.Driver != null ? $"{ driverResult.Driver.FirstName } { driverResult.Driver.LastName }" : "";
             dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
             dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
-            
+            dto.TimezoneName = storeResult.Store != null ? $"{ storeResult.Store.TimezoneName }" : "";
+            var TimeDiff = storeResult.Store != null ? $"{ storeResult.Store.TimezoneDiff }" : "";
+            dto.TimezoneDiff = TimeDiff;
+            if (TimeDiff != "")
+            {
+                dto.TimezoneDateTime = dto.DeliveredAt.AddSeconds(Convert.ToDouble(TimeDiff));
+            }
             return Ok(dto);
         }
 
@@ -53,7 +59,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetAllDeliveryTicketsAsync();
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
 
             // get store name and number
@@ -76,7 +85,10 @@ namespace WiiTrakApi.Controllers
             var result = await _repository
                 .GetDeliveryTicketsByConditionAsync(x => x.DriverId == driverId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
 
             // get store name and number
@@ -94,6 +106,13 @@ namespace WiiTrakApi.Controllers
                 dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
                 dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
                 dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
+                dto.TimezoneName = storeResult.Store != null ? $"{ storeResult.Store.TimezoneName }" : "";
+                var TimeDiff = storeResult.Store != null ? $"{ storeResult.Store.TimezoneDiff }" : "";
+                dto.TimezoneDiff = TimeDiff;
+                if (TimeDiff != "")
+                {
+                    dto.TimezoneDateTime = dto.DeliveredAt.AddSeconds(Convert.ToDouble(TimeDiff));
+                }
             }
             dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
@@ -105,7 +124,10 @@ namespace WiiTrakApi.Controllers
             var result = await _repository
                 .GetDeliveryTicketsByConditionAsync(x => x.StoreId == storeId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
 
             // get store name and number
@@ -123,6 +145,13 @@ namespace WiiTrakApi.Controllers
                 dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
                 dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
                 dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
+                dto.TimezoneName = storeResult.Store != null ? $"{ storeResult.Store.TimezoneName }" : "";
+                var TimeDiff = storeResult.Store != null ? $"{ storeResult.Store.TimezoneDiff }" : "";
+                dto.TimezoneDiff = TimeDiff;
+                if (TimeDiff != "")
+                {
+                    dto.TimezoneDateTime = dto.DeliveredAt.AddSeconds(Convert.ToDouble(TimeDiff));
+                }
             }
             dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
@@ -134,7 +163,10 @@ namespace WiiTrakApi.Controllers
             var result = await _repository
                 .GetDeliveryTicketsByConditionAsync(x => x.ServiceProviderId == serviceProviderId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
 
             // get store name and number
@@ -157,7 +189,10 @@ namespace WiiTrakApi.Controllers
             var result = await _repository
                 .GetDeliveryTicketsByPrimaryIdAsync(Id, (Role)Role);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
             // get store name and number
             foreach (var dto in dtoList)
@@ -174,6 +209,13 @@ namespace WiiTrakApi.Controllers
                 dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
                 dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
                 dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
+                dto.TimezoneName = storeResult.Store != null ? $"{ storeResult.Store.TimezoneName }" : "";
+                var TimeDiff = storeResult.Store != null ? $"{ storeResult.Store.TimezoneDiff }" : "";
+                dto.TimezoneDiff = TimeDiff;
+                if (TimeDiff != "")
+                {
+                    dto.TimezoneDateTime = dto.DeliveredAt.AddSeconds(Convert.ToDouble(TimeDiff));
+                }
             }
             dtoList= dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
@@ -183,11 +225,44 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetDeliveryTicketSummaryById(Guid id)
         {
             var result = await _repository.GetDeliveryTicketSummaryByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             return Ok(result.DeliveryTicketSummary);
         }
-
-        [HttpPost]
+        [HttpGet("DeliveryTickets/{Id:guid}/{Role:int}/{RecordCount:int}")]
+        public async Task<IActionResult> GetDeliveryTicketsById(Guid Id, int Role,int RecordCount)
+        {
+            DateTime ToDate, FromDate;
+            if (RecordCount == 0)
+            {
+                ToDate = DateTime.UtcNow;
+                FromDate =Convert.ToDateTime("0001-01-01");
+            }
+            else
+            {
+                 ToDate = DateTime.UtcNow;
+                 FromDate = ToDate.AddDays(-Convert.ToDouble(RecordCount));
+            }
+            var result = await _repository.GetDeliveryTicketsById(Id,(Role)Role,FromDate.ToString(),ToDate.ToString());
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            return Ok(result.DeliveryTickets);
+        }
+       // [HttpPost("GetDeliveryTicketsByIdTest")]
+        //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
+        //{
+        //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
+        //    if (!result.IsSuccess)
+        //    {
+        //        return NotFound(result.ErrorMessage);
+        //    }
+        //    return Ok(result.DeliveryTickets); 
+        //}
+            [HttpPost]
         public async Task<ActionResult<DeliveryTicketDto>> CreateDeliveryTicket([FromBody] DeliveryTicketCreationDto deliveryTicketCreation)
         {
             var deliveryTicket = _mapper.Map<DeliveryTicketModel>(deliveryTicketCreation);
@@ -199,8 +274,8 @@ namespace WiiTrakApi.Controllers
             var createResult = await _repository.CreateDeliveryTicketAsync(deliveryTicket);
             if (!createResult.IsSuccess)
             {
-                ModelState.AddModelError("", $"Something went wrong when saving the record.");
-                return StatusCode(500, ModelState);
+                ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
             var dto = _mapper.Map<DeliveryTicketDto>(deliveryTicket);
@@ -212,26 +287,33 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetDeliveryTicketByIdAsync(id);
             var Delivereddate = result.DeliveryTicket.DeliveredAt;
-            if (!result.IsSuccess || result.DeliveryTicket is null) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess || result.DeliveryTicket is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             _mapper.Map(companyUpdate, result.DeliveryTicket);
             result.DeliveryTicket.UpdatedAt = DateTime.UtcNow;
             result.DeliveryTicket.DeliveredAt = Delivereddate;
 
             var updateResult = await _repository.UpdateDeliveryTicketAsync(result.DeliveryTicket);
-            if (updateResult.IsSuccess) return NoContent();
-
-            ModelState.AddModelError("", $"Something went wrong when updating the record.");
-            return StatusCode(500, ModelState);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDeliveryTicket(Guid id)
         {
             var result = await _repository.DeleteDeliveryTicketAsync(id);
-            if (result.IsSuccess) return NoContent();
-
-            ModelState.AddModelError("", $"Something went wrong when deleting the record.");
-            return StatusCode(500, ModelState);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
     }

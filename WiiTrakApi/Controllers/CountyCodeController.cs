@@ -12,13 +12,11 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CountyCodeController : ControllerBase
     {
-        private readonly ILogger<CountyCodeController> _logger;
         private readonly IMapper _mapper;
         private readonly ICountyCodeRepository _repository;
 
-        public CountyCodeController(ILogger<CountyCodeController> logger, IMapper mapper, ICountyCodeRepository repository)
+        public CountyCodeController( IMapper mapper, ICountyCodeRepository repository)
         {
-            _logger = logger;
             _mapper = mapper;
             _repository = repository;
         }

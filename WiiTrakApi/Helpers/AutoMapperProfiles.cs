@@ -69,6 +69,7 @@ namespace WiiTrakApi.Helpers
             CreateMap<DriverStoreDetailsDto, SpGetDriverAssignedStoresBySystemOwner>().ReverseMap();
             CreateMap<StoreDto, SpGetDriverAssignedStores>().ReverseMap();
             CreateMap<StoreDto, SPGetStoresBySystemOwnerId>().ReverseMap();
+            CreateMap<DeliveryTicketDto, SPGetDeliveryTicketsById>().ReverseMap();
             CreateMap<NotificationModel, NotificationDto>().ReverseMap();
             CreateMap<CountyCodeModel, CountyCodeDto>().ReverseMap();
 

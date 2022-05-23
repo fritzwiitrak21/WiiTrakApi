@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Cores;
-using WiiTrakApi.Services;
-using WiiTrakApi.Controllers;
 
 namespace WiiTrakApi.Repository
 {
@@ -23,7 +20,6 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-
                 var Users = await _dbContext.Users
                             .Select(x => x)
                             .AsNoTracking().ToListAsync();
@@ -43,11 +39,9 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-
                 var User = await _dbContext.Users
                             .AsNoTracking()
                             .FirstOrDefaultAsync(x => x.Id == Id);
-
 
                 if (User != null)
                 {
@@ -68,17 +62,11 @@ namespace WiiTrakApi.Repository
 
                 var Username = Core.Base64Decrypt(login.Username);
                 var Password = Core.Base64Decrypt(login.Password);
-
                 var EnPassword = Core.EncryptText(Password);
-                //var Users = await _dbContext.Users
-                //   .Where(x => x.Email == login.Username && x.Password == EnPassword && x.IsActive == true)
-                //   .AsNoTracking().ToListAsync();
 
                 var Users = await _dbContext.Users
                             .AsNoTracking()
-                            .FirstOrDefaultAsync(x => x.Email == Username && x.Password == EnPassword && x.IsActive == true);
-
-
+                            .FirstOrDefaultAsync(x => x.Email == Username && x.Password == EnPassword && x.IsActive );
 
                 if (Users != null)
                 {
@@ -96,8 +84,6 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-
-
                 var Users = await _dbContext.Users
                             .AsNoTracking()
                             .FirstOrDefaultAsync(x => x.Email == forgot.Username && x.IsActive == true);

@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.OData;
-using WiiTrakApi.Data;
 using WiiTrakApi.Helpers;
-using WiiTrakApi.Repository;
-using WiiTrakApi.Repository.Contracts;
 //using Hangfire;
 //using Hangfire.SqlServer;
 using System.Configuration;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
-using WiiTrakApi.DTOs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
