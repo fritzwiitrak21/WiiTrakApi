@@ -37,5 +37,8 @@ namespace WiiTrakApi.DTOs
         public TrackingDeviceDto? TrackingDevice { get; set; }
 
         public List<CartHistoryDto> CartHistory { get; set; }
+
+        public Guid DeviceId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

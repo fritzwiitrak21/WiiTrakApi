@@ -37,5 +37,8 @@ namespace WiiTrakApi.Models
 
         public List<CartHistoryModel> CartHistory { get; set; }
 
+        public Guid DeviceId { get; set; }
+        public bool IsActive { get; set; }
+
     }
 }

@@ -73,6 +73,7 @@ namespace WiiTrakApi.Data
             modelBuilder.Entity<SpGetNotification>().HasNoKey();
             modelBuilder.Entity<SPGetStoresBySystemOwnerId>().HasNoKey();
             modelBuilder.Entity<SpGetDriverAssignedStores>().HasNoKey();
+            modelBuilder.Entity<SPGetServiceBoardDetailsById>().HasNoKey();
 
             base.OnModelCreating(modelBuilder);
         }
@@ -104,7 +105,7 @@ namespace WiiTrakApi.Data
         public DbSet<SPGetStoresBySystemOwnerId> SPGetStoresBySystemOwnerId { get; set; }
         public DbSet<SPGetDeliveryTicketsById> SPGetDeliveryTicketsById { get; set; }
 
-        
+        public DbSet<SPGetServiceBoardDetailsById> SPGetServiceBoardDetailsById { get; set; }
 
     }
 }

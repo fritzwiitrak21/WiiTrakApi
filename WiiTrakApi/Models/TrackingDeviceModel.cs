@@ -37,5 +37,6 @@ namespace WiiTrakApi.Models
         public Guid SystemOwnerId { get; set; }
 
         public SystemOwnerModel? SystemOwner { get; set; }
+        public bool IsActive { get; set; }
     }
 }
