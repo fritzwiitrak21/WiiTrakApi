@@ -252,16 +252,26 @@ namespace WiiTrakApi.Controllers
             }
             return Ok(result.DeliveryTickets);
         }
-       // [HttpPost("GetDeliveryTicketsByIdTest")]
-        //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
-        //{
-        //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
-        //    if (!result.IsSuccess)
-        //    {
-        //        return NotFound(result.ErrorMessage);
-        //    }
-        //    return Ok(result.DeliveryTickets); 
-        //}
+        [HttpGet("ServiceBoard/{Id:guid}/{Role:int}")]
+        public async Task<IActionResult> GetServiceBoardDetailsById(Guid Id,int Role)
+        {
+            var result = await _repository.GetServiceBoardDetailsByRoleId(Id, (Role)Role);
+                 if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            return Ok(result.ServiceBoard);
+        }
+            // [HttpPost("GetDeliveryTicketsByIdTest")]
+            //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
+            //{
+            //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
+            //    if (!result.IsSuccess)
+            //    {
+            //        return NotFound(result.ErrorMessage);
+            //    }
+            //    return Ok(result.DeliveryTickets); 
+            //}
             [HttpPost]
         public async Task<ActionResult<DeliveryTicketDto>> CreateDeliveryTicket([FromBody] DeliveryTicketCreationDto deliveryTicketCreation)
         {

@@ -176,6 +176,33 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<SPGetServiceBoardDetailsById>? ServiceBoard, string? ErrorMessage)> GetServiceBoardDetailsByRoleId(Guid Id, Enums.Role role)
+        {
+            try
+            {
+                List<SqlParameter> parms;
+                string sqlquery = "Exec SPGetServiceBoardDetailsById @Id,@RoleId";
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =Id  },
+                    new SqlParameter { ParameterName = "@RoleId", Value =(int)role },
+
+                };
+
+                var ServiceBoard = await _dbContext.SPGetServiceBoardDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (ServiceBoard != null)
+                {
+                    return (true, ServiceBoard, null);
+                }
+                return (false, null, "No delivery  tickets found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+        
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateDeliveryTicketAsync(DeliveryTicketModel deliveryTicket)
         {
             try

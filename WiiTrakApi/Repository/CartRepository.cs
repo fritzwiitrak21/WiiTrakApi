@@ -122,7 +122,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 var driverStores = await _dbContext.DriverStores
-                    .Where(x => x.DriverId == driverId)
+                    .Where(x => x.DriverId == driverId && x.IsActive)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -131,9 +131,11 @@ namespace WiiTrakApi.Repository
                 foreach (var driverStore in driverStores)
                 {
                     var carts = await _dbContext.Carts
-                        .Where(x => x.StoreId == driverStore.StoreId && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
+                        .Where(x => x.StoreId == driverStore.StoreId && x.IsActive && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
                         .Include(x => x.Store)
+                        .Where(x=>x.Store.IsActive)
                         .Include(x => x.TrackingDevice)
+                        .Where(x => x.TrackingDevice.IsActive)
                         .AsNoTracking()
                         .ToListAsync();
 
