@@ -9,20 +9,19 @@ namespace WiiTrakApi.Repository
 {
     public class CartRepository : ICartRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext DbContext;
 
         public CartRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
         }
 
         public async Task<(bool IsSuccess, CartModel? Cart, string? ErrorMessage)> GetCartByIdAsync(Guid id)
         {
-            var cart = await _dbContext.Carts
+            var cart = await DbContext.Carts
                 .Include(x => x.TrackingDevice)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
-
             if (cart is not null)
             {
                 return (true, (CartModel)cart, null);
@@ -34,13 +33,12 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var carts = await _dbContext.Carts
+                var carts = await DbContext.Carts
                     .Include(x => x.TrackingDevice)
                     .Include(x => x.Store)
                     .Select(x => x)
                     .AsNoTracking()
                     .ToListAsync();
-
                 if (carts.Any())
                 {
                     return (true, carts, null);
@@ -57,18 +55,18 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var deliveryTicket = await _dbContext.DeliveryTickets
+                var deliveryTicket = await DbContext.DeliveryTickets
                     .Where(x => x.Id == deliveryTicketId)
                     .AsNoTracking()
                     .FirstOrDefaultAsync();
-                var cartHistory = await _dbContext.CartHistory
+                var cartHistory = await DbContext.CartHistory
                     .Where(x => x.DeliveryTicketId == deliveryTicketId)
                     .AsNoTracking()
                     .ToListAsync();
                 var carts = new List<CartModel>();
                 foreach(var cart in cartHistory)
                 {
-                    var _cart = await _dbContext.Carts
+                    var _cart = await DbContext.Carts
                         .Include(x => x.Store)
                         .Include(x => x.TrackingDevice)
                         .Where(x => x.Id == cart.CartId)
@@ -83,7 +81,6 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, carts, null);
                 }
-
                 return (false, null, "No carts found");
             }
             catch (Exception ex)
@@ -96,14 +93,13 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var carts = await _dbContext.Carts
+                var carts = await DbContext.Carts
                     .Include(x => x.Store)
-                    .Include(x => x.TrackingDevice)
-                    .Where(x => x.StoreId == storeId && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
+                    //.Include(x => x.TrackingDevice)
+                    .Where(x => x.StoreId == storeId) 
+                    //&& (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
                     .AsNoTracking()
                     .ToListAsync();
-
-
                 if (carts.Any())
                 {
                     return (true, carts, null);
@@ -121,16 +117,15 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var driverStores = await _dbContext.DriverStores
+                var driverStores = await DbContext.DriverStores
                     .Where(x => x.DriverId == driverId && x.IsActive)
                     .AsNoTracking()
                     .ToListAsync();
-
                 var cartList = new List<CartModel>();
 
                 foreach (var driverStore in driverStores)
                 {
-                    var carts = await _dbContext.Carts
+                    var carts = await DbContext.Carts
                         .Where(x => x.StoreId == driverStore.StoreId && x.IsActive && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
                         .Include(x => x.Store)
                         .Where(x=>x.Store.IsActive)
@@ -141,7 +136,6 @@ namespace WiiTrakApi.Repository
 
                     cartList.AddRange(carts);
                 }
-
                 if (cartList.Any())
                 {
                     return (true, cartList, null);
@@ -158,22 +152,18 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var corporateStores = await _dbContext.Stores.Where(x => x.CorporateId == corporateId).ToListAsync();
-
+                var corporateStores = await DbContext.Stores.Where(x => x.CorporateId == corporateId).ToListAsync();
                 var cartList = new List<CartModel>();
-
                 foreach (var store in corporateStores)
                 {
-                    var carts = await _dbContext.Carts
+                    var carts = await DbContext.Carts
                         .Where(x => x.StoreId == store.Id && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
                         .Include(x => x.Store)
                         .Include(x => x.TrackingDevice)
                         .AsNoTracking()
                         .ToListAsync();
-
                     cartList.AddRange(carts);
                 }
-
                 if (cartList.Any())
                 {
                     return (true, cartList, null);
@@ -190,22 +180,18 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var companyStores = await _dbContext.Stores.Where(x => x.CompanyId == companyId).ToListAsync();
-
+                var companyStores = await DbContext.Stores.Where(x => x.CompanyId == companyId).ToListAsync();
                 var cartList = new List<CartModel>();
-
                 foreach (var store in companyStores)
                 {
-                    var carts = await _dbContext.Carts
+                    var carts = await DbContext.Carts
                         .Where(x => x.StoreId == store.Id && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
                         .Include(x => x.Store)
                         .Include(x => x.TrackingDevice)
                         .AsNoTracking()
                         .ToListAsync();
-
                     cartList.AddRange(carts);
                 }
-
                 if (cartList.Any())
                 {
                     return (true, cartList, null);
@@ -222,13 +208,12 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var carts = await _dbContext.Carts
+                var carts = await DbContext.Carts
                     .Include(x => x.TrackingDevice)
                     .Where(expression)
                     .Select(x => x)
                     .AsNoTracking()
                     .ToListAsync();
-
                 if (carts.Any())
                 {
                     return (true, carts, null);
@@ -245,7 +230,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var exists = await _dbContext.Carts.AnyAsync(x => x.Id.Equals(id));
+                var exists = await DbContext.Carts.AnyAsync(x => x.Id.Equals(id));
                 return (true, exists, null);
             }
             catch (Exception ex)
@@ -258,8 +243,8 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                await _dbContext.Carts.AddAsync(cart);
-                await _dbContext.SaveChangesAsync();
+                await DbContext.Carts.AddAsync(cart);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -272,9 +257,9 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                cart.Status = CartStatus.PickedUp;//need to change for pahase 2
-                _dbContext.Carts.Update(cart);
-                await _dbContext.SaveChangesAsync();
+                //cart.Status = CartStatus.PickedUp;//need to change for pahase 2
+                DbContext.Carts.Update(cart);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -287,10 +272,10 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var recordToDelete = await _dbContext.Carts.FirstOrDefaultAsync(x => x.Id == id);
+                var recordToDelete = await DbContext.Carts.FirstOrDefaultAsync(x => x.Id == id);
                 if (recordToDelete is null) return (false, "Cart not found");
-                _dbContext.Carts.Remove(recordToDelete);
-                await _dbContext.SaveChangesAsync();
+                DbContext.Carts.Remove(recordToDelete);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -301,7 +286,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<bool> SaveAsync()
         {
-            return await _dbContext.SaveChangesAsync() >= 0;
+            return await DbContext.SaveChangesAsync() >= 0;
         }
     }
 }

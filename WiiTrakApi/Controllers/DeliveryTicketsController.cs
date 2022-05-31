@@ -183,43 +183,6 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
                
-        [HttpGet("DeliveryTickets/{Id:guid}/{Role:int}")]
-        public async Task<IActionResult> GetDeliveryTicketsByPrimaryId(Guid Id, int Role)
-        {
-            var result = await _repository
-                .GetDeliveryTicketsByPrimaryIdAsync(Id, (Role)Role);
-
-            if (!result.IsSuccess)
-            {
-                return NotFound(result.ErrorMessage);
-            }
-            var dtoList = _mapper.Map<List<DeliveryTicketDto>>(result.DeliveryTickets);
-            // get store name and number
-            foreach (var dto in dtoList)
-            {
-                var storeResult = await _storeRepository.GetStoreByIdAsync(dto.StoreId);
-                var driverResult = await _driverRepository.GetDriverByIdAsync(dto.DriverId);
-
-                dto.DriverName = driverResult.Driver != null ? $"{ driverResult.Driver.FirstName } { driverResult.Driver.LastName }" : "";
-                dto.DriverNumber = driverResult.Driver != null ?  driverResult.Driver.DriverNumber  : 0;
-                dto.StoreName = storeResult.Store != null ? $"{ storeResult.Store.StoreName }" : "";
-                dto.StoreNumber = storeResult.Store != null ? $"{ storeResult.Store.StoreNumber }" : "";
-                dto.StreetAddress1 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress1 }" : "";
-                dto.StreetAddress2 = storeResult.Store != null ? $"{ storeResult.Store.StreetAddress2 }" : "";
-                dto.City = storeResult.Store != null ? $"{ storeResult.Store.City}" : "";
-                dto.State = storeResult.Store != null ? $"{ storeResult.Store.State }" : "";
-                dto.PostalCode = storeResult.Store != null ? $"{ storeResult.Store.PostalCode}" : "";
-                dto.TimezoneName = storeResult.Store != null ? $"{ storeResult.Store.TimezoneName }" : "";
-                var TimeDiff = storeResult.Store != null ? $"{ storeResult.Store.TimezoneDiff }" : "";
-                dto.TimezoneDiff = TimeDiff;
-                if (TimeDiff != "")
-                {
-                    dto.TimezoneDateTime = dto.DeliveredAt.AddSeconds(Convert.ToDouble(TimeDiff));
-                }
-            }
-            dtoList= dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
-            return Ok(dtoList);
-        }
              
         [HttpGet("Summary/{id:guid}")]
         public async Task<IActionResult> GetDeliveryTicketSummaryById(Guid id)

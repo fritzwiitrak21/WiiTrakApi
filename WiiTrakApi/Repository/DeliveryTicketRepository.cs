@@ -117,37 +117,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<DeliveryTicketModel>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsByPrimaryIdAsync(Guid Id, Enums.Role role)
-        {
-            try
-            {
-                List<DeliveryTicketModel> list = new List<DeliveryTicketModel>();
-                string sqlquery = "Exec SpGetDeliveryTickets @Id,@Role";
-                List<SqlParameter> parms;
-
-
-                parms = new List<SqlParameter>
-                {
-                    new SqlParameter { ParameterName = "@Id", Value =Id  },
-                    new SqlParameter { ParameterName = "@Role", Value =(int)role }
-
-                };
-
-                list = await _dbContext.DeliveryTickets.FromSqlRaw<DeliveryTicketModel>(sqlquery, parms.ToArray()).ToListAsync();
-
-
-
-                if (list.Any())
-                {
-                    return (true, list, null);
-                }
-                return (false, null, "No delivery  tickets found");
-            }
-            catch (Exception ex)
-            {
-                return (false, null, ex.Message);
-            }
-        }
+        
         public async Task<(bool IsSuccess, List<SPGetDeliveryTicketsById>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsById(Guid Id, Enums.Role role, string FromDate, string ToDate)
         {
             try

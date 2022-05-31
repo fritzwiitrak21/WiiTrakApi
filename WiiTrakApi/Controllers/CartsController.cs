@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
@@ -158,7 +159,7 @@ namespace WiiTrakApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CartDto>> CreateCart([FromBody] CartCreationDto cartCreation)
-        {
+         {
             var cart = _mapper.Map<CartModel>(cartCreation);
             cart.CreatedAt = DateTime.UtcNow;
 
@@ -177,34 +178,42 @@ namespace WiiTrakApi.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCart(Guid id, CartUpdateDto cartUpdate)
         {
-            // update cart history
-            var cartHistory = _mapper.Map<CartHistoryModel>(cartUpdate.CartHistory);
-            cartHistory.CreatedAt = DateTime.Now;
-            await _cartHistoryRepository.CreateCartHistoryAsync(cartHistory);
+            try
+            {
+                if (cartUpdate.CartHistory.DriverId != Guid.Empty)
+                {
+                    //update cart history
+                    var cartHistory = _mapper.Map<CartHistoryModel>(cartUpdate.CartHistory);
+                    cartHistory.CreatedAt = DateTime.Now;
+                    await _cartHistoryRepository.CreateCartHistoryAsync(cartHistory);
+                }
+                var result = await _repository.GetCartByIdAsync(id);
+                var cart = result.Cart;
 
-            var result = await _repository.GetCartByIdAsync(id);
-            var cart = result.Cart;
-
-            if (!result.IsSuccess || cart is null) return NotFound(result.ErrorMessage);
+                if (!result.IsSuccess || cart is null) return NotFound(result.ErrorMessage);
 
 
-            cart.BarCode = cartUpdate.BarCode;
-            cart.Condition = cartUpdate.Condition;
-            cart.Status = cartUpdate.Status;
-            cart.DateManufactured = cartUpdate.DateManufactured;
-            cart.IsProvisioned = cartUpdate.IsProvisioned;
-            cart.ManufacturerName = cartUpdate.ManufacturerName;
-            cart.OrderedFrom = cartUpdate.OrderedFrom;
-            cart.PicUrl = cartUpdate.PicUrl;
-            cart.StoreId = cartUpdate.StoreId;
+                cart.BarCode = cartUpdate.BarCode;
+                cart.Condition = cartUpdate.Condition;
+                cart.Status = cartUpdate.Status;
+                cart.DateManufactured = cartUpdate.DateManufactured;
+                cart.IsProvisioned = cartUpdate.IsProvisioned;
+                cart.ManufacturerName = cartUpdate.ManufacturerName;
+                cart.CartNumber = cartUpdate.CartNumber;
+                cart.OrderedFrom = cartUpdate.OrderedFrom;
+                cart.PicUrl = cartUpdate.PicUrl;
+                cart.StoreId = cartUpdate.StoreId;
+                cart.UpdatedAt = DateTime.UtcNow;
 
-            cart.UpdatedAt = DateTime.UtcNow;
-
-            var updateResult = await _repository.UpdateCartAsync(cart);
-            if (updateResult.IsSuccess) return NoContent();
-
-            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
-            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+                var updateResult = await _repository.UpdateCartAsync(cart);
+                if (updateResult.IsSuccess) return NoContent();
+                ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+                return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
