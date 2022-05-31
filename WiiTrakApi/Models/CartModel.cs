@@ -25,8 +25,7 @@ namespace WiiTrakApi.Models
         public StoreModel? Store { get; set; }
         public TrackingDeviceModel? TrackingDevice { get; set; }
         public List<CartHistoryModel> CartHistory { get; set; }
-        public Guid DeviceId { get; set; }
-        public bool IsActive { get; set; }
+       
 
     }
 }
