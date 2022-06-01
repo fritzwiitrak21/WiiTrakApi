@@ -77,6 +77,10 @@ namespace WiiTrakApi.Helpers
             CreateMap<SimCardModel, SimCardCreationDto>().ReverseMap();
             CreateMap<SimCardModel, SimCardUpdateDto>().ReverseMap();
 
+            CreateMap<DevicesModel, DevicesDto>().ReverseMap();
+            CreateMap<DevicesModel, DeviceCreationDto>().ReverseMap();
+            CreateMap<DevicesModel, DeviceUpdateDto>().ReverseMap();
+
             CreateMap<NotificationDto, SpGetNotification>().ReverseMap();
         }
     }

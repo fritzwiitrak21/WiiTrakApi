@@ -76,6 +76,24 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
+        [HttpPut]
+        public async Task<IActionResult> GetCoordinatesOfDevices()
+        {
+
+            //var result = await _repository.GetTrackingDeviceByIdAsync(id);
+
+            //if (!result.IsSuccess || result.TrackingDevice is null) return NotFound(result.ErrorMessage);
+            //_mapper.Map(trackingDeviceUpdate, result.TrackingDevice);
+            //result.TrackingDevice.UpdatedAt = DateTime.UtcNow;
+
+
+            //var updateResult = await _repository.UpdateTrackingDeviceAsync(result.TrackingDevice);
+            //if (updateResult.IsSuccess) return NoContent();
+
+            //error
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+        }
 
 
         [HttpDelete("{id}")]

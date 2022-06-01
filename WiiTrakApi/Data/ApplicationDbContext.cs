@@ -98,6 +98,7 @@ namespace WiiTrakApi.Data
         public DbSet<NotificationModel> Notification { get; set; } = default!;
         public DbSet<CountyCodeModel> CountyCode { get; set; } = default!;
         public DbSet<SimCardModel> SimCards { get; set; } = default!;
+        public DbSet<DevicesModel> Devices { get; set; } = default!;
 
         public DbSet<SpGetDriverAssignedStoresByCompany> SpGetDriverAssignedStoresByCompany { get; set; }
         public DbSet<SpGetDriverAssignedStoresBySystemOwner> SpGetDriverAssignedStoresBySystemOwner { get; set; }

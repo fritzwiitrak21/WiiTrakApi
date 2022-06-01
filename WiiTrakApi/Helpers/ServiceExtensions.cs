@@ -56,6 +56,7 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ICountyCodeRepository, CountyCodeRepository>();
             services.AddScoped<ISimCardsRepository, SimCardsRepository>();
+            services.AddScoped<IDevicesRepository, DevicesRepository>();
         }
     }
 }

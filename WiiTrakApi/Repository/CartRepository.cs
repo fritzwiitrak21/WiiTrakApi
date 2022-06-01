@@ -126,7 +126,7 @@ namespace WiiTrakApi.Repository
                 foreach (var driverStore in driverStores)
                 {
                     var carts = await DbContext.Carts
-                        .Where(x => x.StoreId == driverStore.StoreId && x.IsActive && (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
+                        .Where(x => x.StoreId == driverStore.StoreId && x.IsActive && (x.Status != CartStatus.InsideGeofence))
                         .Include(x => x.Store)
                         .Where(x=>x.Store.IsActive)
                         .Include(x => x.TrackingDevice)
@@ -257,7 +257,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                //cart.Status = CartStatus.PickedUp;//need to change for pahase 2
+               
                 DbContext.Carts.Update(cart);
                 await DbContext.SaveChangesAsync();
                 return (true, null);
