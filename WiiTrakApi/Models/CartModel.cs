@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WiiTrakApi.Enums;
 namespace WiiTrakApi.Models
@@ -25,7 +29,8 @@ namespace WiiTrakApi.Models
         public StoreModel? Store { get; set; }
         public TrackingDeviceModel? TrackingDevice { get; set; }
         public List<CartHistoryModel> CartHistory { get; set; }
-       
 
+        public string IssueType { get; set; } = string.Empty;
+        public string IssueDescription { get; set; } = string.Empty;
     }
 }

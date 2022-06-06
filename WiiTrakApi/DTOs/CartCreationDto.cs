@@ -1,4 +1,8 @@
-﻿using WiiTrakApi.Enums;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakApi.Enums;
 namespace WiiTrakApi.DTOs
 {
     public record CartCreationDto
@@ -17,5 +21,7 @@ namespace WiiTrakApi.DTOs
         public Guid DeviceId { get; set; }
         public bool IsActive { get; set; }
         public TrackingDeviceDto? TrackingDevice { get; set; }
+        public string IssueType { get; set; } = string.Empty;
+        public string IssueDescription { get; set; } = string.Empty;
     }
 }

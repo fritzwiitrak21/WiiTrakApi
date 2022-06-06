@@ -101,7 +101,7 @@ namespace WiiTrakApi.Repository
             {
                 var deliveryTickets = await _dbContext.DeliveryTickets
                     .Where(expression)
-                    .Select(x => x).Where(x => x.IsActive == true)
+                    .Select(x => x).Where(x => x.IsActive )
                     .AsNoTracking()
                     .ToListAsync();
 

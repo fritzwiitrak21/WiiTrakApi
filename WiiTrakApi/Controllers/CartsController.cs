@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -107,12 +111,6 @@ namespace WiiTrakApi.Controllers
             if (!result.IsSuccess) return NotFound(result.ErrorMessage);
 
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
-
-            foreach (var cart in dtoList)
-            {
-                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
-            }
 
             return Ok(dtoList);
         }
