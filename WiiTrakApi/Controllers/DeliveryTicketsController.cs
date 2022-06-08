@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
@@ -24,7 +28,7 @@ namespace WiiTrakApi.Controllers
             _driverRepository = driverRepository;
             _storeRepository = storeRepository;
         }
-        
+
 
         [HttpGet("{id:guid}", Name = "GetDeliveryTicket")]
         public async Task<IActionResult> GetDeliveryTicket(Guid id)
@@ -182,8 +186,8 @@ namespace WiiTrakApi.Controllers
             dtoList = dtoList.OrderByDescending(x => x.DeliveryTicketNumber).ToList();
             return Ok(dtoList);
         }
-               
-             
+
+
         [HttpGet("Summary/{id:guid}")]
         public async Task<IActionResult> GetDeliveryTicketSummaryById(Guid id)
         {
@@ -195,20 +199,20 @@ namespace WiiTrakApi.Controllers
             return Ok(result.DeliveryTicketSummary);
         }
         [HttpGet("DeliveryTickets/{Id:guid}/{Role:int}/{RecordCount:int}")]
-        public async Task<IActionResult> GetDeliveryTicketsById(Guid Id, int Role,int RecordCount)
+        public async Task<IActionResult> GetDeliveryTicketsById(Guid Id, int Role, int RecordCount)
         {
             DateTime ToDate, FromDate;
             if (RecordCount == 0)
             {
                 ToDate = DateTime.UtcNow;
-                FromDate =Convert.ToDateTime("0001-01-01");
+                FromDate = Convert.ToDateTime("0001-01-01");
             }
             else
             {
-                 ToDate = DateTime.UtcNow;
-                 FromDate = ToDate.AddDays(-Convert.ToDouble(RecordCount));
+                ToDate = DateTime.UtcNow;
+                FromDate = ToDate.AddDays(-Convert.ToDouble(RecordCount));
             }
-            var result = await _repository.GetDeliveryTicketsById(Id,(Role)Role,FromDate.ToString(),ToDate.ToString());
+            var result = await _repository.GetDeliveryTicketsById(Id, (Role)Role, FromDate.ToString(), ToDate.ToString());
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -216,26 +220,26 @@ namespace WiiTrakApi.Controllers
             return Ok(result.DeliveryTickets);
         }
         [HttpGet("ServiceBoard/{Id:guid}/{Role:int}")]
-        public async Task<IActionResult> GetServiceBoardDetailsById(Guid Id,int Role)
+        public async Task<IActionResult> GetServiceBoardDetailsById(Guid Id, int Role)
         {
             var result = await _repository.GetServiceBoardDetailsByRoleId(Id, (Role)Role);
-                 if (!result.IsSuccess)
+            if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
             return Ok(result.ServiceBoard);
         }
-            // [HttpPost("GetDeliveryTicketsByIdTest")]
-            //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
-            //{
-            //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
-            //    if (!result.IsSuccess)
-            //    {
-            //        return NotFound(result.ErrorMessage);
-            //    }
-            //    return Ok(result.DeliveryTickets); 
-            //}
-            [HttpPost]
+        // [HttpPost("GetDeliveryTicketsByIdTest")]
+        //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
+        //{
+        //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
+        //    if (!result.IsSuccess)
+        //    {
+        //        return NotFound(result.ErrorMessage);
+        //    }
+        //    return Ok(result.DeliveryTickets); 
+        //}
+        [HttpPost]
         public async Task<ActionResult<DeliveryTicketDto>> CreateDeliveryTicket([FromBody] DeliveryTicketCreationDto deliveryTicketCreation)
         {
             var deliveryTicket = _mapper.Map<DeliveryTicketModel>(deliveryTicketCreation);

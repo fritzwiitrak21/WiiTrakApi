@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
@@ -8,7 +12,7 @@ using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Repository
 {
-    public class CartHistoryRepository: ICartHistoryRepository
+    public class CartHistoryRepository : ICartHistoryRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -173,7 +177,19 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                _dbContext.CartHistory.Update(cartHistory);
+                if ((_dbContext.CartHistory.Any(x => x.DeliveryTicketId == cartHistory.DeliveryTicketId && x.DriverId == cartHistory.DriverId && x.CartId==cartHistory.CartId)) && cartHistory.DeliveryTicketId!=Guid.Empty)
+                {
+                    var cart=_dbContext.CartHistory.Where(x => x.DeliveryTicketId == cartHistory.DeliveryTicketId && x.DriverId == cartHistory.DriverId && x.CartId == cartHistory.CartId).FirstOrDefault();
+                    if (cart != null)
+                    {
+                        cartHistory.Id = cart.Id;
+                    }
+                    _dbContext.CartHistory.Update(cartHistory);
+                }
+                else
+                {
+                    await _dbContext.CartHistory.AddAsync(cartHistory);
+                }
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }
@@ -188,7 +204,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.CartHistory.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Cart history not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Cart history not found");
+                }
                 _dbContext.CartHistory.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -200,7 +219,7 @@ namespace WiiTrakApi.Repository
         }
 
         public async Task<bool> SaveAsync()
-{
+        {
             return await _dbContext.SaveChangesAsync() >= 0;
         }
     }

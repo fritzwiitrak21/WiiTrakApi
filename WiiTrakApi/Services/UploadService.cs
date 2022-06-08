@@ -1,4 +1,8 @@
-﻿using Azure.Storage.Blobs.Models;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using WiiTrakApi.Services.Contracts;
 

@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Enums;
@@ -133,7 +137,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Technicians.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Technician not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Technician not found");
+                }
                 _dbContext.Technicians.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

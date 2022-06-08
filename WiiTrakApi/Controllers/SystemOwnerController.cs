@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.OData.Query;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using WiiTrakApi.DTOs;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Controllers

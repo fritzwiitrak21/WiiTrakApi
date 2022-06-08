@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Cores;
@@ -86,7 +90,7 @@ namespace WiiTrakApi.Repository
 
                 //var corporations = companyCorporates.Select(x => x.Corporate).ToList();
 
-                string sqlquery = "Exec SpGetCorporatesByCompanyId @CompanyId";
+                const string sqlquery = "Exec SpGetCorporatesByCompanyId @CompanyId";
 
                 List<SqlParameter> parms;
 
@@ -118,7 +122,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpGetCorporatesBySystemOwnerId @SystemOwnerId";
+                const string sqlquery = "Exec SpGetCorporatesBySystemOwnerId @SystemOwnerId";
 
                 List<SqlParameter> parms;
                 parms = new List<SqlParameter>
@@ -271,7 +275,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 #region Update corporate details to users table
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -301,7 +305,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Corporates.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Corporate not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Corporate not found");
+                }
                 _dbContext.Corporates.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

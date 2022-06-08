@@ -2,14 +2,11 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
-using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
-using WiiTrakApi.Repository;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Controllers
@@ -182,8 +179,8 @@ namespace WiiTrakApi.Controllers
                 {
                     //update cart history
                     var cartHistory = _mapper.Map<CartHistoryModel>(cartUpdate.CartHistory);
-                    cartHistory.CreatedAt = DateTime.Now;
-                    await _cartHistoryRepository.CreateCartHistoryAsync(cartHistory);
+                    cartHistory.CreatedAt = DateTime.UtcNow;
+                    await _cartHistoryRepository.UpdateCartHistoryAsync(cartHistory);
                 }
                 var result = await _repository.GetCartByIdAsync(id);
                 var cart = result.Cart;
@@ -202,6 +199,8 @@ namespace WiiTrakApi.Controllers
                 cart.PicUrl = cartUpdate.PicUrl;
                 cart.StoreId = cartUpdate.StoreId;
                 cart.UpdatedAt = DateTime.UtcNow;
+                cart.IssueType = cartUpdate.IssueType;
+                cart.IssueDescription = cartUpdate.IssueDescription;
 
                 var updateResult = await _repository.UpdateCartAsync(cart);
                 if (updateResult.IsSuccess) return NoContent();

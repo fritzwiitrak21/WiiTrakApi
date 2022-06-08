@@ -28,7 +28,11 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> StoreExistsAsync(Guid id);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> CreateStoreAsync(StoreModel store);
+        Task<(bool IsSuccess, string? ErrorMessage)> CreateStoreAsync(StoreModel store);/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+
 
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreAsync(StoreModel store);
 

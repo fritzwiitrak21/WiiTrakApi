@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
@@ -118,7 +122,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.ServiceProviders.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "ServiceProvider not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "ServiceProvider not found");
+                }
                 _dbContext.ServiceProviders.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

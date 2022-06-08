@@ -1,4 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
@@ -34,7 +38,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, List<SpGetNotification>? Notification, string? ErrorMessage)> GetNotificationAsync(Guid Id)
         {
-            string sqlquery = "Exec SpGetNotification @Id";
+            const string sqlquery = "Exec SpGetNotification @Id";
 
             List<SqlParameter> parms;
 
@@ -70,7 +74,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpUpdateNotifiedTime @Id";
+                const string sqlquery = "Exec SpUpdateNotifiedTime @Id";
 
                 List<SqlParameter> parms;
 

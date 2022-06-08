@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -78,13 +82,10 @@ namespace WiiTrakApi.Repository
                 var Password = Core.Base64Decrypt(login.Password);
 
                 var EnPassword = Core.EncryptText(Password);
-                //var Users = await _dbContext.Users
-                //   .Where(x => x.Email == login.Username && x.Password == EnPassword && x.IsActive == true)
-                //   .AsNoTracking().ToListAsync();
-
+                
                 var Users = await _dbContext.Users
                             .AsNoTracking()
-                            .FirstOrDefaultAsync(x => x.Email == Username && x.Password == EnPassword && x.IsActive == true);
+                            .FirstOrDefaultAsync(x => x.Email == Username && x.Password == EnPassword && x.IsActive );
 
 
 

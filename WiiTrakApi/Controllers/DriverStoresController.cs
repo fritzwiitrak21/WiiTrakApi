@@ -1,15 +1,15 @@
-﻿using AutoMapper;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Cores;
-using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace WiiTrakApi.Controllers
 {

@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Enums;
@@ -273,7 +277,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await DbContext.Carts.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Cart not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Cart not found");
+                }
                 DbContext.Carts.Remove(recordToDelete);
                 await DbContext.SaveChangesAsync();
                 return (true, null);

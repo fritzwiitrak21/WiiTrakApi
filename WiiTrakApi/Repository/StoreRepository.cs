@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
@@ -63,7 +67,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpGetDriverAssignedStores @DriverId";
+                const string sqlquery = "Exec SpGetDriverAssignedStores @DriverId";
 
                 List<SqlParameter> parms;
 
@@ -435,7 +439,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SPGetStoresBySystemOwnerId @SystemownerId";
+                const string sqlquery = "Exec SPGetStoresBySystemOwnerId @SystemownerId";
 
                 List<SqlParameter> parms;
 
@@ -520,7 +524,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 #region Update store details to users table
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -562,7 +566,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Stores.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Store not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Store not found");
+                }
                 _dbContext.Stores.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -609,7 +616,7 @@ namespace WiiTrakApi.Repository
 
                         {
 
-                            string geometry_id = dsResult.Tables["geometry"].Select("result_id = " + row["result_id"].ToString())[0]["geometry_id"].ToString();
+                            string geometry_id = dsResult.Tables["geometry"].Select("result_id = " + row["result_id"])[0]["geometry_id"].ToString();
 
                             DataRow location = dsResult.Tables["location"].Select("geometry_id = " + geometry_id)[0];
 

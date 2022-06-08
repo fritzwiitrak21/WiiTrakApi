@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;

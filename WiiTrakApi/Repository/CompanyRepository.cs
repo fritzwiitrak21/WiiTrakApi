@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -93,7 +97,7 @@ namespace WiiTrakApi.Repository
             try
             {
               
-                string sqlquery = "Exec SpGetCompaniesByCorporateId @CorporateId";
+                const string sqlquery = "Exec SpGetCompaniesByCorporateId @CorporateId";
 
                 List<SqlParameter> parms;
 
@@ -263,7 +267,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 #region Update company details to users table
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -293,7 +297,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Companies.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Customer not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Customer not found");
+                }
                 _dbContext.Companies.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

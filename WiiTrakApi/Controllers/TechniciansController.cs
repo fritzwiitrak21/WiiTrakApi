@@ -1,14 +1,13 @@
-﻿using System;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
-using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;

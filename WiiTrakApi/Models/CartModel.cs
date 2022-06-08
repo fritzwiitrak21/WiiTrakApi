@@ -5,6 +5,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WiiTrakApi.Enums;
+using WiiTrakApi.Cores;
+
 namespace WiiTrakApi.Models
 {
     [Table(name: "Carts")]
@@ -19,7 +21,7 @@ namespace WiiTrakApi.Models
         public CartStatus Status { get; set; }
         public string PicUrl { get; set; } = string.Empty;
         public bool IsProvisioned { get; set; }
-        // TODO research best way to store barcode
+        
         [MaxLength(256)]
         public string BarCode { get; set; } = string.Empty;    
         [ForeignKey(nameof(StoreModel))]

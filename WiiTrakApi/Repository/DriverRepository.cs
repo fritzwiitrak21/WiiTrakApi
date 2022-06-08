@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -80,7 +84,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 var drivers = new List<DriverModel>();
-                string sqlquery = "Exec SpGetDriversBySystemOwner @Id";
+                const string sqlquery = "Exec SpGetDriversBySystemOwner @Id";
 
                 List<SqlParameter> parms;
 
@@ -171,7 +175,7 @@ namespace WiiTrakApi.Repository
                     isactive = true;
                 }
 
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -203,7 +207,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Drivers.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Driver not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Driver not found");
+                }
                 _dbContext.Drivers.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

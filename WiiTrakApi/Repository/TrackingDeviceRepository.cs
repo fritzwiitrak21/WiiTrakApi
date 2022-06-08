@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
@@ -118,7 +122,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.TrackingDevices.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Tracking Device not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Tracking Device not found");
+                }
                 _dbContext.TrackingDevices.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

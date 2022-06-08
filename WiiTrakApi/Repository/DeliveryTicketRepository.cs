@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
@@ -123,7 +127,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 List<SqlParameter> parms;
-                string sqlquery = "Exec SPGetDeliveryTicketsById @Id,@RoleId,@FromDate,@ToDate";
+                const string sqlquery = "Exec SPGetDeliveryTicketsById @Id,@RoleId,@FromDate,@ToDate";
                 parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@Id", Value =Id  },
@@ -151,7 +155,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 List<SqlParameter> parms;
-                string sqlquery = "Exec SPGetServiceBoardDetailsById @Id,@RoleId";
+                const string sqlquery = "Exec SPGetServiceBoardDetailsById @Id,@RoleId";
                 parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@Id", Value =Id  },
@@ -202,7 +206,6 @@ namespace WiiTrakApi.Repository
                  .AsNoTracking()
                  .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
                 deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
-                deliveryTicket.IsActive = true; 
                 _dbContext.DeliveryTickets.Update(deliveryTicket);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -218,7 +221,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.DeliveryTickets.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Delivery ticket not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Delivery ticket not found");
+                }
                 _dbContext.DeliveryTickets.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

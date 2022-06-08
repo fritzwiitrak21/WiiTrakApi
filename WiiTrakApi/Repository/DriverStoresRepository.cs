@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using WiiTrakApi.Data;
 using WiiTrakApi.Repository.Contracts;
@@ -19,7 +23,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpGetDriverAssignedStoresByCompany @DriverId,@CompanyId";
+                const string sqlquery = "Exec SpGetDriverAssignedStoresByCompany @DriverId,@CompanyId";
 
                 List<SqlParameter> parms;
 
@@ -46,7 +50,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpGetDriverAssignedStoresBySystemOwner @DriverId,@SystemOwnerId";
+                const string sqlquery = "Exec SpGetDriverAssignedStoresBySystemOwner @DriverId,@SystemOwnerId";
 
                 List<SqlParameter> parms;
 
@@ -74,7 +78,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpAssignUnAssignDrivers @DriverId,@StoreId,@IsActive,@AssignedBy";
+                const string sqlquery = "Exec SpAssignUnAssignDrivers @DriverId,@StoreId,@IsActive,@AssignedBy";
 
                 List<SqlParameter> parms;
 

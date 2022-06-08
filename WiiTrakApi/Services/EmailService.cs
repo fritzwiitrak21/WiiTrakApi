@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using WiiTrakApi.Services.Contracts;
