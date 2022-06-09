@@ -56,7 +56,10 @@ namespace WiiTrakApi.Controllers
         {
             var result = await _repository.GetAllCartsAsync();
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
             return Ok(dtoList);
         }
@@ -67,8 +70,30 @@ namespace WiiTrakApi.Controllers
             // Returns carts with outside geofence and picked up statuses
             var result = await _repository.GetCartsByDeliveryTicketIdAsync(deliveryTicketId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
 
+
+            foreach (var cart in dtoList)
+            {
+                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
+            }
+
+            return Ok(dtoList);
+        }
+        [HttpGet("CartHistory/{deliveryTicketId:guid}")]
+        public async Task<IActionResult> GetCartHistoryByDeliveryTicketId(Guid deliveryTicketId)
+        {
+            // Returns carts with outside geofence and picked up statuses
+            var result = await _repository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicketId);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
 
 
@@ -86,8 +111,10 @@ namespace WiiTrakApi.Controllers
             // Returns carts with outside geofence and picked up statuses
             var result = await _repository.GetCartsByStoreIdAsync(storeId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
 
 
@@ -105,8 +132,10 @@ namespace WiiTrakApi.Controllers
             // Returns carts with outside geofence and picked up statuses
             var result = await _repository.GetCartsByDriverIdAsync(driverId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
 
             return Ok(dtoList);
@@ -119,8 +148,10 @@ namespace WiiTrakApi.Controllers
             // Returns carts with outside geofence and picked up statuses
             var result = await _repository.GetCartsByCorporateIdAsync(corporateId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
 
 

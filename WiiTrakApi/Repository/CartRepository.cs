@@ -8,6 +8,8 @@ using WiiTrakApi.Data;
 using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
+using Microsoft.Data.SqlClient;
+using WiiTrakApi.SPModels;
 
 namespace WiiTrakApi.Repository
 {
@@ -92,7 +94,31 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<SPGetCartsDetailsByDeliveryTicketId>? Carts, string? ErrorMessage)> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId)
+        {
+            try
+            {
+                List<SqlParameter> parms;
+                const string sqlquery = "Exec SPGetCartsDetailsByDeliveryTicketId @DeliveryTicketId";
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@DeliveryTicketId", Value =deliveryTicketId  }
 
+                };
+
+                var Carts = await DbContext.SPGetCartsDetailsByDeliveryTicketId.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (Carts != null)
+                {
+                    return (true, Carts, null);
+                }
+                return (false, null, "No Carts");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid storeId)
         {
             try
@@ -102,7 +128,7 @@ namespace WiiTrakApi.Repository
                     //.Include(x => x.TrackingDevice)
                     .Where(x => x.StoreId == storeId) 
                     //&& (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
-                    .AsNoTracking()
+                    .AsNoTracking().OrderByDescending(x => x.CreatedAt)
                     .ToListAsync();
                 if (carts.Any())
                 {

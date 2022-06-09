@@ -28,7 +28,10 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetAllDeviceDetails()
         {
             var result = await _repository.GetAllDeviceDetailsAsync();
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtolist = _mapper.Map<List<DevicesDto>>(result.DeviceList);
             return Ok(dtolist);
         }
@@ -37,13 +40,16 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetDeviceById(Guid id)
         {
             var result = await _repository.GetDeviceByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dto = _mapper.Map<DevicesDto>(result.DeviceList);
             return Ok(dto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<DevicesDto>> CreateDevice([FromBody] DeviceCreationDto DeviceCreation)
+        public async Task<ActionResult<DevicesDto>> CreateDevice([FromBody] DevicesDto DeviceCreation)
         {
             var Device = _mapper.Map<DevicesModel>(DeviceCreation);
             Device.CreatedAt = DateTime.UtcNow;
@@ -58,17 +64,22 @@ namespace WiiTrakApi.Controllers
             return CreatedAtRoute(nameof(GetDeviceById), new { id = dto.Id }, dto);
         }
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateDevice(Guid id, DeviceUpdateDto DeviceUpdate)
+        public async Task<IActionResult> UpdateDevice(Guid id, DevicesDto DeviceUpdate)
         {
             var result = await _repository.GetDeviceByIdAsync(id);
 
-            if (!result.IsSuccess || result.DeviceList is null) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess || result.DeviceList is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             _mapper.Map(DeviceUpdate, result.DeviceList);
             result.DeviceList.UpdatedAt = DateTime.UtcNow;
 
             var updateResult = await _repository.UpdateDeviceAsync(result.DeviceList);
-            if (updateResult.IsSuccess) return NoContent();
-
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

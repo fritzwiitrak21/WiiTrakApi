@@ -68,24 +68,20 @@ namespace WiiTrakApi.Helpers
             CreateMap<UsersModel, UserDto>().ReverseMap();
             CreateMap<DriverStoreModel, DriverStoreDto>().ReverseMap();
             CreateMap<DriverStoreModel, DriverStoreDetailsDto>().ReverseMap();
+       
+            CreateMap<NotificationModel, NotificationDto>().ReverseMap();
+            CreateMap<CountyCodeModel, CountyCodeDto>().ReverseMap();
+            CreateMap<SimCardModel, SimCardsDto>().ReverseMap();
+            CreateMap<DevicesModel, DevicesDto>().ReverseMap();
 
+            CreateMap<NotificationDto, SpGetNotification>().ReverseMap();
+            CreateMap<CartDto, SPGetCartsDetailsByDeliveryTicketId>().ReverseMap();
             CreateMap<DriverStoreDetailsDto, SpGetDriverAssignedStoresByCompany>().ReverseMap();
             CreateMap<DriverStoreDetailsDto, SpGetDriverAssignedStoresBySystemOwner>().ReverseMap();
             CreateMap<StoreDto, SpGetDriverAssignedStores>().ReverseMap();
             CreateMap<StoreDto, SPGetStoresBySystemOwnerId>().ReverseMap();
             CreateMap<DeliveryTicketDto, SPGetDeliveryTicketsById>().ReverseMap();
-            CreateMap<ServiceBoardDto, SPGetServiceBoardDetailsById>().ReverseMap(); 
-            CreateMap<NotificationModel, NotificationDto>().ReverseMap();
-            CreateMap<CountyCodeModel, CountyCodeDto>().ReverseMap();
-            CreateMap<SimCardModel, SimCardsDto>().ReverseMap();
-            CreateMap<SimCardModel, SimCardCreationDto>().ReverseMap();
-            CreateMap<SimCardModel, SimCardUpdateDto>().ReverseMap();
-
-            CreateMap<DevicesModel, DevicesDto>().ReverseMap();
-            CreateMap<DevicesModel, DeviceCreationDto>().ReverseMap();
-            CreateMap<DevicesModel, DeviceUpdateDto>().ReverseMap();
-
-            CreateMap<NotificationDto, SpGetNotification>().ReverseMap();
+            CreateMap<ServiceBoardDto, SPGetServiceBoardDetailsById>().ReverseMap();
         }
     }
 }
