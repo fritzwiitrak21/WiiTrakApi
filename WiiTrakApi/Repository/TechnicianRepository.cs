@@ -91,10 +91,17 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateTechnicianAsync(TechnicianModel technician)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateTechnicianAsync(TechnicianModel technician, int RoleId)
         {
             try
             {
+                if (RoleId == 3)
+                {
+                    var CompanyDetails = await DbContext.Companies
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == technician.CompanyId);
+                    technician.SystemOwnerId = CompanyDetails.SystemOwnerId;
+                }
                 await DbContext.Technicians.AddAsync(technician);
 
                 #region Adding Technician details to users table
@@ -116,16 +123,23 @@ namespace WiiTrakApi.Repository
                 await DbContext.SaveChangesAsync();
                 return (true, null);
             }
-            catch (Exception ex)
+             catch (Exception ex)
             {
                 return (false, ex.Message);
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateTechnicianAsync(TechnicianModel technician)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateTechnicianAsync(TechnicianModel technician, int RoleId)
         {
             try
             {
+                if (RoleId == 3)
+                {
+                    var CompanyDetails = await DbContext.Companies
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == technician.CompanyId);
+                    technician.SystemOwnerId = CompanyDetails.SystemOwnerId;
+                }
                 DbContext.Technicians.Update(technician);
                 #region Update Technician details to users table
 

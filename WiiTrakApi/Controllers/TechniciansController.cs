@@ -42,7 +42,6 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetAllTechnicians()
         {
             var result = await Repository.GetAllTechniciansAsync();
-
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -52,46 +51,40 @@ namespace WiiTrakApi.Controllers
         }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<TechnicianDto>> CreateTechnician([FromBody] TechnicianCreationDto TechnicianCreation)
+        [HttpPost("{roleid:int}")]
+        public async Task<ActionResult<TechnicianDto>> CreateTechnician([FromBody] TechnicianCreationDto TechnicianCreation, int RoleId)
         {
             var technician = Mapper.Map<TechnicianModel>(TechnicianCreation);
             technician.CreatedAt = DateTime.UtcNow;
-
-            var createResult = await Repository.CreateTechnicianAsync(technician);
+            var createResult = await Repository.CreateTechnicianAsync(technician, RoleId);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-
             var dto = Mapper.Map<TechnicianDto>(technician);
             return CreatedAtRoute(nameof(GetTechnician), new { id = dto.Id }, dto);
         }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateTechnician(Guid id, TechnicianUpdateDto TechnicianUpdate)
+        [HttpPut("{id:guid}/{roleid:int}")]
+        public async Task<IActionResult> UpdateTechnician(Guid id, TechnicianUpdateDto TechnicianUpdate, int RoleId)
         {
             var result = await Repository.GetTechnicianByIdAsync(id);
-
             if (!result.IsSuccess || result.Technician is null)
             {
                 return NotFound(result.ErrorMessage);
             }
             Mapper.Map(TechnicianUpdate, result.Technician);
             result.Technician.UpdatedAt = DateTime.UtcNow;
-
-            var updateResult = await Repository.UpdateTechnicianAsync(result.Technician);
+            var updateResult = await Repository.UpdateTechnicianAsync(result.Technician, RoleId);
             if (updateResult.IsSuccess)
             {
                 return NoContent();
             }
-
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTechnician(Guid id)
@@ -101,7 +94,6 @@ namespace WiiTrakApi.Controllers
             {
                 return NoContent();
             }
-
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

@@ -14,22 +14,25 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CountyCodeController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ICountyCodeRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly ICountyCodeRepository Repository;
 
         public CountyCodeController( IMapper mapper, ICountyCodeRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
 
         [HttpGet]
         [EnableQuery]
         public async Task<IActionResult> GetCountyList()
         {
-            var result = await _repository.GetCountyListAsync();
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtolist = _mapper.Map<List<CountyCodeDto>>(result.CountyList);
+            var result = await Repository.GetCountyListAsync();
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtolist = Mapper.Map<List<CountyCodeDto>>(result.CountyList);
             return Ok(dtolist);
         }
     }

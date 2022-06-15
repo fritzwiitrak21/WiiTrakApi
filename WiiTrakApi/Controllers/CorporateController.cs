@@ -15,21 +15,24 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CorporateController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ICorporateRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly ICorporateRepository Repository;
 
         public CorporateController(IMapper mapper, ICorporateRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
 
         [HttpGet("{id:guid}", Name = "GetCorporate")]
         public async Task<IActionResult> GetCorporate(Guid id)
         {
-            var result = await _repository.GetCorporateByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dto = _mapper.Map<CorporateDto>(result.Corporate);
+            var result = await Repository.GetCorporateByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<CorporateDto>(result.Corporate);
             return Ok(dto);
         }
 
@@ -37,10 +40,12 @@ namespace WiiTrakApi.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetAllCorporates()
         {
-            var result = await _repository.GetAllCorporatesAsync();
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CorporateDto>>(result.Corporates);
+            var result = await Repository.GetAllCorporatesAsync();
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CorporateDto>>(result.Corporates);
             return Ok(dtoList);
         }
 
@@ -48,9 +53,11 @@ namespace WiiTrakApi.Controllers
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetCorporateReport(Guid id)
         {
-            var result = await _repository.GetCorporateReportById(id);
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var result = await Repository.GetCorporateReportById(id);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var reportDto = result.Report;
             return Ok(reportDto);
         }
@@ -58,41 +65,41 @@ namespace WiiTrakApi.Controllers
         [HttpGet("company/{companyId:guid}")]
         public async Task<IActionResult> GetCorporatesByCompanyId(Guid companyId)
         {
-            var result = await _repository.GetCorporatesByCompanyIdAsync(companyId);
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CorporateDto>>(result.Corporates);
+            var result = await Repository.GetCorporatesByCompanyIdAsync(companyId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CorporateDto>>(result.Corporates);
             return Ok(dtoList);
         }
 
         [HttpGet("SystemOwner/{SystemOwnerId:guid}")]
         public async Task<IActionResult> GetCorporatesBySystemOwnerId(Guid SystemOwnerId)
         {
-            var result = await _repository.GetCorporatesBySystemOwnerIdAsync(SystemOwnerId);
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CorporateDto>>(result.Corporates);
+            var result = await Repository.GetCorporatesBySystemOwnerIdAsync(SystemOwnerId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CorporateDto>>(result.Corporates);
             return Ok(dtoList);
         }
-
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("{companyid:guid}/{roleid:int}")]
         public async Task<ActionResult<CorporateDto>> CreateCorporate(Guid CompanyId, int RoleId,[FromBody] CorporateCreationDto corporateCreation)
         {
-            var corporate = _mapper.Map<CorporateModel>(corporateCreation);
+            var corporate = Mapper.Map<CorporateModel>(corporateCreation);
             corporate.CreatedAt = DateTime.UtcNow;
-
            //TODO company id
-
-            var createResult = await _repository.CreateCorporateAsync(corporate,CompanyId,RoleId);
+            var createResult = await Repository.CreateCorporateAsync(corporate,CompanyId,RoleId);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-
-            var dto = _mapper.Map<CorporateDto>(corporate);
+            var dto = Mapper.Map<CorporateDto>(corporate);
             return CreatedAtRoute(nameof(GetCorporate), new { id = dto.Id }, dto);
         }
 
@@ -100,26 +107,30 @@ namespace WiiTrakApi.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCorporate(Guid id, CorporateUpdateDto corporateUpdate)
         {
-            var result = await _repository.GetCorporateByIdAsync(id);
-
-            if (!result.IsSuccess || result.Corporate is null) return NotFound(result.ErrorMessage);
-            _mapper.Map(corporateUpdate, result.Corporate);
+            var result = await Repository.GetCorporateByIdAsync(id);
+            if (!result.IsSuccess || result.Corporate is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            Mapper.Map(corporateUpdate, result.Corporate);
             result.Corporate.UpdatedAt = DateTime.UtcNow;
-
-            var updateResult = await _repository.UpdateCorporateAsync(result.Corporate);
-            if (updateResult.IsSuccess) return NoContent();
-
+            var updateResult = await Repository.UpdateCorporateAsync(result.Corporate);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCorporate(Guid id)
         {
-            var result = await _repository.DeleteCorporateAsync(id);
-            if (result.IsSuccess) return NoContent();
-
+            var result = await Repository.DeleteCorporateAsync(id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

@@ -15,9 +15,9 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ICartRepository _repository;
-        private readonly ICartHistoryRepository _cartHistoryRepository;
+        private readonly IMapper Mapper;
+        private readonly ICartRepository Repository;
+        private readonly ICartHistoryRepository CartHistoryRepository;
 
         string[] _cartImgUrls = new[]
         {
@@ -31,22 +31,22 @@ namespace WiiTrakApi.Controllers
         static Random _randomizer = new Random();
 
         public CartsController(IMapper mapper,
-            ICartRepository repository, ICartHistoryRepository cartHistoryRepository)
+            ICartRepository repository, ICartHistoryRepository Carthistoryrepository)
         {
-            _mapper = mapper;
-            _repository = repository;
-            _cartHistoryRepository = cartHistoryRepository;
+            Mapper = mapper;
+            Repository = repository;
+            CartHistoryRepository = Carthistoryrepository;
         }
 
         [HttpGet("{id:guid}", Name = "GetCart")]
         public async Task<IActionResult> GetCart(Guid id)
         {
-            var result = await _repository.GetCartByIdAsync(id);
+            var result = await Repository.GetCartByIdAsync(id);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dto = _mapper.Map<CartDto>(result.Cart);
+            var dto = Mapper.Map<CartDto>(result.Cart);
             return Ok(dto);
         }
 
@@ -54,13 +54,12 @@ namespace WiiTrakApi.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetAllCarts()
         {
-            var result = await _repository.GetAllCartsAsync();
-
+            var result = await Repository.GetAllCartsAsync();
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             return Ok(dtoList);
         }
 
@@ -68,40 +67,32 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetCartsByDeliveryTicketId(Guid deliveryTicketId)
         {
             // Returns carts with outside geofence and picked up statuses
-            var result = await _repository.GetCartsByDeliveryTicketIdAsync(deliveryTicketId);
-
+            var result = await Repository.GetCartsByDeliveryTicketIdAsync(deliveryTicketId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
-
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             foreach (var cart in dtoList)
             {
                 cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
             }
-
             return Ok(dtoList);
         }
         [HttpGet("CartHistory/{deliveryTicketId:guid}")]
         public async Task<IActionResult> GetCartHistoryByDeliveryTicketId(Guid deliveryTicketId)
         {
             // Returns carts with outside geofence and picked up statuses
-            var result = await _repository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicketId);
-
+            var result = await Repository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicketId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
-
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             foreach (var cart in dtoList)
             {
                 cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
             }
-
             return Ok(dtoList);
         }
 
@@ -109,20 +100,16 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetCartsByStoreId(Guid storeId)
         {
             // Returns carts with outside geofence and picked up statuses
-            var result = await _repository.GetCartsByStoreIdAsync(storeId);
-
+            var result = await Repository.GetCartsByStoreIdAsync(storeId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
-
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             foreach (var cart in dtoList)
             {
                 cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
             }
-
             return Ok(dtoList);
         }
 
@@ -130,36 +117,29 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetCartsByDriverId(Guid driverId)
         {
             // Returns carts with outside geofence and picked up statuses
-            var result = await _repository.GetCartsByDriverIdAsync(driverId);
-
+            var result = await Repository.GetCartsByDriverIdAsync(driverId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             return Ok(dtoList);
         }
 
         [HttpGet("Corporate/{corporateId:guid}")]
         public async Task<IActionResult> GetCartsByCorporateId(Guid corporateId)
         {
-
             // Returns carts with outside geofence and picked up statuses
-            var result = await _repository.GetCartsByCorporateIdAsync(corporateId);
-
+            var result = await Repository.GetCartsByCorporateIdAsync(corporateId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
-
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             foreach (var cart in dtoList)
             {
                 cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
             }
-
             return Ok(dtoList);
         }
 
@@ -167,18 +147,16 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetCartsByCompanyId(Guid companyId)
         {
             // Returns carts with outside geofence and picked up statuses
-            var result = await _repository.GetCartsByCompanyIdAsync(companyId);
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-
-            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
-
-
+            var result = await Repository.GetCartsByCompanyIdAsync(companyId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
             foreach (var cart in dtoList)
             {
                 cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
             }
-
             return Ok(dtoList);
         }
 
@@ -186,17 +164,17 @@ namespace WiiTrakApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CartDto>> CreateCart([FromBody] CartCreationDto cartCreation)
          {
-            var cart = _mapper.Map<CartModel>(cartCreation);
+            var cart = Mapper.Map<CartModel>(cartCreation);
             cart.CreatedAt = DateTime.UtcNow;
 
-            var createResult = await _repository.CreateCartAsync(cart);
+            var createResult = await Repository.CreateCartAsync(cart);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
-            var dto = _mapper.Map<CartDto>(cart);
+            var dto = Mapper.Map<CartDto>(cart);
             return CreatedAtRoute(nameof(GetCart), new { id = dto.Id }, dto);
         }
 
@@ -209,16 +187,16 @@ namespace WiiTrakApi.Controllers
                 if (cartUpdate.CartHistory.DriverId != Guid.Empty)
                 {
                     //update cart history
-                    var cartHistory = _mapper.Map<CartHistoryModel>(cartUpdate.CartHistory);
+                    var cartHistory = Mapper.Map<CartHistoryModel>(cartUpdate.CartHistory);
                     cartHistory.CreatedAt = DateTime.UtcNow;
-                    await _cartHistoryRepository.UpdateCartHistoryAsync(cartHistory);
+                    await CartHistoryRepository.UpdateCartHistoryAsync(cartHistory);
                 }
-                var result = await _repository.GetCartByIdAsync(id);
+                var result = await Repository.GetCartByIdAsync(id);
                 var cart = result.Cart;
-
-                if (!result.IsSuccess || cart is null) return NotFound(result.ErrorMessage);
-
-
+                if (!result.IsSuccess || cart is null)
+                {
+                    return NotFound(result.ErrorMessage);
+                }
                 cart.BarCode = cartUpdate.BarCode;
                 cart.Condition = cartUpdate.Condition;
                 cart.Status = cartUpdate.Status;
@@ -232,9 +210,11 @@ namespace WiiTrakApi.Controllers
                 cart.UpdatedAt = DateTime.UtcNow;
                 cart.IssueType = cartUpdate.IssueType;
                 cart.IssueDescription = cartUpdate.IssueDescription;
-
-                var updateResult = await _repository.UpdateCartAsync(cart);
-                if (updateResult.IsSuccess) return NoContent();
+                var updateResult = await Repository.UpdateCartAsync(cart);
+                if (updateResult.IsSuccess)
+                {
+                    return NoContent();
+                }
                 ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
@@ -244,13 +224,14 @@ namespace WiiTrakApi.Controllers
             }
         }
 
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCart(Guid id)
         {
-            var result = await _repository.DeleteCartAsync(id);
-            if (result.IsSuccess) return NoContent();
-
+            var result = await Repository.DeleteCartAsync(id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

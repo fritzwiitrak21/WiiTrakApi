@@ -17,9 +17,9 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> TechnicianExistsAsync(Guid id);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> CreateTechnicianAsync(TechnicianModel technician);
+        Task<(bool IsSuccess, string? ErrorMessage)> CreateTechnicianAsync(TechnicianModel technician, int RoleId);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTechnicianAsync(TechnicianModel technician);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTechnicianAsync(TechnicianModel technician, int RoleId);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteTechnicianAsync(Guid id);
 

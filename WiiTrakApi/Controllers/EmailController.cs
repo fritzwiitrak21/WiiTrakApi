@@ -5,7 +5,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Services.Contracts;
-using System.Threading.Tasks;
 
 namespace WiiTrakApi.Controllers
 {

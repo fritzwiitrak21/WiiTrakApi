@@ -16,66 +16,66 @@ namespace WiiTrakApi.Controllers
 
     public class DevicesController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IDevicesRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly IDevicesRepository Repository;
         public DevicesController(IMapper mapper, IDevicesRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
         [HttpGet]
         [EnableQuery]
         public async Task<IActionResult> GetAllDeviceDetails()
         {
-            var result = await _repository.GetAllDeviceDetailsAsync();
+            var result = await Repository.GetAllDeviceDetailsAsync();
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtolist = _mapper.Map<List<DevicesDto>>(result.DeviceList);
+            var dtolist = Mapper.Map<List<DevicesDto>>(result.DeviceList);
             return Ok(dtolist);
         }
 
         [HttpGet("{id:guid}", Name = "GetDevice")]
         public async Task<IActionResult> GetDeviceById(Guid id)
         {
-            var result = await _repository.GetDeviceByIdAsync(id);
+            var result = await Repository.GetDeviceByIdAsync(id);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dto = _mapper.Map<DevicesDto>(result.DeviceList);
+            var dto = Mapper.Map<DevicesDto>(result.DeviceList);
             return Ok(dto);
         }
 
         [HttpPost]
         public async Task<ActionResult<DevicesDto>> CreateDevice([FromBody] DevicesDto DeviceCreation)
         {
-            var Device = _mapper.Map<DevicesModel>(DeviceCreation);
+            var Device = Mapper.Map<DevicesModel>(DeviceCreation);
             Device.CreatedAt = DateTime.UtcNow;
-            var createResult = await _repository.CreateDeviceAsync(Device);
+            var createResult = await Repository.CreateDeviceAsync(Device);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
-            var dto = _mapper.Map<DevicesDto>(Device);
+            var dto = Mapper.Map<DevicesDto>(Device);
             return CreatedAtRoute(nameof(GetDeviceById), new { id = dto.Id }, dto);
         }
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateDevice(Guid id, DevicesDto DeviceUpdate)
         {
-            var result = await _repository.GetDeviceByIdAsync(id);
+            var result = await Repository.GetDeviceByIdAsync(id);
 
             if (!result.IsSuccess || result.DeviceList is null)
             {
                 return NotFound(result.ErrorMessage);
             }
-            _mapper.Map(DeviceUpdate, result.DeviceList);
+            Mapper.Map(DeviceUpdate, result.DeviceList);
             result.DeviceList.UpdatedAt = DateTime.UtcNow;
 
-            var updateResult = await _repository.UpdateDeviceAsync(result.DeviceList);
+            var updateResult = await Repository.UpdateDeviceAsync(result.DeviceList);
             if (updateResult.IsSuccess)
             {
                 return NoContent();

@@ -12,33 +12,34 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class SystemOwnerController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ISystemOwnerRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly ISystemOwnerRepository Repository;
         public SystemOwnerController( IMapper mapper, ISystemOwnerRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
+
         [HttpGet("{Id:guid}")]
         public async Task<IActionResult> GetSystemOwnerById(Guid Id)
         {
-            var result = await _repository.GetSystemOwnerByIdAsync(Id);
-            if(!result.IsSuccess) return NotFound(result.ErrorMessage);
+            var result = await Repository.GetSystemOwnerByIdAsync(Id);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             return Ok(result.SystemOwner);
-
-
         }
+
         [HttpGet("{EmailId}")]
         public async Task<IActionResult> CheckEmailId(string EmailId)
         {
-            var result = await _repository.CheckEmailIdAsync(EmailId);
-            if (!result.IsExists) return NotFound(result.ErrorMessage);
+            var result = await Repository.CheckEmailIdAsync(EmailId);
+            if (!result.IsExists)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             return Ok(result.ErrorMessage);
         }
-
     }
-
-
-       
-
-    }
+}
