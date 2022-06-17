@@ -54,5 +54,6 @@ namespace WiiTrakApi.DTOs
         public string TimezoneDiff { get; set; }
         public string TimezoneName { get; set; }
         public DateTime? TimezoneDateTime { get; set; }
+        public string ServiceFrequency { get; set; }
     }
 }
