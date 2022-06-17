@@ -77,7 +77,46 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<TechnicianModel>? Technicians, string? ErrorMessage)> GetTechniciansBySystemOwnerIdAsync(Guid SystemOwnerId)
+        {
+            try
+            {
+                var technicians = await DbContext.Technicians
+                    .Where(x => x.SystemOwnerId == SystemOwnerId)
+                    .AsNoTracking()
+                    .ToListAsync();
 
+                if (technicians.Any())
+                {
+                    return (true, technicians, null);
+                }
+                return (false, null, "No technicians found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+        public async Task<(bool IsSuccess, List<TechnicianModel>? Technicians, string? ErrorMessage)> GetTechniciansByCompanyIdAsync(Guid CompanyId)
+        {
+            try
+            {
+                var technicians = await DbContext.Technicians
+                    .Where(x => x.CompanyId == CompanyId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                if (technicians.Any())
+                {
+                    return (true, technicians, null);
+                }
+                return (false, null, "No technicians found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> TechnicianExistsAsync(Guid id)
         {
             try

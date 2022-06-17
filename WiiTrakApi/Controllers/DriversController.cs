@@ -100,7 +100,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DriverDto>> CreateDriver([FromBody] DriverCreationDto driverCreation)
+        public async Task<ActionResult<DriverDto>> CreateDriver([FromBody] DriverDto driverCreation)
         {
             var driver = Mapper.Map<DriverModel>(driverCreation);
             driver.CreatedAt = DateTime.UtcNow;
@@ -117,7 +117,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateDriver(Guid id, DriverUpdateDto driverUpdate)
+        public async Task<IActionResult> UpdateDriver(Guid id, DriverDto driverUpdate)
         {
             var result = await Repository.GetDriverByIdAsync(id);
             if (!result.IsSuccess || result.Driver is null)

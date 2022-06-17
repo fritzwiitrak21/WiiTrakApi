@@ -94,7 +94,7 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool IsSuccess, List<SPGetCartsDetailsByDeliveryTicketId>? Carts, string? ErrorMessage)> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace WiiTrakApi.Repository
 
                 };
 
-                var Carts = await DbContext.SPGetCartsDetailsByDeliveryTicketId.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var Carts = await DbContext.Carts.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (Carts != null)
                 {

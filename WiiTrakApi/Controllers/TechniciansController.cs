@@ -49,10 +49,34 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<TechnicianDto>>(result.Technicians);
             return Ok(dtoList);
         }
+        [HttpGet("systemowner/{systemownerId:guid}")]
+        public async Task<IActionResult> GetTechniciansBySystemOwnerId(Guid SystemOwnerId)
+        {
+            var result = await Repository.GetTechniciansBySystemOwnerIdAsync(SystemOwnerId); 
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<TechnicianDto>>(result.Technicians);
+            return Ok(dtoList);
+        }
+        [HttpGet("company/{companyId:guid}")]
+        public async Task<IActionResult> GetTechniciansByCompanyId(Guid CompanyId)
+        {
+            var result = await Repository.GetTechniciansByCompanyIdAsync(CompanyId);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<TechnicianDto>>(result.Technicians);
+            return Ok(dtoList);
+        }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("{roleid:int}")]
-        public async Task<ActionResult<TechnicianDto>> CreateTechnician([FromBody] TechnicianCreationDto TechnicianCreation, int RoleId)
+        public async Task<ActionResult<TechnicianDto>> CreateTechnician([FromBody] TechnicianDto TechnicianCreation, int RoleId)
         {
             var technician = Mapper.Map<TechnicianModel>(TechnicianCreation);
             technician.CreatedAt = DateTime.UtcNow;
@@ -68,7 +92,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}/{roleid:int}")]
-        public async Task<IActionResult> UpdateTechnician(Guid id, TechnicianUpdateDto TechnicianUpdate, int RoleId)
+        public async Task<IActionResult> UpdateTechnician(Guid id, TechnicianDto TechnicianUpdate, int RoleId)
         {
             var result = await Repository.GetTechnicianByIdAsync(id);
             if (!result.IsSuccess || result.Technician is null)

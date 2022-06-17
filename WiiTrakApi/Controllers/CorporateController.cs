@@ -88,7 +88,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("{companyid:guid}/{roleid:int}")]
-        public async Task<ActionResult<CorporateDto>> CreateCorporate(Guid CompanyId, int RoleId,[FromBody] CorporateCreationDto corporateCreation)
+        public async Task<ActionResult<CorporateDto>> CreateCorporate(Guid CompanyId, int RoleId,[FromBody] CorporateDto corporateCreation)
         {
             var corporate = Mapper.Map<CorporateModel>(corporateCreation);
             corporate.CreatedAt = DateTime.UtcNow;
@@ -105,7 +105,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCorporate(Guid id, CorporateUpdateDto corporateUpdate)
+        public async Task<IActionResult> UpdateCorporate(Guid id, CorporateDto corporateUpdate)
         {
             var result = await Repository.GetCorporateByIdAsync(id);
             if (!result.IsSuccess || result.Corporate is null)

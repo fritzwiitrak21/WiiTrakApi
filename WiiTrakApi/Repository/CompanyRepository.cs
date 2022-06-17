@@ -266,6 +266,11 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                if (company.ParentId != null && company.SystemOwner == null)
+                {
+                    var ParrentCompany = await _dbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
+                    company.SystemOwnerId = ParrentCompany.SystemOwnerId;
+                }
                 #region Update company details to users table
                 const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 

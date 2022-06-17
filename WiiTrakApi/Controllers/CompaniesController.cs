@@ -119,7 +119,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CompanyDto>> CreateCompany([FromBody] CompanyCreationDto companyCreation)
+        public async Task<ActionResult<CompanyDto>> CreateCompany([FromBody] CompanyDto companyCreation)
         {
             var company = Mapper.Map<CompanyModel>(companyCreation);
             company.CreatedAt = DateTime.UtcNow;
@@ -136,7 +136,7 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCompany(Guid id, CompanyUpdateDto companyUpdate)
+        public async Task<IActionResult> UpdateCompany(Guid id, CompanyDto companyUpdate)
         {
             var result = await Repository.GetCompanyByIdAsync(id);
 

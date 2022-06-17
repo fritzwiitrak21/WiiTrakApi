@@ -110,9 +110,11 @@ namespace WiiTrakApi.Data
         public DbSet<SpGetNotification> SpGetNotifications { get; set; }
         public DbSet<SPGetStoresBySystemOwnerId> SPGetStoresBySystemOwnerId { get; set; }
         public DbSet<SPGetDeliveryTicketsById> SPGetDeliveryTicketsById { get; set; }
-        public DbSet<SPGetCartsDetailsByDeliveryTicketId> SPGetCartsDetailsByDeliveryTicketId { get; set; }
+        
 
         public DbSet<SPGetServiceBoardDetailsById> SPGetServiceBoardDetailsById { get; set; }
+        public DbSet<SPGetTrackingDeviceDetailsById> SPGetTrackingDeviceDetailsById { get; set; }
+        
 
     }
 }

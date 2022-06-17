@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
+using WiiTrakApi.Enums;
 
 namespace WiiTrakApi.Controllers
 {
@@ -49,7 +50,20 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<TrackingDeviceDto>>(result.TrackingDevices);
             return Ok(dtoList);
         }
+        
+        [HttpGet("TrackingDevice/{id:guid}/{RoleId:int}")]
+        public async Task<IActionResult> GetTrackingDeviceDetailsById(Guid id, int RoleId)
+        {
+            var result = await Repository.GetTrackingDeviceDetailsByIdAsync(id, (Role)RoleId);
 
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<TrackingDeviceDetailsDto>>(result.TrackingDeviceDetails);
+            return Ok(dtoList);
+        }
+        
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<TrackingDeviceDto>> CreateTrackingDevice([FromBody] TrackingDeviceCreationDto trackingDeviceCreation)
