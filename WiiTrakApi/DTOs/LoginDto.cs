@@ -3,7 +3,6 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WiiTrakApi.DTOs
 {
@@ -11,10 +10,10 @@ namespace WiiTrakApi.DTOs
     {
         [Required]
         [EmailAddress]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
     }
 
@@ -22,34 +21,34 @@ namespace WiiTrakApi.DTOs
     {
         [Required]
         [EmailAddress]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
     }
 
     public class ResetPasswordDto
     {
         [Required]
-        public string NewPassword { get; set; }
+        public string NewPassword { get; set; } = string.Empty;
 
         [Required]
         [Compare("NewPassword")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
     public class ChangePasswordDto
     {
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
         [Required]      
-        public string NewPassword { get;set; }
+        public string NewPassword { get;set; } = string.Empty;
         [Required]
         [Compare("NewPassword")]
-        public string ConfirmNewPassword { get; set; }
+        public string ConfirmNewPassword { get; set; } = string.Empty;
     }
     public class DeliveryTicketInputDto
     {
         public Guid Id { get; set; }
         public int RoleId { get; set; }
         public int RecordCount { get; set; }
-        public string FromDate { get; set; }
-        public string ToDate { get; set; }
+        public string FromDate { get; set; } = string.Empty;
+        public string ToDate { get; set; } = string.Empty;
     }
 }

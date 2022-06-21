@@ -4,7 +4,6 @@
 */
 using System.Linq.Expressions;
 using WiiTrakApi.Models;
-using WiiTrakApi.SPModels;
 
 namespace WiiTrakApi.Repository.Contracts
 {

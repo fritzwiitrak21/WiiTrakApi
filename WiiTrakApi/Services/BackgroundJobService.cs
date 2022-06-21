@@ -28,8 +28,11 @@ namespace WiiTrakApi.Services
         {
             var result = await _storeRepository.GetAllStoresAsync();
 
-            
-            if (!result.IsSuccess || result.Stores is null) return;
+
+            if (!result.IsSuccess || result.Stores is null)
+            {
+                return;
+            }
             foreach (var store in result.Stores)
             {
                 await ResetCartDataHelper(store);
@@ -349,7 +352,10 @@ namespace WiiTrakApi.Services
             TrackingDeviceModel? device2 = null;
             TrackingDeviceModel? device3 = null;
 
-            if (store.Carts is null) return;
+            if (store.Carts is null)
+            {
+                return;
+            }
             cart1 = store.Carts[0];
             cart2 = store.Carts[1];
             cart3 = store.Carts[2];

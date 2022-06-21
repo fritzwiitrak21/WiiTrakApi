@@ -2,13 +2,10 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using WiiTrakApi.Services.Contracts;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Cores;
-using System;
 using System.Net;
 using System.Net.Mail;
 

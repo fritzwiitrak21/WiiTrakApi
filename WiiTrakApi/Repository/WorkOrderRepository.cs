@@ -3,9 +3,6 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using NuGet.ContentModel;
-using System.Linq;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;

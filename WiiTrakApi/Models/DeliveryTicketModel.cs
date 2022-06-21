@@ -3,7 +3,6 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations;
-using WiiTrakApi.Enums;
 
 namespace WiiTrakApi.Models
 {

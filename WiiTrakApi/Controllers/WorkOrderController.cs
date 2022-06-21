@@ -32,9 +32,11 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetWorkOrder(Guid id)
         {
             var result = await Repository.GetWorkOrderByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dto = Mapper.Map<WorkOrderDto>(result.WorkOrder);
-
             return Ok(dto);
         }
 
@@ -43,11 +45,11 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetAllWorkOrders()
         {
             var result = await Repository.GetAllWorkOrdersAsync();
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var dtoList = Mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
-
-
             return Ok(dtoList);
         }
 
@@ -57,7 +59,10 @@ namespace WiiTrakApi.Controllers
         //    var result = await _repository
         //        .GetWorkOrdersByConditionAsync(x => x.DriverId == driverId);
 
-        //    if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+        //    if (!result.IsSuccess)
+        //    {
+        //      return NotFound(result.ErrorMessage);
+        //    }
         //    var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
 
         //    // get store name and number
@@ -80,7 +85,10 @@ namespace WiiTrakApi.Controllers
         //    var result = await _repository
         //        .GetWorkOrdersByConditionAsync(x => x.StoreId == storeId);
 
-        //    if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+        //    if (!result.IsSuccess)
+        //    {
+        //          return NotFound(result.ErrorMessage);
+        //    }
         //    var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
 
         //    // get store name and number
@@ -103,7 +111,10 @@ namespace WiiTrakApi.Controllers
         //    var result = await _repository
         //        .GetWorkOrdersByConditionAsync(x => x.ServiceProviderId == serviceProviderId);
 
-        //    if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+        //    if (!result.IsSuccess)
+        //    {
+        //          return NotFound(result.ErrorMessage);
+        //    }
         //    var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
 
         //    // get store name and number
@@ -126,17 +137,14 @@ namespace WiiTrakApi.Controllers
         {
             var workOrder = Mapper.Map<WorkOrderModel>(workOrderCreation);
             workOrder.CreatedAt = DateTime.UtcNow;
-
             var workOrderNumberResult = await Repository.GetWorkOrderNumberAsync();
             workOrder.WorkOrderNumber = workOrderNumberResult.WorkOrderNumber;
-
             var createResult = await Repository.CreateWorkOrderAsync(workOrder);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-
             var dto = Mapper.Map<WorkOrderDto>(workOrder);
             return CreatedAtRoute(nameof(GetWorkOrder), new { id = dto.Id }, dto);
         }
@@ -146,13 +154,18 @@ namespace WiiTrakApi.Controllers
         {
             var result = await Repository.GetWorkOrderByIdAsync(id);
 
-            if (!result.IsSuccess || result.WorkOrder is null) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess || result.WorkOrder is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             Mapper.Map(workOrderUpdate, result.WorkOrder);
             result.WorkOrder.UpdatedAt = DateTime.UtcNow;
 
             var updateResult = await Repository.UpdateWorkOrderAsync(result.WorkOrder);
-            if (updateResult.IsSuccess) return NoContent();
-
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
@@ -161,8 +174,10 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> DeleteWorkOrder(Guid id)
         {
             var result = await Repository.DeleteWorkOrderAsync(id);
-            if (result.IsSuccess) return NoContent();
-
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

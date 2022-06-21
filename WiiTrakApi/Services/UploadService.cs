@@ -20,13 +20,16 @@ namespace WiiTrakApi.Services
             var container = new BlobContainerClient(_storageConnectionString, containerName);
             var createResponse = await container.CreateIfNotExistsAsync();
             if (createResponse != null && createResponse.GetRawResponse().Status == 201)
+            {
                 await container.SetAccessPolicyAsync(PublicAccessType.Blob);
+            }
             var blob = container.GetBlobClient(fileName);
             await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
 
             if (IsCoords)
+            {
                 fileStream.Position = 0;
-
+            }
             await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType });
             return blob.Uri.ToString();
         }

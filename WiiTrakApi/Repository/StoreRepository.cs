@@ -3,7 +3,6 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -29,16 +28,16 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, StoreModel? Store, string? ErrorMessage)> GetStoreByIdAsync(Guid id)
         {
-                var store = await _dbContext.Stores
-                    .Include(x => x.Carts)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Id == id);
+            var store = await _dbContext.Stores
+                .Include(x => x.Carts)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-                if (store is not null)
-                {
-                    return (true, store, null);
-                }
-                return (false, null, "No store found");
+            if (store is not null)
+            {
+                return (true, store, null);
+            }
+            return (false, null, "No store found");
         }
 
         public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetAllStoresAsync()
@@ -489,7 +488,7 @@ namespace WiiTrakApi.Repository
                     store.Latitude = LatLong.Latitude;
                     store.Longitude = LatLong.Longitude;
                     store.TimezoneDiff = LatLong.TimezoneDiff;
-                    store.TimezoneName= LatLong.TimezoneName;
+                    store.TimezoneName = LatLong.TimezoneName;
                 }
                 #endregion
                 await _dbContext.Stores.AddAsync(store);
@@ -586,7 +585,7 @@ namespace WiiTrakApi.Repository
         }
         public LatitudeLongitude GetLatLong(string Address)
         {
-            string APIKey = "AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE";
+            const string APIKey = "AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE";
             string url = "https://maps.googleapis.com/maps/api/geocode/xml?address=" + Address + "&key=" + APIKey + "";
             WebRequest request = WebRequest.Create(url);
             LatitudeLongitude LatLong = new();
@@ -640,7 +639,7 @@ namespace WiiTrakApi.Repository
                                 {
                                     var raw_offset = row["raw_offset"].ToString();
                                     var dst_offset = row["dst_offset"].ToString();
-                                    LatLong.TimezoneDiff =(Convert.ToDouble(raw_offset) + Convert.ToDouble(dst_offset)).ToString();
+                                    LatLong.TimezoneDiff = (Convert.ToDouble(raw_offset) + Convert.ToDouble(dst_offset)).ToString();
                                     LatLong.TimezoneName = row["time_zone_name"].ToString();
                                 }
                             }
@@ -660,7 +659,7 @@ namespace WiiTrakApi.Repository
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public string TimezoneDiff { get; set; }
-        public string TimezoneName { get; set; }
+        public string TimezoneDiff { get; set; } = string.Empty;
+        public string TimezoneName { get; set; } = string.Empty;
     }
 }

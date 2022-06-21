@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WiiTrakApi.Enums;
-using WiiTrakApi.Cores;
 
 namespace WiiTrakApi.Models
 {

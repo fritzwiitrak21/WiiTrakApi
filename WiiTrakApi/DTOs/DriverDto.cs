@@ -2,9 +2,6 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System.ComponentModel.DataAnnotations.Schema;
-using WiiTrakApi.Enums;
-using WiiTrakApi.Models;
 
 namespace WiiTrakApi.DTOs
 {

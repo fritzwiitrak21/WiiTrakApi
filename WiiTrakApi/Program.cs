@@ -4,11 +4,8 @@
 */
 using Microsoft.AspNetCore.OData;
 using WiiTrakApi.Helpers;
-using System.Configuration;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

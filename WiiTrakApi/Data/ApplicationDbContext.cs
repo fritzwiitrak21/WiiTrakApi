@@ -3,11 +3,8 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using WiiTrakApi.Models;
 using WiiTrakApi.SPModels;
-using WiiTrakApi.DTOs;
-
 
 namespace WiiTrakApi.Data
 {

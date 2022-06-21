@@ -9,7 +9,6 @@ using WiiTrakApi.Repository;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
 using WiiTrakApi.DTOs;
-using Microsoft.Extensions.Configuration;
 
 namespace WiiTrakApi.Helpers
 {
@@ -61,6 +60,7 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<ICountyCodeRepository, CountyCodeRepository>();
             services.AddScoped<ISimCardsRepository, SimCardsRepository>();
             services.AddScoped<IDevicesRepository, DevicesRepository>();
+            //services.AddScoped<ITrackSolidRepository, TrackSolidRepository>();
         }
     }
 }

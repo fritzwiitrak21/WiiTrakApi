@@ -18,12 +18,13 @@ namespace WiiTrakApi.Controllers
     {
         private readonly IMapper Mapper;
         private readonly ITrackingDeviceRepository Repository;
+        //private readonly ITrackSolidRepository _trackSolidRepository;
 
-        public TrackingDeviceController(IMapper mapper,
-            ITrackingDeviceRepository repository)
+        public TrackingDeviceController(IMapper mapper, ITrackingDeviceRepository repository)//, ITrackSolidRepository trackSolidRepositor)
         {
             Mapper = mapper;
             Repository = repository;
+            //_trackSolidRepository = trackSolidRepositor;
         }
 
         [HttpGet("{id:guid}", Name = "GetTrackingDevice")]
@@ -99,10 +100,10 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
-
-        [HttpPut]
+        [HttpPut("GetCoordinatesOfDevices")]
         public async Task<IActionResult> GetCoordinatesOfDevices()
         {
+            //_trackSolidRepository.GetDataFromTrackSolidAsync();
             //var result = await _repository.GetTrackingDeviceByIdAsync(id);
             //if (!result.IsSuccess || result.TrackingDevice is null) return NotFound(result.ErrorMessage);
             //_mapper.Map(trackingDeviceUpdate, result.TrackingDevice);

@@ -9,7 +9,6 @@ using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.Data.SqlClient;
-using WiiTrakApi.SPModels;
 
 namespace WiiTrakApi.Repository
 {

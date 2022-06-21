@@ -143,7 +143,10 @@ namespace WiiTrakApi.Repository
         public async Task<(bool IsExists, string? ErrorMessage)> CheckEmailIdAsync(string EmailId)
         {
             var CheckMail = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == EmailId);
-            if (CheckMail is null) return (false, "Email not exists");
+            if (CheckMail is null)
+            {
+                return (false, "Email not exists");
+            }
             else return (true, "Email already Exists");
         }
     }
