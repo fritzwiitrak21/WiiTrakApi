@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
-
 namespace WiiTrakApi.Controllers
 {
     [Route("api/carthistory")]
@@ -17,7 +16,6 @@ namespace WiiTrakApi.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ICartHistoryRepository _repository;
-
         public CartHistoryController(IMapper mapper, ICartHistoryRepository repository)
         {
             _mapper = mapper;
@@ -94,7 +92,18 @@ namespace WiiTrakApi.Controllers
 
             return Ok(dtoList);
         }
-
+        [HttpGet("CartHistory/{deliveryTicketId:guid}")]
+        public async Task<IActionResult> GetCartHistoryByDeliveryTicketId(Guid deliveryTicketId)
+        {
+            // Returns carts with outside geofence and picked up statuses
+            var result = await _repository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicketId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = _mapper.Map<List<CartDto>>(result.Carts);
+            return Ok(dtoList);
+        }
         [HttpPost]
         public async Task<ActionResult<CartHistoryDto>> CreateCartHistory([FromBody] CartHistoryCreationDto cartHistoryCreation)
         {

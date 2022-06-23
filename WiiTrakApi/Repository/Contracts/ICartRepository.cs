@@ -14,7 +14,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetAllCartsAsync();
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId);
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId);
+        
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid storeId);
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDriverIdAsync(Guid driverId);

@@ -23,7 +23,7 @@ namespace WiiTrakApi.Repository
             var CountyCode = await _dbContext.CountyCode
                                 .Where(y => y.IsActive)
                                 .Select(x => x)
-                                .AsNoTracking()
+                                .AsNoTracking().OrderBy(x=>x.City)
                                 .ToListAsync();
 
             if (CountyCode is not null)

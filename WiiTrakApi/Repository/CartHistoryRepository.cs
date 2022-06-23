@@ -7,7 +7,8 @@ using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
-
+using Microsoft.Data.SqlClient;
+using WiiTrakApi.SPModels;
 namespace WiiTrakApi.Repository
 {
     public class CartHistoryRepository : ICartHistoryRepository
@@ -156,7 +157,31 @@ namespace WiiTrakApi.Repository
                 return (false, false, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartHistoryByDeliveryTicketIdAsync(Guid deliveryTicketId)
+        {
+            try
+            {
+                List<SqlParameter> parms;
+                const string sqlquery = "Exec SPGetCartsDetailsByDeliveryTicketId @DeliveryTicketId";
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@DeliveryTicketId", Value =deliveryTicketId  }
 
+                };
+
+                var Carts = await _dbContext.Carts.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (Carts != null)
+                {
+                    return (true, Carts, null);
+                }
+                return (false, null, "No Carts");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCartHistoryAsync(CartHistoryModel cartHistory)
         {
             try

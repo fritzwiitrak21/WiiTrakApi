@@ -65,20 +65,7 @@ namespace WiiTrakApi.Controllers
 
             return Ok(dtoList);
         }
-        [HttpGet("CartHistory/{deliveryTicketId:guid}")]
-        public async Task<IActionResult> GetCartHistoryByDeliveryTicketId(Guid deliveryTicketId)
-        {
-            // Returns carts with outside geofence and picked up statuses
-            var result = await Repository.GetCartHistoryByDeliveryTicketIdAsync(deliveryTicketId);
-            if (!result.IsSuccess)
-            {
-                return NotFound(result.ErrorMessage);
-            }
-            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
-
-            return Ok(dtoList);
-        }
-
+       
         [HttpGet("Store/{storeId:guid}")]
         public async Task<IActionResult> GetCartsByStoreId(Guid storeId)
         {
@@ -137,7 +124,7 @@ namespace WiiTrakApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CartDto>> CreateCart([FromBody] CartCreationDto cartCreation)
-        {
+         {
             var cart = Mapper.Map<CartModel>(cartCreation);
             cart.CreatedAt = DateTime.UtcNow;
 
@@ -195,7 +182,7 @@ namespace WiiTrakApi.Controllers
                 ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }

@@ -18,10 +18,12 @@ namespace WiiTrakApi.Controllers
     {
         private readonly IMapper Mapper;
         private readonly IDevicesRepository Repository;
-        public DevicesController(IMapper mapper, IDevicesRepository repository)
+        private readonly ISimCardsRepository SimCardsRepository;
+        public DevicesController(IMapper mapper, IDevicesRepository repository, ISimCardsRepository simrepository)
         {
             Mapper = mapper;
             Repository = repository;
+            SimCardsRepository = simrepository;
         }
         [HttpGet]
         [EnableQuery]
@@ -54,12 +56,15 @@ namespace WiiTrakApi.Controllers
             var Device = Mapper.Map<DevicesModel>(DeviceCreation);
             Device.CreatedAt = DateTime.UtcNow;
             var createResult = await Repository.CreateDeviceAsync(Device);
+            var CurrentSim = await SimCardsRepository.GetSimCardByIdAsync(DeviceCreation.SIMCardId);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-
+            CurrentSim.SimCardList.IsMapped = true;
+            CurrentSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+            await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
             var dto = Mapper.Map<DevicesDto>(Device);
             return CreatedAtRoute(nameof(GetDeviceById), new { id = dto.Id }, dto);
         }
@@ -67,17 +72,26 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> UpdateDevice(Guid id, DevicesDto DeviceUpdate)
         {
             var result = await Repository.GetDeviceByIdAsync(id);
-
+            var CurrentSim = await SimCardsRepository.GetSimCardByIdAsync(DeviceUpdate.SIMCardId);
+            var PreviousSim = await SimCardsRepository.GetSimCardByIdAsync(result.DeviceList.SIMCardId);
             if (!result.IsSuccess || result.DeviceList is null)
             {
                 return NotFound(result.ErrorMessage);
             }
             Mapper.Map(DeviceUpdate, result.DeviceList);
             result.DeviceList.UpdatedAt = DateTime.UtcNow;
-
             var updateResult = await Repository.UpdateDeviceAsync(result.DeviceList);
             if (updateResult.IsSuccess)
             {
+                if (CurrentSim.SimCardList.Id != PreviousSim.SimCardList.Id)
+                {
+                    PreviousSim.SimCardList.IsMapped = false;
+                    PreviousSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                    await SimCardsRepository.UpdateSimCardAsync(PreviousSim.SimCardList);
+                }
+                CurrentSim.SimCardList.IsMapped = true;
+                CurrentSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
                 return NoContent();
             }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);

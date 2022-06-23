@@ -65,7 +65,6 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-
                 _dbContext.Devices.Update(Device);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
