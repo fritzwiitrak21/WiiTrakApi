@@ -30,7 +30,7 @@ namespace WiiTrakApi.Repository
 
             if (technician is not null)
             {
-                return (true, (TechnicianModel)technician, null);
+                return (true, technician, null);
             }
             return (false, null, "No technician found");
         }

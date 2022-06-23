@@ -57,6 +57,7 @@ namespace WiiTrakApi.DTOs
         public int Distance { get; set; }
         public string? TimezoneDiff { get; set; } = string.Empty;
         public string? TimezoneName { get; set; } = string.Empty;
+        public bool IsConnectedStore { get; set; }
 
     }
 }

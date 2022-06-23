@@ -67,14 +67,16 @@ namespace WiiTrakApi.Helpers
             CreateMap<StoreDto, SPGetStoresBySystemOwnerId>().ReverseMap();
             CreateMap<DeliveryTicketDto, SPGetDeliveryTicketsById>().ReverseMap();
             CreateMap<ServiceBoardDto, SPGetServiceBoardDetailsById>().ReverseMap(); 
+
             CreateMap<NotificationModel, NotificationDto>().ReverseMap();
             CreateMap<CountyCodeModel, CountyCodeDto>().ReverseMap();
             CreateMap<SimCardModel, SimCardsDto>().ReverseMap();
-
             CreateMap<DevicesModel, DevicesDto>().ReverseMap();
 
             CreateMap<NotificationDto, SpGetNotification>().ReverseMap();
             CreateMap<TrackingDeviceDetailsDto, SPGetTrackingDeviceDetailsById>().ReverseMap();
+            CreateMap<DeviceHistoryModel,DeviceHistoryDto >().ReverseMap();
+            CreateMap<SimCardHistoryModel, SimCardHistoryDto>().ReverseMap();
         }
     }
 }

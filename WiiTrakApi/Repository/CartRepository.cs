@@ -15,7 +15,7 @@ namespace WiiTrakApi.Repository
     public class CartRepository : ICartRepository
     {
         private readonly ApplicationDbContext DbContext;
-
+        const string ErrorMessage = "No carts found";
         public CartRepository(ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
@@ -29,9 +29,9 @@ namespace WiiTrakApi.Repository
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (cart is not null)
             {
-                return (true, (CartModel)cart, null);
+                return (true, cart, null);
             }
-            return (false, null, "No cart found");
+            return (false, null, ErrorMessage);
         }
 
         public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetAllCartsAsync()
@@ -48,7 +48,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, carts, null);
                 }
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -69,7 +69,7 @@ namespace WiiTrakApi.Repository
                     .AsNoTracking()
                     .ToListAsync();
                 var carts = new List<CartModel>();
-                foreach(var cart in cartHistory)
+                foreach (var cart in cartHistory)
                 {
                     var _cart = await DbContext.Carts
                         .Include(x => x.Store)
@@ -86,7 +86,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, carts, null);
                 }
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -124,9 +124,7 @@ namespace WiiTrakApi.Repository
             {
                 var carts = await DbContext.Carts
                     .Include(x => x.Store)
-                    //.Include(x => x.TrackingDevice)
-                    .Where(x => x.StoreId == storeId) 
-                    //&& (x.Status == CartStatus.OutsideGeofence || x.Status == CartStatus.PickedUp))
+                    .Where(x => x.StoreId == storeId)
                     .AsNoTracking().OrderByDescending(x => x.CreatedAt)
                     .ToListAsync();
                 if (carts.Any())
@@ -134,7 +132,7 @@ namespace WiiTrakApi.Repository
                     return (true, carts, null);
                 }
 
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -157,7 +155,7 @@ namespace WiiTrakApi.Repository
                     var carts = await DbContext.Carts
                         .Where(x => x.StoreId == driverStore.StoreId && x.IsActive && (x.Status != CartStatus.InsideGeofence))
                         .Include(x => x.Store)
-                        .Where(x=>x.Store.IsActive)
+                        .Where(x => x.Store.IsActive)
                         .Include(x => x.TrackingDevice)
                         .Where(x => x.TrackingDevice.IsActive)
                         .AsNoTracking()
@@ -169,7 +167,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, cartList, null);
                 }
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -197,7 +195,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, cartList, null);
                 }
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -225,7 +223,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, cartList, null);
                 }
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -247,7 +245,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, carts, null);
                 }
-                return (false, null, "No carts found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -286,7 +284,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-               
+
                 DbContext.Carts.Update(cart);
                 await DbContext.SaveChangesAsync();
                 return (true, null);

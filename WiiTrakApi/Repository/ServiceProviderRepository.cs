@@ -27,7 +27,7 @@ namespace WiiTrakApi.Repository
 
             if (serviceProvider is not null)
             {
-                return (true, (ServiceProviderModel)serviceProvider, null);
+                return (true, serviceProvider, null);
             }
             return (false, null, "No serviceProvider found");
         }

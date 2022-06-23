@@ -54,7 +54,8 @@ namespace WiiTrakApi.SPModels
         //public bool DriverStoresIsActive { get; set; }=false;
         //public List<CartDto>? Carts { get; set; }
         public string? TimezoneDiff { get; set; } = string.Empty; 
-        public string? TimezoneName { get; set; } = string.Empty; 
+        public string? TimezoneName { get; set; } = string.Empty;
+        public bool IsConnectedStore { get; set; }
 
 
     }

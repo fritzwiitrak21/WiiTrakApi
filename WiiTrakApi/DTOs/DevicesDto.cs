@@ -20,5 +20,6 @@ namespace WiiTrakApi.DTOs
         public bool IsActive { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsMapped { get; set; }
     }
 }

@@ -19,17 +19,6 @@ namespace WiiTrakApi.Controllers
         private readonly ICartRepository Repository;
         private readonly ICartHistoryRepository CartHistoryRepository;
 
-        string[] _cartImgUrls = new[]
-        {
-            "https://wiitrakstorage.blob.core.windows.net/wiitrakblobcontainer/103-172-red-45-degree-view.jpg",
-            "https://wiitrakstorage.blob.core.windows.net/wiitrakblobcontainer/1725580.jpg",
-            "https://wiitrakstorage.blob.core.windows.net/wiitrakblobcontainer/46051_1000.jpg",
-            "https://wiitrakstorage.blob.core.windows.net/wiitrakblobcontainer/H-4568.jpg",
-        };
-
-
-        static Random _randomizer = new Random();
-
         public CartsController(IMapper mapper,
             ICartRepository repository, ICartHistoryRepository Carthistoryrepository)
         {
@@ -73,10 +62,7 @@ namespace WiiTrakApi.Controllers
                 return NotFound(result.ErrorMessage);
             }
             var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
-            foreach (var cart in dtoList)
-            {
-                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
-            }
+
             return Ok(dtoList);
         }
         [HttpGet("CartHistory/{deliveryTicketId:guid}")]
@@ -89,10 +75,7 @@ namespace WiiTrakApi.Controllers
                 return NotFound(result.ErrorMessage);
             }
             var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
-            foreach (var cart in dtoList)
-            {
-                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
-            }
+
             return Ok(dtoList);
         }
 
@@ -106,10 +89,7 @@ namespace WiiTrakApi.Controllers
                 return NotFound(result.ErrorMessage);
             }
             var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
-            foreach (var cart in dtoList)
-            {
-                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
-            }
+
             return Ok(dtoList);
         }
 
@@ -136,10 +116,7 @@ namespace WiiTrakApi.Controllers
                 return NotFound(result.ErrorMessage);
             }
             var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
-            foreach (var cart in dtoList)
-            {
-                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
-            }
+
             return Ok(dtoList);
         }
 
@@ -153,17 +130,14 @@ namespace WiiTrakApi.Controllers
                 return NotFound(result.ErrorMessage);
             }
             var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
-            foreach (var cart in dtoList)
-            {
-                cart.PicUrl = _cartImgUrls[_randomizer.Next(_cartImgUrls.Length)];
-            }
+
             return Ok(dtoList);
         }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CartDto>> CreateCart([FromBody] CartCreationDto cartCreation)
-         {
+        {
             var cart = Mapper.Map<CartModel>(cartCreation);
             cart.CreatedAt = DateTime.UtcNow;
 
@@ -184,6 +158,9 @@ namespace WiiTrakApi.Controllers
         {
             try
             {
+                var result = await Repository.GetCartByIdAsync(id);
+                var cart = result.Cart;
+
                 if (cartUpdate.CartHistory.DriverId != Guid.Empty)
                 {
                     //update cart history
@@ -191,12 +168,12 @@ namespace WiiTrakApi.Controllers
                     cartHistory.CreatedAt = DateTime.UtcNow;
                     await CartHistoryRepository.UpdateCartHistoryAsync(cartHistory);
                 }
-                var result = await Repository.GetCartByIdAsync(id);
-                var cart = result.Cart;
+
                 if (!result.IsSuccess || cart is null)
                 {
                     return NotFound(result.ErrorMessage);
                 }
+
                 cart.BarCode = cartUpdate.BarCode;
                 cart.Condition = cartUpdate.Condition;
                 cart.Status = cartUpdate.Status;
@@ -218,7 +195,7 @@ namespace WiiTrakApi.Controllers
                 ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

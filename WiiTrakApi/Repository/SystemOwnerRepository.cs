@@ -27,7 +27,7 @@ namespace WiiTrakApi.Repository
 
             if (systemOwner is not null)
             {
-                return (true, (SystemOwnerModel)systemOwner, null);
+                return (true, systemOwner, null);
             }
             return (false, null, "No systemOwner found");
         }

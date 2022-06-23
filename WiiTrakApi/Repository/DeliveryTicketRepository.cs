@@ -17,7 +17,7 @@ namespace WiiTrakApi.Repository
     public class DeliveryTicketRepository : IDeliveryTicketRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
+        const string ExceptionMessage = "No delivery tickets found";
         public DeliveryTicketRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -33,7 +33,7 @@ namespace WiiTrakApi.Repository
             {
                 return (true, deliveryTicket, null);
             }
-            return (false, null, "No delivery ticket found");
+            return (false, null, ExceptionMessage);
         }
 
         public async Task<(bool IsSuccess, DeliveryTicketSummaryDto? DeliveryTicketSummary, string? ErrorMessage)> GetDeliveryTicketSummaryByIdAsync(Guid id)
@@ -60,7 +60,7 @@ namespace WiiTrakApi.Repository
             {
                 return (true, summary, null);
             }
-            return (false, null, "No delivery ticket found");
+            return (false, null, ExceptionMessage);
         }
 
         public async Task<(bool IsSuccess, long DeliveryTicketNumber, string? ErrorMessage)> GetDeliveryTicketNumberAsync(Guid serviceProviderId)
@@ -91,7 +91,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, deliveryTickets, null);
                 }
-                return (false, null, "No delivery tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
@@ -105,7 +105,7 @@ namespace WiiTrakApi.Repository
             {
                 var deliveryTickets = await _dbContext.DeliveryTickets
                     .Where(expression)
-                    .Select(x => x).Where(x => x.IsActive )
+                    .Select(x => x).Where(x => x.IsActive)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -113,7 +113,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, deliveryTickets, null);
                 }
-                return (false, null, "No delivery tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
@@ -121,7 +121,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        
+
         public async Task<(bool IsSuccess, List<SPGetDeliveryTicketsById>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsById(Guid Id, Enums.Role role, string FromDate, string ToDate)
         {
             try
@@ -143,7 +143,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, DeliveryTickets, null);
                 }
-                return (false, null, "No delivery  tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
@@ -169,14 +169,14 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, ServiceBoard, null);
                 }
-                return (false, null, "No delivery  tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
                 return (false, null, ex.Message);
             }
         }
-        
+
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateDeliveryTicketAsync(DeliveryTicketModel deliveryTicket)
         {
             try
@@ -201,7 +201,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                
+
                 var storedetails = await _dbContext.Stores
                  .AsNoTracking()
                  .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
@@ -223,7 +223,7 @@ namespace WiiTrakApi.Repository
                 var recordToDelete = await _dbContext.DeliveryTickets.FirstOrDefaultAsync(x => x.Id == id);
                 if (recordToDelete is null)
                 {
-                    return (false, "Delivery ticket not found");
+                    return (false, ExceptionMessage);
                 }
                 _dbContext.DeliveryTickets.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();

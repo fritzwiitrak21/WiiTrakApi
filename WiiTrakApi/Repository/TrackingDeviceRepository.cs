@@ -29,7 +29,7 @@ namespace WiiTrakApi.Repository
 
             if (trackingDevice is not null)
             {
-                return (true, (TrackingDeviceModel)trackingDevice, null);
+                return (true, trackingDevice, null);
             }
             return (false, null, "No tracking device found");
         }

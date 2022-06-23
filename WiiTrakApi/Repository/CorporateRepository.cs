@@ -17,11 +17,11 @@ namespace WiiTrakApi.Repository
     public class CorporateRepository : ICorporateRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
+        const string ErrorMessage = "No Corporate found";
         public CorporateRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-        } 
+        }
 
         public async Task<(bool IsSuccess, CorporateModel? Corporate, string? ErrorMessage)> GetCorporateByIdAsync(Guid id)
         {
@@ -31,9 +31,9 @@ namespace WiiTrakApi.Repository
 
             if (company is not null)
             {
-                return (true, (CorporateModel)company, null);
+                return (true, company, null);
             }
-            return (false, null, "No corporate found");
+            return (false, null, ErrorMessage);
         }
 
         public async Task<(bool IsSuccess, List<CorporateModel>? Corporates, string? ErrorMessage)> GetAllCorporatesAsync()
@@ -49,7 +49,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporations, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -71,7 +71,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporations, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -97,9 +97,9 @@ namespace WiiTrakApi.Repository
 
                 parms = new List<SqlParameter>
                 {
-                    
+
                      new SqlParameter { ParameterName = "@CompanyId", Value = companyId },
-                    
+
                 };
 
                 var corporates = await _dbContext.Corporates.FromSqlRaw<CorporateModel>(sqlquery, parms.ToArray()).ToListAsync();
@@ -110,7 +110,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporates, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -138,7 +138,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporates, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -233,7 +233,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                
+
                 await _dbContext.Corporates.AddAsync(corporate);
                 #region Adding Corporate details to users table
                 UsersModel user = new UsersModel();
@@ -249,9 +249,9 @@ namespace WiiTrakApi.Repository
 
                 await _dbContext.Users.AddAsync(user);
                 #endregion
-                
+
                 #region Adding Corporate details to CompanyCorporate table
-                if(RoleId==3 || RoleId==4)
+                if (RoleId == 3 || RoleId == 4)
                 {
                     CompanyCorporateModel companycorporate = new CompanyCorporateModel();
                     companycorporate.CorporateId = corporate.Id;

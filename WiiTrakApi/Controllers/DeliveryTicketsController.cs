@@ -187,7 +187,6 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-
         [HttpGet("Summary/{id:guid}")]
         public async Task<IActionResult> GetDeliveryTicketSummaryById(Guid id)
         {
@@ -201,7 +200,8 @@ namespace WiiTrakApi.Controllers
         [HttpGet("DeliveryTickets/{Id:guid}/{Role:int}/{RecordCount:int}")]
         public async Task<IActionResult> GetDeliveryTicketsById(Guid Id, int Role, int RecordCount)
         {
-            DateTime ToDate, FromDate;
+            DateTime ToDate;
+            DateTime FromDate;
             if (RecordCount == 0)
             {
                 ToDate = DateTime.UtcNow;
@@ -229,16 +229,7 @@ namespace WiiTrakApi.Controllers
             }
             return Ok(result.ServiceBoard);
         }
-        // [HttpPost("GetDeliveryTicketsByIdTest")]
-        //public async Task<ActionResult<DeliveryTicketDto>> GetDeliveryTicketsByIdTest([FromBody] DeliveryTicketInputDto inputDto)
-        //{
-        //    var result = await _repository.GetDeliveryTicketsById(inputDto.Id,(Role)inputDto.RoleId,Convert.ToDateTime(inputDto.FromDate),Convert.ToDateTime(inputDto.ToDate));
-        //    if (!result.IsSuccess)
-        //    {
-        //        return NotFound(result.ErrorMessage);
-        //    }
-        //    return Ok(result.DeliveryTickets); 
-        //}
+
         [HttpPost]
         public async Task<ActionResult<DeliveryTicketDto>> CreateDeliveryTicket([FromBody] DeliveryTicketCreationDto deliveryTicketCreation)
         {

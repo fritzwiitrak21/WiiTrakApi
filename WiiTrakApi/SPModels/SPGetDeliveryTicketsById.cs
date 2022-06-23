@@ -57,5 +57,6 @@ namespace WiiTrakApi.SPModels
         public string TimezoneName { get; set; }
         public DateTime? TimezoneDateTime { get; set; }
         public string ServiceFrequency { get; set; }
+        public bool IsConnectedStore { get; set; }
     }
 }

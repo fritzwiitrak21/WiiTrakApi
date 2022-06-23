@@ -10,13 +10,13 @@ namespace WiiTrakApi.Models
     public class SimCardModel: EntityModel
     {
      
-        public string TelecomCompany { get; set; }
-        public string PhoneNumber { get; set; }
-        public string PlanName { get; set; }
+        public string TelecomCompany { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string PlanName { get; set; } = string.Empty;
         public DateTime PlanActivationDate { get; set; }
         public DateTime PlanEndDate { get; set; }
-        public string SIMNo { get; set; }
-        public string IMSI { get; set; }
+        public string SIMNo { get; set; } = string.Empty;
+        public string IMSI { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? CreatedAt { get; set; }

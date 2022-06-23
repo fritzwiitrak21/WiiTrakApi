@@ -44,5 +44,6 @@ namespace WiiTrakApi.DTOs
         public string CountyCode { get; set; } = string.Empty;
         public string ServiceFrequency { get; set; } = string.Empty;
         public DateTime? StartDate { get; set; }
+        public bool IsConnectedStore { get; set; }
     }
 }

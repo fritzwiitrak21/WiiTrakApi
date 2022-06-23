@@ -34,7 +34,7 @@ namespace WiiTrakApi.Helpers
         public static void ConfigureAddMailSetting(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MailSettingsDto>(configuration.GetSection("MailSettings"));
-           
+
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -61,6 +61,9 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<ISimCardsRepository, SimCardsRepository>();
             services.AddScoped<IDevicesRepository, DevicesRepository>();
             //services.AddScoped<ITrackSolidRepository, TrackSolidRepository>();
+            services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
+            services.AddScoped<ISimCardHistoryRepository, SimCardHistoryRepository>();
+
         }
     }
 }

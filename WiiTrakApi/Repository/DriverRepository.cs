@@ -31,7 +31,7 @@ namespace WiiTrakApi.Repository
 
             if (driver is not null)
             {
-                return (true, (DriverModel)driver, null);
+                return (true, driver, null);
             }
             return (false, null, "No driver found");
         }
