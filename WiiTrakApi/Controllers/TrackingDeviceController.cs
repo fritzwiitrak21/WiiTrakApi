@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
-using WiiTrakApi.Enums;
+using WiiTrakApi.Enums; 
 
 namespace WiiTrakApi.Controllers
 {

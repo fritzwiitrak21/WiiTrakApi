@@ -44,7 +44,26 @@ namespace WiiTrakApi.Repository
             }
             return (false, null, "No SimCard found");
         }
+        public async Task<(bool IsSuccess, List<SimCardModel>? SimCards, string? ErrorMessage)> GetSimCardByTechnicianIdAsync(Guid TechnicianId)
+        {
+            try
+            {
+                var simcard = await _dbContext.SimCards
+                    .Where(x => x.TechnicianId == TechnicianId)
+                    .AsNoTracking().OrderByDescending(x => x.CreatedAt)
+                    .ToListAsync();
+                if (simcard.Any())
+                {
+                    return (true, simcard, null);
+                }
 
+                return (false, null, "No SimCard found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateSimCardAsync(SimCardModel SimCard)
         {
             try

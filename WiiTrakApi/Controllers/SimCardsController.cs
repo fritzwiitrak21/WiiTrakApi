@@ -47,6 +47,18 @@ namespace WiiTrakApi.Controllers
             var dto = Mapper.Map<SimCardsDto>(result.SimCardList);
             return Ok(dto);
         }
+        [HttpGet("Technicians/{TechnicianId:guid}")]
+        public async Task<IActionResult> GetSimCardByTechnicianId(Guid TechnicianId)
+        {
+            var result = await Repository.GetSimCardByTechnicianIdAsync(TechnicianId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<SimCardsDto>>(result.SimCards);
+
+            return Ok(dtoList);
+        }
         [HttpPost]
         public async Task<ActionResult<SimCardsDto>> CreateSimCard([FromBody] SimCardsDto SimCardCreation)
         {

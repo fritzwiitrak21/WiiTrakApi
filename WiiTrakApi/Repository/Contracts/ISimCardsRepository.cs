@@ -10,6 +10,7 @@ namespace WiiTrakApi.Repository.Contracts
     {
         Task<(bool IsSuccess, List<SimCardModel>? SimCardList, string? ErrorMessage)> GetAllSimCardDetailsAsync();
         Task<(bool IsSuccess, SimCardModel? SimCardList, string? ErrorMessage)> GetSimCardByIdAsync(Guid Id);
+        Task<(bool IsSuccess, List<SimCardModel>? SimCards, string? ErrorMessage)> GetSimCardByTechnicianIdAsync(Guid TechnicianId);
         Task<(bool IsSuccess, string? ErrorMessage)> CreateSimCardAsync(SimCardModel SimCard);
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateSimCardAsync(SimCardModel SimCard);
     }

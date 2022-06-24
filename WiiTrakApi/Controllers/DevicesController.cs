@@ -19,11 +19,13 @@ namespace WiiTrakApi.Controllers
         private readonly IMapper Mapper;
         private readonly IDevicesRepository Repository;
         private readonly ISimCardsRepository SimCardsRepository;
-        public DevicesController(IMapper mapper, IDevicesRepository repository, ISimCardsRepository simrepository)
+        private readonly ISimCardHistoryRepository SimCardHistoryRepository;
+        public DevicesController(IMapper mapper, IDevicesRepository repository, ISimCardsRepository simrepository, ISimCardHistoryRepository simcardhistory)
         {
             Mapper = mapper;
             Repository = repository;
             SimCardsRepository = simrepository;
+            SimCardHistoryRepository = simcardhistory;
         }
         [HttpGet]
         [EnableQuery]
@@ -49,7 +51,18 @@ namespace WiiTrakApi.Controllers
             var dto = Mapper.Map<DevicesDto>(result.DeviceList);
             return Ok(dto);
         }
+        [HttpGet("Technicians/{TechnicianId:guid}")]
+        public async Task<IActionResult> GetDeviceByTechnicianId(Guid TechnicianId)
+        {
+            var result = await Repository.GetDeviceByTechnicianIdAsync(TechnicianId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<DevicesDto>>(result.Devices);
 
+            return Ok(dtoList);
+        }
         [HttpPost]
         public async Task<ActionResult<DevicesDto>> CreateDevice([FromBody] DevicesDto DeviceCreation)
         {
@@ -85,8 +98,28 @@ namespace WiiTrakApi.Controllers
             {
                 if (CurrentSim.SimCardList.Id != PreviousSim.SimCardList.Id)
                 {
+                    var PreviousSimHistory = new SimCardHistoryModel
+                    {
+                        DeviceId = DeviceUpdate.Id,
+                        SIMCardId = PreviousSim.SimCardList.Id,
+                        RemovedAt = DateTime.UtcNow,
+                        CreatedAt = DateTime.UtcNow,
+                        IsActive=true,
+                        TechnicianId=DeviceUpdate.TechnicianId
+                    };
+                    var CurrentSimHistory = new SimCardHistoryModel
+                    {
+                        DeviceId = DeviceUpdate.Id,
+                        SIMCardId = DeviceUpdate.SIMCardId,
+                        MappedAt = DateTime.UtcNow,
+                        CreatedAt = DateTime.UtcNow,
+                        IsActive = true,
+                        TechnicianId = DeviceUpdate.TechnicianId
+                    };
                     PreviousSim.SimCardList.IsMapped = false;
                     PreviousSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                    await SimCardHistoryRepository.CreateSimCardHistoryAsync(PreviousSimHistory);
+                    await SimCardHistoryRepository.CreateSimCardHistoryAsync(CurrentSimHistory);
                     await SimCardsRepository.UpdateSimCardAsync(PreviousSim.SimCardList);
                 }
                 CurrentSim.SimCardList.IsMapped = true;
