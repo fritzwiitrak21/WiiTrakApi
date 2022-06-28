@@ -11,6 +11,8 @@ namespace WiiTrakApi.Models
         public Guid SenderId { get; set; }
         public int SenderRoleId { get; set; }
         public Guid StoreId { get; set; }
+        public string Store { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public Guid ReciverId { get; set; }
         public DateTime? DeliveredAt { get; set; }
