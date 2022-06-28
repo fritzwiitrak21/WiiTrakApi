@@ -77,6 +77,9 @@ namespace WiiTrakApi.Helpers
             CreateMap<TrackingDeviceDetailsDto, SPGetTrackingDeviceDetailsById>().ReverseMap();
             CreateMap<DeviceHistoryModel,DeviceHistoryDto >().ReverseMap();
             CreateMap<SimCardHistoryModel, SimCardHistoryDto>().ReverseMap();
+
+            CreateMap<MessagesModel, MessagesDto>().ReverseMap();
+            CreateMap<MessagesDto, SpGetMessagesById>().ReverseMap();
         }
     }
 }

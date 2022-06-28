@@ -19,7 +19,7 @@ namespace WiiTrakApi.DTOs
         public Guid StoreId { get; set; }
         public Guid DeviceId { get; set; }
         public bool IsActive { get; set; }
-        public CartHistoryUpdateDto CartHistory { get; set; }
+        public CartHistoryUpdateDto? CartHistory { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
     }

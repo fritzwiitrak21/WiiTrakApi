@@ -87,6 +87,8 @@ namespace WiiTrakApi.Controllers
             var result = await Repository.GetDeviceByIdAsync(id);
             var CurrentSim = await SimCardsRepository.GetSimCardByIdAsync(DeviceUpdate.SIMCardId);
             var PreviousSim = await SimCardsRepository.GetSimCardByIdAsync(result.DeviceList.SIMCardId);
+            var PreviousSimHistory = new SimCardHistoryModel();
+            var CurrentSimHistory = new SimCardHistoryModel();
             if (!result.IsSuccess || result.DeviceList is null)
             {
                 return NotFound(result.ErrorMessage);
@@ -96,35 +98,62 @@ namespace WiiTrakApi.Controllers
             var updateResult = await Repository.UpdateDeviceAsync(result.DeviceList);
             if (updateResult.IsSuccess)
             {
-                if (CurrentSim.SimCardList.Id != PreviousSim.SimCardList.Id)
+
+                if (PreviousSim.SimCardList != null)
                 {
-                    var PreviousSimHistory = new SimCardHistoryModel
+                    PreviousSimHistory.DeviceId = DeviceUpdate.Id;
+                    PreviousSimHistory.SIMCardId = PreviousSim.SimCardList.Id;
+                    PreviousSimHistory.RemovedAt = DateTime.UtcNow;
+                    PreviousSimHistory.CreatedAt = DateTime.UtcNow;
+                    PreviousSimHistory.IsActive = true;
+                    PreviousSimHistory.TechnicianId = DeviceUpdate.TechnicianId;
+                }
+                if (CurrentSim.SimCardList != null)
+                {
+                    CurrentSimHistory.DeviceId = DeviceUpdate.Id;
+                    CurrentSimHistory.SIMCardId = DeviceUpdate.SIMCardId;
+                    CurrentSimHistory.MappedAt = DateTime.UtcNow;
+                    CurrentSimHistory.CreatedAt = DateTime.UtcNow;
+                    CurrentSimHistory.IsActive = true;
+                    CurrentSimHistory.TechnicianId = DeviceUpdate.TechnicianId;
+                }
+                if (DeviceUpdate.SIMCardId != Guid.Empty)
+                {
+                   
+                    if (PreviousSim.SimCardList != null && CurrentSim.SimCardList != null && CurrentSim.SimCardList.Id != PreviousSim.SimCardList.Id)
                     {
-                        DeviceId = DeviceUpdate.Id,
-                        SIMCardId = PreviousSim.SimCardList.Id,
-                        RemovedAt = DateTime.UtcNow,
-                        CreatedAt = DateTime.UtcNow,
-                        IsActive=true,
-                        TechnicianId=DeviceUpdate.TechnicianId
-                    };
-                    var CurrentSimHistory = new SimCardHistoryModel
+                        PreviousSim.SimCardList.IsMapped = false;
+                        PreviousSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                        CurrentSim.SimCardList.IsMapped = true;
+                        CurrentSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                        await SimCardHistoryRepository.CreateSimCardHistoryAsync(PreviousSimHistory);
+                        await SimCardHistoryRepository.CreateSimCardHistoryAsync(CurrentSimHistory);
+                        await SimCardsRepository.UpdateSimCardAsync(PreviousSim.SimCardList);
+                        await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
+                    }
+                   else if (PreviousSim.SimCardList != null)
                     {
-                        DeviceId = DeviceUpdate.Id,
-                        SIMCardId = DeviceUpdate.SIMCardId,
-                        MappedAt = DateTime.UtcNow,
-                        CreatedAt = DateTime.UtcNow,
-                        IsActive = true,
-                        TechnicianId = DeviceUpdate.TechnicianId
-                    };
+                        PreviousSim.SimCardList.IsMapped = false;
+                        PreviousSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                        await SimCardHistoryRepository.CreateSimCardHistoryAsync(PreviousSimHistory);
+                        await SimCardsRepository.UpdateSimCardAsync(PreviousSim.SimCardList);
+                    }
+                    else if (CurrentSim.SimCardList != null)
+                    {
+                        CurrentSim.SimCardList.IsMapped = true;
+                        CurrentSim.SimCardList.UpdatedAt = DateTime.UtcNow;
+                        await SimCardHistoryRepository.CreateSimCardHistoryAsync(CurrentSimHistory);
+                        await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
+                    }
+                }
+                else
+                {
                     PreviousSim.SimCardList.IsMapped = false;
                     PreviousSim.SimCardList.UpdatedAt = DateTime.UtcNow;
                     await SimCardHistoryRepository.CreateSimCardHistoryAsync(PreviousSimHistory);
-                    await SimCardHistoryRepository.CreateSimCardHistoryAsync(CurrentSimHistory);
                     await SimCardsRepository.UpdateSimCardAsync(PreviousSim.SimCardList);
                 }
-                CurrentSim.SimCardList.IsMapped = true;
-                CurrentSim.SimCardList.UpdatedAt = DateTime.UtcNow;
-                await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
+
                 return NoContent();
             }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);

@@ -63,6 +63,7 @@ namespace WiiTrakApi.Helpers
             //services.AddScoped<ITrackSolidRepository, TrackSolidRepository>();
             services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
             services.AddScoped<ISimCardHistoryRepository, SimCardHistoryRepository>();
+            services.AddScoped<IMessagesRepository, MessagesRepository>();
 
         }
     }
