@@ -29,7 +29,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByCorporateId(Guid corporateId);
 
         Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByCompanyId(Guid companyId);
-
+        Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByTechnicianId(Guid technicianId);
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> StoreExistsAsync(Guid id);
 
         Task<(bool IsSuccess, string? ErrorMessage)> CreateStoreAsync(StoreModel store);

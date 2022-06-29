@@ -18,13 +18,16 @@ namespace WiiTrakApi.Controllers
         private readonly IMapper Mapper;
         private readonly ICartRepository Repository;
         private readonly ICartHistoryRepository CartHistoryRepository;
-
+        private readonly IDevicesRepository DevicesRepository;
+        private readonly IDeviceHistoryRepository DeviceHistoryRepository;
         public CartsController(IMapper mapper,
-            ICartRepository repository, ICartHistoryRepository Carthistoryrepository)
+            ICartRepository repository, ICartHistoryRepository Carthistoryrepository, IDevicesRepository Devicesrepository, IDeviceHistoryRepository Devicehistoryrepository)
         {
             Mapper = mapper;
             Repository = repository;
             CartHistoryRepository = Carthistoryrepository;
+            DevicesRepository = Devicesrepository;
+            DeviceHistoryRepository = Devicehistoryrepository;
         }
 
         [HttpGet("{id:guid}", Name = "GetCart")]
@@ -65,7 +68,7 @@ namespace WiiTrakApi.Controllers
 
             return Ok(dtoList);
         }
-       
+
         [HttpGet("Store/{storeId:guid}")]
         public async Task<IActionResult> GetCartsByStoreId(Guid storeId)
         {
@@ -121,16 +124,44 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
+        [HttpGet("Technician/{technicianId:guid}")]
+        public async Task<IActionResult> GetCartsByTechnicianId(Guid technicianId)
+        {
+            // Returns carts with outside geofence and picked up statuses
+            var result = await Repository.GetCartsByTechnicianIdAsync(technicianId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CartDto>>(result.Carts);
+
+            return Ok(dtoList);
+        }
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CartDto>> CreateCart([FromBody] CartCreationDto cartCreation)
-         {
+        {
             var cart = Mapper.Map<CartModel>(cartCreation);
             cart.CreatedAt = DateTime.UtcNow;
 
             var createResult = await Repository.CreateCartAsync(cart);
             if (!createResult.IsSuccess)
             {
+                var CurrentDevice = await DevicesRepository.GetDeviceByIdAsync(cart.DeviceId);
+                CurrentDevice.DeviceList.IsMapped = true;
+                CurrentDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                var DeviceHistory = new DeviceHistoryModel
+                {
+                    DeviceId = cart.DeviceId,
+                    CartId = cart.Id,
+                    MappedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
+                    TechnicianId = cartCreation.CreatedBy
+
+                };
+                await DeviceHistoryRepository.CreateDeviceHistoryAsync(DeviceHistory);
+                await DevicesRepository.UpdateDeviceAsync(CurrentDevice.DeviceList);
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
@@ -147,7 +178,10 @@ namespace WiiTrakApi.Controllers
             {
                 var result = await Repository.GetCartByIdAsync(id);
                 var cart = result.Cart;
-
+                var CurrentDevice = await DevicesRepository.GetDeviceByIdAsync(cartUpdate.DeviceId);
+                var PreviousDevice = await DevicesRepository.GetDeviceByIdAsync(result.Cart.DeviceId);
+                var PreviousDeviceHistory = new DeviceHistoryModel();
+                var CurrentDeviceHistory = new DeviceHistoryModel();
                 if (cartUpdate.CartHistory.DriverId != Guid.Empty)
                 {
                     //update cart history
@@ -174,15 +208,71 @@ namespace WiiTrakApi.Controllers
                 cart.UpdatedAt = DateTime.UtcNow;
                 cart.IssueType = cartUpdate.IssueType;
                 cart.IssueDescription = cartUpdate.IssueDescription;
+                cart.DeviceId=cartUpdate.DeviceId;
                 var updateResult = await Repository.UpdateCartAsync(cart);
                 if (updateResult.IsSuccess)
                 {
+                    if (PreviousDevice.DeviceList != null)
+                    {
+                        PreviousDeviceHistory.DeviceId = PreviousDevice.DeviceList.Id;
+                        PreviousDeviceHistory.CartId = cart.Id;
+                        PreviousDeviceHistory.RemovedAt = DateTime.UtcNow;
+                        PreviousDeviceHistory.CreatedAt = DateTime.UtcNow;
+                        PreviousDeviceHistory.TechnicianId = cartUpdate.CreatedBy;
+                        PreviousDeviceHistory.IsActive = true;
+                    }
+                    if (CurrentDevice.DeviceList != null)
+                    {
+                        CurrentDeviceHistory.DeviceId = cart.DeviceId;
+                        CurrentDeviceHistory.CartId = cart.Id;
+                        CurrentDeviceHistory.MappedAt = DateTime.UtcNow;
+                        CurrentDeviceHistory.CreatedAt = DateTime.UtcNow;
+                        CurrentDeviceHistory.TechnicianId = cartUpdate.CreatedBy;
+                        CurrentDeviceHistory.IsActive = true;
+                    }
+                    if (cartUpdate.DeviceId != Guid.Empty)
+                    {
+
+                        if (PreviousDevice.DeviceList != null && CurrentDevice.DeviceList != null && CurrentDevice.DeviceList.Id != PreviousDevice.DeviceList.Id)
+                        {
+                            PreviousDevice.DeviceList.IsMapped = false;
+                            PreviousDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                            CurrentDevice.DeviceList.IsMapped = true;
+                            CurrentDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                            await DeviceHistoryRepository.CreateDeviceHistoryAsync(PreviousDeviceHistory);
+                            await DeviceHistoryRepository.CreateDeviceHistoryAsync(CurrentDeviceHistory);
+                            await DevicesRepository.UpdateDeviceAsync(PreviousDevice.DeviceList);
+                            await DevicesRepository.UpdateDeviceAsync(CurrentDevice.DeviceList);
+                        }
+                        else if (PreviousDevice.DeviceList != null)
+                        {
+                            PreviousDevice.DeviceList.IsMapped = false;
+                            PreviousDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                            await DeviceHistoryRepository.CreateDeviceHistoryAsync(PreviousDeviceHistory);
+                            await DevicesRepository.UpdateDeviceAsync(PreviousDevice.DeviceList);
+                        }
+                        else if (CurrentDevice.DeviceList != null)
+                        {
+                            CurrentDevice.DeviceList.IsMapped = true;
+                            CurrentDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                            await DeviceHistoryRepository.CreateDeviceHistoryAsync(CurrentDeviceHistory);
+                            await DevicesRepository.UpdateDeviceAsync(CurrentDevice.DeviceList);
+                        }
+                    }
+                    else
+                    {
+                        PreviousDevice.DeviceList.IsMapped = false;
+                        PreviousDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                        await DeviceHistoryRepository.CreateDeviceHistoryAsync(PreviousDeviceHistory);
+                        await DevicesRepository.UpdateDeviceAsync(PreviousDevice.DeviceList);
+                    }
+
                     return NoContent();
                 }
                 ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

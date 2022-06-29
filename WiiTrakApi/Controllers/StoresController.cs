@@ -87,6 +87,17 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
+        [HttpGet("Technician/{technicianId:guid}")]
+        public async Task<IActionResult> GetStoresByTechnicianId(Guid technicianId)
+        {
+            var result = await Repository.GetStoresByTechnicianId(technicianId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
+            return Ok(dtoList);
+        }
         [HttpGet("Systemowner/{SystemownerId:guid}")]
         public async Task<IActionResult> GetStoresBySystemOwnerId(Guid SystemownerId)
         {

@@ -40,7 +40,7 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool IsSuccess, List<SpGetMessagesById>? Messages, string? ErrorMessage)> GetMessagesBIdAsync(Guid Id,int RoleId)
+        public async Task<(bool IsSuccess, List<SpGetMessagesById>? Messages, string? ErrorMessage)> GetMessagesBIdAsync(Guid Id, int RoleId)
         {
             try
             {
@@ -89,6 +89,52 @@ namespace WiiTrakApi.Repository
 
                 DbContext.Messages.Update(Message);
                 await DbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateMessageDeliveredTimeAsync(Guid Id)
+        {
+            try
+            {
+                const string sqlquery = "Exec SpUpdateMessagesDeliveredTime @Id";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = Id }
+                };
+
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateMessageActionAsync(Guid Id, string ActionTaken)
+        {
+            try
+            {
+                const string sqlquery = "Exec SpUpdateMessageAction @Id,@ActionTaken";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@Id", Value = Id },
+                     new SqlParameter { ParameterName = "@ActionTaken", Value = ActionTaken }
+                };
+
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+
                 return (true, null);
             }
             catch (Exception ex)

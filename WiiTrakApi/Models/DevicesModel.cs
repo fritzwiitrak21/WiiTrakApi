@@ -23,5 +23,6 @@ namespace WiiTrakApi.Models
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid TechnicianId { get; set; }
+        public bool IsMapped { get; set; }
     }
 }

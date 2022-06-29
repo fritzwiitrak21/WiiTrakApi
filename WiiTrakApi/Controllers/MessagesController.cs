@@ -40,7 +40,7 @@ namespace WiiTrakApi.Controllers
         {
             try
             {
-                var result = await Repository.GetMessagesBIdAsync(Id,RoleId);
+                var result = await Repository.GetMessagesBIdAsync(Id, RoleId);
                 if (!result.IsSuccess)
                 {
                     return NotFound(result.ErrorMessage);
@@ -70,12 +70,22 @@ namespace WiiTrakApi.Controllers
             return CreatedAtRoute(nameof(GetMessage), new { id = dto.Id }, dto);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateNotifiedTime(MessagesDto Message)
+        public async Task<IActionResult> UpdateMessageDeliveredTime(MessagesDto Message)
         {
-            var OldMessage = Mapper.Map<MessagesModel>(Message);
-            OldMessage.UpdatedAt = DateTime.UtcNow;
-            
-            var result = await Repository.UpdateMessageAsync(OldMessage);
+
+            var result = await Repository.UpdateMessageDeliveredTimeAsync(Message.Id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+        }
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateMessageDeliveredTime(Guid Id, MessagesDto Message)
+        {
+
+            var result = await Repository.UpdateMessageActionAsync(Id, Message.ActionTaken);
             if (result.IsSuccess)
             {
                 return NoContent();

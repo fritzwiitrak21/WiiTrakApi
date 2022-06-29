@@ -4,7 +4,7 @@
 */
 using WiiTrakApi.Enums;
 namespace WiiTrakApi.DTOs
-{  
+{
     public record CartDto
     {
         public Guid Id { get; set; }
@@ -22,10 +22,12 @@ namespace WiiTrakApi.DTOs
         public Guid StoreId { get; set; }
         public StoreDto? Store { get; set; }
         public TrackingDeviceDto? TrackingDevice { get; set; }
+        public DevicesDto? Device {get; set;}
         public List<CartHistoryDto>? CartHistory { get; set; }
         public Guid? DeviceId { get; set; }
         public bool IsActive { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
+        public Guid? CreatedBy { get; set; }
     }
 }

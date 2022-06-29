@@ -80,7 +80,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@Id", Value = Id }
                 };
 
-                var DriverStores = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
 
                 return (true, null);
             }

@@ -23,5 +23,6 @@ namespace WiiTrakApi.DTOs
         public TrackingDeviceDto? TrackingDevice { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
+        public Guid? CreatedBy { get; set; }
     }
 }

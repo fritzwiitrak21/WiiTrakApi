@@ -206,6 +206,53 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid technicianId)
+        {
+            try
+            {
+                var technician=await DbContext.Technicians.Where(x=>x.Id == technicianId).FirstOrDefaultAsync();
+                var company = await DbContext.Companies.Where(x => x.SystemOwnerId == technician.SystemOwnerId).ToListAsync();
+                var companyStores = new List<StoreModel>();
+                if (company != null)
+                {
+                    foreach (var com in company)
+                    {
+                        var store = await DbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
+                        companyStores.AddRange(store);
+                    }
+
+                }
+                //var companyStores = await DbContext.Stores.Where(x => x.CompanyId == technician.CompanyId && x.IsConnectedStore).ToListAsync();
+                var cartList = new List<CartModel>();
+                foreach (var store in companyStores)
+                {
+                    var carts = await DbContext.Carts
+                        .Where(x => x.StoreId == store.Id && store.IsConnectedStore)
+                        .Include(x => x.Store)
+                        .Include(x => x.TrackingDevice)
+                        .AsNoTracking()
+                        .ToListAsync();
+                    cartList.AddRange(carts);
+                }
+                if (cartList.Any())
+                {
+                    foreach(var cart in cartList)
+                    {
+                        var device = await DbContext.Devices.Where(x => x.Id == cart.DeviceId).FirstOrDefaultAsync();
+                        if (device != null)
+                        {
+                            cart.Device = device;
+                        }
+                    }
+                    return (true, cartList, null);
+                }
+                return (false, null, ErrorMessage);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
 
         public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByConditionAsync(Expression<Func<CartModel, bool>> expression)
         {

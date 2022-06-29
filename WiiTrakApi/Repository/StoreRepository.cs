@@ -434,6 +434,34 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByTechnicianId(Guid technicianId)
+        {
+            try
+            {
+                var technician = await _dbContext.Technicians.Where(x => x.Id == technicianId).FirstOrDefaultAsync();
+                var company = await _dbContext.Companies.Where(x => x.SystemOwnerId == technician.SystemOwnerId).ToListAsync();
+                var StoreList = new List<StoreModel>();
+                if (company != null)
+                {
+                    foreach(var com in company)
+                    {
+                        var store= await _dbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
+                        StoreList.AddRange(store);
+                    }
+
+                }
+                if (StoreList.Any())
+                {
+                    return (true, StoreList,null);
+                }
+                    return (false, null, "No stores found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+        
         public async Task<(bool IsSuccess, List<SPGetStoresBySystemOwnerId>? Stores, string? ErrorMessage)> GetStoresBySystemOwnerId(Guid SystemownerId)
         {
             try

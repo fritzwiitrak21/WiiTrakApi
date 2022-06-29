@@ -25,10 +25,11 @@ namespace WiiTrakApi.Models
         public string BarCode { get; set; } = string.Empty;    
         [ForeignKey(nameof(StoreModel))]
         public Guid StoreId { get; set; }
-        public Guid? DeviceId { get; set; }
+        public Guid DeviceId { get; set; }
         public bool IsActive { get; set; }
         public StoreModel? Store { get; set; }
         public TrackingDeviceModel? TrackingDevice { get; set; }
+        public DevicesModel? Device { get; set; }
         public List<CartHistoryModel> CartHistory { get; set; }
 
         public string IssueType { get; set; } = string.Empty;

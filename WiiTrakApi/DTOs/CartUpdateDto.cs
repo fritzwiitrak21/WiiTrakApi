@@ -22,5 +22,6 @@ namespace WiiTrakApi.DTOs
         public CartHistoryUpdateDto? CartHistory { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public string IssueDescription { get; set; } = string.Empty;
+        public Guid? CreatedBy { get; set; }
     }
 }

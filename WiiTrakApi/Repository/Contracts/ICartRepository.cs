@@ -22,7 +22,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCorporateIdAsync(Guid corporateId);
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCompanyIdAsync(Guid companyId);
-
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid technicianId);
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByConditionAsync(Expression<Func<CartModel, bool>> expression);
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CartExistsAsync(Guid id);

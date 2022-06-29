@@ -16,5 +16,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, List<SpGetMessagesById>? Messages, string? ErrorMessage)> GetMessagesBIdAsync(Guid Id, int RoleId);
         Task<(bool IsSuccess, string? ErrorMessage)> AddNewMessageAsync(MessagesModel NewMessage);
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateMessageAsync(MessagesModel Message);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateMessageDeliveredTimeAsync(Guid Id);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateMessageActionAsync(Guid Id, string ActionTaken);
     }
 }
