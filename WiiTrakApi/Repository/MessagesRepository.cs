@@ -21,6 +21,27 @@ namespace WiiTrakApi.Repository
         {
             DbContext = dbContext;
         }
+        public async Task<(bool IsSuccess, List<MessagesModel>? Messages, string? ErrorMessage)> GetAllMessagesAsync()
+        {
+            try
+            {
+                var Messages = await DbContext.Messages
+                    .Select(x => x)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                if (Messages.Any())
+                {
+                    return (true, Messages, null);
+                }
+                
+                return (false, null, "No message found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, MessagesModel? Message, string? ErrorMessage)> GetMessageAsync(Guid Id)
         {
             try

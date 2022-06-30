@@ -23,7 +23,7 @@ namespace WiiTrakApi.Controllers
             Mapper = mapper;
             Repository = repository;
         }
-        [HttpGet]
+        [HttpGet("{Id:guid}")]
         public async Task<IActionResult> GetMessage(Guid id)
         {
             var result = await Repository.GetMessageAsync(id);
@@ -35,6 +35,18 @@ namespace WiiTrakApi.Controllers
             return Ok(dto);
         }
         [EnableQuery]
+        [HttpGet]
+        public async Task<IActionResult> GetAllMessages()
+        {
+            var result = await Repository.GetAllMessagesAsync();
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<List<MessagesDto>>(result.Messages);
+            return Ok(dto);
+        }
+        
         [HttpGet("{Id:guid}/{RoleId:int}", Name = "GetMessage")]
         public async Task<IActionResult> GetMessageById(Guid Id, int RoleId)
         {

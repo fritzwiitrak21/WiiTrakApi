@@ -12,6 +12,7 @@ namespace WiiTrakApi.Repository.Contracts
 {
     public interface IMessagesRepository
     {
+        Task<(bool IsSuccess, List<MessagesModel>? Messages, string? ErrorMessage)> GetAllMessagesAsync();
         Task<(bool IsSuccess, MessagesModel? Message, string? ErrorMessage)> GetMessageAsync(Guid Id);
         Task<(bool IsSuccess, List<SpGetMessagesById>? Messages, string? ErrorMessage)> GetMessagesBIdAsync(Guid Id, int RoleId);
         Task<(bool IsSuccess, string? ErrorMessage)> AddNewMessageAsync(MessagesModel NewMessage);
