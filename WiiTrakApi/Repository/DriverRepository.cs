@@ -107,6 +107,35 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByStoreIdAsync(Guid StoreId)
+        {
+            try
+            {
+                var drivers = new List<DriverModel>();
+                const string sqlquery = "Exec SpGetDriversByStoreId @Id";
+
+                List<SqlParameter> parms;
+
+
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =StoreId  }
+                };
+
+                drivers = await _dbContext.Drivers.FromSqlRaw<DriverModel>(sqlquery, parms.ToArray()).ToListAsync();
+
+
+                if (drivers.Any())
+                {
+                    return (true, drivers, null);
+                }
+                return (false, null, "No drivers found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
 
         public async Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> DriverExistsAsync(Guid id)
         {

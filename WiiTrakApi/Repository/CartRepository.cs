@@ -222,7 +222,6 @@ namespace WiiTrakApi.Repository
                     }
 
                 }
-                //var companyStores = await DbContext.Stores.Where(x => x.CompanyId == technician.CompanyId && x.IsConnectedStore).ToListAsync();
                 var cartList = new List<CartModel>();
                 foreach (var store in companyStores)
                 {

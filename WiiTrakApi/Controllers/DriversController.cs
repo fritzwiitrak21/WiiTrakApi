@@ -85,6 +85,17 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<DriverDto>>(result.Drivers);
             return Ok(dtoList);
         }
+        [HttpGet("Store/{StoreId:guid}")]
+        public async Task<IActionResult> GetDriversByStoreId(Guid StoreId)
+        {
+            var result = await Repository.GetDriversByStoreIdAsync(StoreId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<DriverDto>>(result.Drivers);
+            return Ok(dtoList);
+        }
 
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetDriverReport(Guid id)

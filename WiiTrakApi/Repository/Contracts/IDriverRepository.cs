@@ -18,7 +18,7 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByConditionAsync(Expression<Func<DriverModel, bool>> expression);
         Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversBySystemOwnerAsync(Guid Id);
-
+        Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByStoreIdAsync(Guid StoreId);
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> DriverExistsAsync(Guid id);
 
         Task<(bool IsSuccess, string? ErrorMessage)> CreateDriverAsync(DriverModel driver);
