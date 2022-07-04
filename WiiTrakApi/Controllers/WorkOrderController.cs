@@ -1,10 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
-using WiiTrakApi.Repository;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Controllers
@@ -13,26 +15,28 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class WorkOrderController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IWorkOrderRepository _repository;
-        private readonly IDriverRepository _driverRepository;
-        private readonly IStoreRepository _storeRepository;
+        private readonly IMapper Mapper;
+        private readonly IWorkOrderRepository Repository;
+        private readonly IDriverRepository DriverRepository;
+        private readonly IStoreRepository StoreRepository;
 
-        public WorkOrderController(IMapper mapper, IWorkOrderRepository repository, IDriverRepository driverRepository, IStoreRepository storeRepository)
+        public WorkOrderController(IMapper mapper, IWorkOrderRepository repository, IDriverRepository driverrepository, IStoreRepository storerepository)
         {
-            _mapper = mapper;
-            _repository = repository;
-            _driverRepository = driverRepository;
-            _storeRepository = storeRepository;
+            Mapper = mapper;
+            Repository = repository;
+            DriverRepository = driverrepository;
+            StoreRepository = storerepository;
         }
 
         [HttpGet("{id:guid}", Name = "GetWorkOrder")]
         public async Task<IActionResult> GetWorkOrder(Guid id)
         {
-            var result = await _repository.GetWorkOrderByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dto = _mapper.Map<WorkOrderDto>(result.WorkOrder);
-
+            var result = await Repository.GetWorkOrderByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<WorkOrderDto>(result.WorkOrder);
             return Ok(dto);
         }
 
@@ -40,12 +44,12 @@ namespace WiiTrakApi.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetAllWorkOrders()
         {
-            var result = await _repository.GetAllWorkOrdersAsync();
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
-
-
+            var result = await Repository.GetAllWorkOrdersAsync();
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
             return Ok(dtoList);
         }
 
@@ -55,7 +59,10 @@ namespace WiiTrakApi.Controllers
         //    var result = await _repository
         //        .GetWorkOrdersByConditionAsync(x => x.DriverId == driverId);
 
-        //    if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+        //    if (!result.IsSuccess)
+        //    {
+        //      return NotFound(result.ErrorMessage);
+        //    }
         //    var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
 
         //    // get store name and number
@@ -78,7 +85,10 @@ namespace WiiTrakApi.Controllers
         //    var result = await _repository
         //        .GetWorkOrdersByConditionAsync(x => x.StoreId == storeId);
 
-        //    if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+        //    if (!result.IsSuccess)
+        //    {
+        //          return NotFound(result.ErrorMessage);
+        //    }
         //    var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
 
         //    // get store name and number
@@ -101,7 +111,10 @@ namespace WiiTrakApi.Controllers
         //    var result = await _repository
         //        .GetWorkOrdersByConditionAsync(x => x.ServiceProviderId == serviceProviderId);
 
-        //    if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+        //    if (!result.IsSuccess)
+        //    {
+        //          return NotFound(result.ErrorMessage);
+        //    }
         //    var dtoList = _mapper.Map<List<WorkOrderDto>>(result.WorkOrders);
 
         //    // get store name and number
@@ -122,35 +135,37 @@ namespace WiiTrakApi.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkOrderDto>> CreateWorkOrder([FromBody] WorkOrderCreationDto workOrderCreation)
         {
-            var workOrder = _mapper.Map<WorkOrderModel>(workOrderCreation);
+            var workOrder = Mapper.Map<WorkOrderModel>(workOrderCreation);
             workOrder.CreatedAt = DateTime.UtcNow;
-
-            var workOrderNumberResult = await _repository.GetWorkOrderNumberAsync();
+            var workOrderNumberResult = await Repository.GetWorkOrderNumberAsync();
             workOrder.WorkOrderNumber = workOrderNumberResult.WorkOrderNumber;
-
-            var createResult = await _repository.CreateWorkOrderAsync(workOrder);
+            var createResult = await Repository.CreateWorkOrderAsync(workOrder);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-
-            var dto = _mapper.Map<WorkOrderDto>(workOrder);
+            var dto = Mapper.Map<WorkOrderDto>(workOrder);
             return CreatedAtRoute(nameof(GetWorkOrder), new { id = dto.Id }, dto);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateWorkOrder(Guid id, WorkOrderUpdateDto workOrderUpdate)
         {
-            var result = await _repository.GetWorkOrderByIdAsync(id);
+            var result = await Repository.GetWorkOrderByIdAsync(id);
 
-            if (!result.IsSuccess || result.WorkOrder is null) return NotFound(result.ErrorMessage);
-            _mapper.Map(workOrderUpdate, result.WorkOrder);
+            if (!result.IsSuccess || result.WorkOrder is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            Mapper.Map(workOrderUpdate, result.WorkOrder);
             result.WorkOrder.UpdatedAt = DateTime.UtcNow;
 
-            var updateResult = await _repository.UpdateWorkOrderAsync(result.WorkOrder);
-            if (updateResult.IsSuccess) return NoContent();
-
+            var updateResult = await Repository.UpdateWorkOrderAsync(result.WorkOrder);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
@@ -158,9 +173,11 @@ namespace WiiTrakApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWorkOrder(Guid id)
         {
-            var result = await _repository.DeleteWorkOrderAsync(id);
-            if (result.IsSuccess) return NoContent();
-
+            var result = await Repository.DeleteWorkOrderAsync(id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

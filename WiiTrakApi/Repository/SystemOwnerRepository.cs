@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
@@ -23,7 +27,7 @@ namespace WiiTrakApi.Repository
 
             if (systemOwner is not null)
             {
-                return (true, (SystemOwnerModel)systemOwner, null);
+                return (true, systemOwner, null);
             }
             return (false, null, "No systemOwner found");
         }
@@ -118,7 +122,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.SystemOwners.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "SystemOwners not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "SystemOwners not found");
+                }
                 _dbContext.SystemOwners.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -136,7 +143,10 @@ namespace WiiTrakApi.Repository
         public async Task<(bool IsExists, string? ErrorMessage)> CheckEmailIdAsync(string EmailId)
         {
             var CheckMail = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == EmailId);
-            if (CheckMail is null) return (false, "Email not exists");
+            if (CheckMail is null)
+            {
+                return (false, "Email not exists");
+            }
             else return (true, "Email already Exists");
         }
     }

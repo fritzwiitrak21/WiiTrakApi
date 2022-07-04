@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NuGet.ContentModel;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
@@ -82,7 +85,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.RepairIssues.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Repair issue not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Repair issue not found");
+                }
                 _dbContext.RepairIssues.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

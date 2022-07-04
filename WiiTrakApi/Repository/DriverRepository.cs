@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -27,7 +31,7 @@ namespace WiiTrakApi.Repository
 
             if (driver is not null)
             {
-                return (true, (DriverModel)driver, null);
+                return (true, driver, null);
             }
             return (false, null, "No driver found");
         }
@@ -80,7 +84,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 var drivers = new List<DriverModel>();
-                string sqlquery = "Exec SpGetDriversBySystemOwner @Id";
+                const string sqlquery = "Exec SpGetDriversBySystemOwner @Id";
 
                 List<SqlParameter> parms;
 
@@ -91,6 +95,35 @@ namespace WiiTrakApi.Repository
                 };
 
                 drivers = await _dbContext.Drivers.FromSqlRaw<DriverModel>(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (drivers.Any())
+                {
+                    return (true, drivers, null);
+                }
+                return (false, null, "No drivers found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+        public async Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByStoreIdAsync(Guid StoreId)
+        {
+            try
+            {
+                var drivers = new List<DriverModel>();
+                const string sqlquery = "Exec SpGetDriversByStoreId @Id";
+
+                List<SqlParameter> parms;
+
+
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =StoreId  }
+                };
+
+                drivers = await _dbContext.Drivers.FromSqlRaw<DriverModel>(sqlquery, parms.ToArray()).ToListAsync();
+
 
                 if (drivers.Any())
                 {
@@ -171,7 +204,7 @@ namespace WiiTrakApi.Repository
                     isactive = true;
                 }
 
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -203,7 +236,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Drivers.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Driver not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Driver not found");
+                }
                 _dbContext.Drivers.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

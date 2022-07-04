@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Cores;
@@ -13,11 +17,11 @@ namespace WiiTrakApi.Repository
     public class CorporateRepository : ICorporateRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
+        const string ErrorMessage = "No Corporate found";
         public CorporateRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-        } 
+        }
 
         public async Task<(bool IsSuccess, CorporateModel? Corporate, string? ErrorMessage)> GetCorporateByIdAsync(Guid id)
         {
@@ -27,9 +31,9 @@ namespace WiiTrakApi.Repository
 
             if (company is not null)
             {
-                return (true, (CorporateModel)company, null);
+                return (true, company, null);
             }
-            return (false, null, "No corporate found");
+            return (false, null, ErrorMessage);
         }
 
         public async Task<(bool IsSuccess, List<CorporateModel>? Corporates, string? ErrorMessage)> GetAllCorporatesAsync()
@@ -45,7 +49,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporations, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -67,7 +71,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporations, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -86,16 +90,16 @@ namespace WiiTrakApi.Repository
 
                 //var corporations = companyCorporates.Select(x => x.Corporate).ToList();
 
-                string sqlquery = "Exec SpGetCorporatesByCompanyId @CompanyId";
+                const string sqlquery = "Exec SpGetCorporatesByCompanyId @CompanyId";
 
                 List<SqlParameter> parms;
 
 
                 parms = new List<SqlParameter>
                 {
-                    
+
                      new SqlParameter { ParameterName = "@CompanyId", Value = companyId },
-                    
+
                 };
 
                 var corporates = await _dbContext.Corporates.FromSqlRaw<CorporateModel>(sqlquery, parms.ToArray()).ToListAsync();
@@ -106,7 +110,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporates, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -118,7 +122,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpGetCorporatesBySystemOwnerId @SystemOwnerId";
+                const string sqlquery = "Exec SpGetCorporatesBySystemOwnerId @SystemOwnerId";
 
                 List<SqlParameter> parms;
                 parms = new List<SqlParameter>
@@ -134,7 +138,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, corporates, null);
                 }
-                return (false, null, "No corporates found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -229,7 +233,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                
+
                 await _dbContext.Corporates.AddAsync(corporate);
                 #region Adding Corporate details to users table
                 UsersModel user = new UsersModel();
@@ -245,9 +249,9 @@ namespace WiiTrakApi.Repository
 
                 await _dbContext.Users.AddAsync(user);
                 #endregion
-                
+
                 #region Adding Corporate details to CompanyCorporate table
-                if(RoleId==3 || RoleId==4)
+                if (RoleId == 3 || RoleId == 4)
                 {
                     CompanyCorporateModel companycorporate = new CompanyCorporateModel();
                     companycorporate.CorporateId = corporate.Id;
@@ -271,7 +275,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 #region Update corporate details to users table
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -301,7 +305,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Corporates.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Corporate not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Corporate not found");
+                }
                 _dbContext.Corporates.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

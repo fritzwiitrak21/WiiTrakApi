@@ -1,4 +1,8 @@
-﻿namespace WiiTrakApi.DTOs
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+namespace WiiTrakApi.DTOs
 {
     public record TechnicianUpdateDto
     {
@@ -13,5 +17,7 @@
         public string ProfilePic { get; set; } = string.Empty;
 
         public Guid ServiceProviderId { get; set; }
+        public Guid SystemOwnerId { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

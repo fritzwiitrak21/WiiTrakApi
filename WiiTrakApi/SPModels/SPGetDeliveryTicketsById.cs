@@ -1,4 +1,8 @@
-﻿namespace WiiTrakApi.SPModels
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+namespace WiiTrakApi.SPModels
 {
     public class SPGetDeliveryTicketsById
     {
@@ -53,5 +57,6 @@
         public string TimezoneName { get; set; }
         public DateTime? TimezoneDateTime { get; set; }
         public string ServiceFrequency { get; set; }
+        public bool IsConnectedStore { get; set; }
     }
 }

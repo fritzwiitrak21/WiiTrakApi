@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using WiiTrakApi.Models;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 
 namespace WiiTrakApi.DTOs
 {   
@@ -55,6 +57,7 @@ namespace WiiTrakApi.DTOs
         public int Distance { get; set; }
         public string? TimezoneDiff { get; set; } = string.Empty;
         public string? TimezoneName { get; set; } = string.Empty;
+        public bool IsConnectedStore { get; set; }
 
     }
 }

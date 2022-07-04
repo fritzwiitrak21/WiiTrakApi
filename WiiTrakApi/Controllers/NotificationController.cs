@@ -1,9 +1,11 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
-using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 
 namespace WiiTrakApi.Controllers
@@ -12,22 +14,25 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly INotificationRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly INotificationRepository Repository;
 
         public NotificationController(IMapper mapper, INotificationRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
 
         [HttpGet]
         [EnableQuery]
         public async Task<IActionResult> GetAllNotification()
         {
-            var result = await _repository.GetAllNotificationsAsync();
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtolist = _mapper.Map<List<NotificationDto>>(result.Notification);
+            var result = await Repository.GetAllNotificationsAsync();
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtolist = Mapper.Map<List<NotificationDto>>(result.Notification);
             return Ok(dtolist);
         }
 
@@ -36,9 +41,12 @@ namespace WiiTrakApi.Controllers
         {
             try
             {
-                var result = await _repository.GetNotificationAsync(Id);
-                if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-                var dtolist = _mapper.Map<List<NotificationDto>>(result.Notification);
+                var result = await Repository.GetNotificationAsync(Id);
+                if (!result.IsSuccess)
+                {
+                    return NotFound(result.ErrorMessage);
+                }
+                var dtolist = Mapper.Map<List<NotificationDto>>(result.Notification);
                 return Ok(dtolist);
             }
             catch (Exception ex)
@@ -50,9 +58,11 @@ namespace WiiTrakApi.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateNotifiedTime(NotificationDto dto)
         {
-            var result = await _repository.UpdateNotifiedTimeAsync(dto.Id);
-            if (result.IsSuccess) return NoContent();
-
+            var result = await Repository.UpdateNotifiedTimeAsync(dto.Id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

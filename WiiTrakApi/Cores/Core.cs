@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Text;
 using System.Security.Cryptography;
 
 namespace WiiTrakApi.Cores
@@ -114,11 +118,12 @@ namespace WiiTrakApi.Cores
                 sb.Append(valid[rnd.Next(valid.Length)]);
             }
 
-            return EncryptText(DefaultPassword);// EncryptText(sb.ToString());
+            return EncryptText(DefaultPassword);/// EncryptText(sb.ToString());
         }
     }
     public static class Numbers
     {
+        public static int OneTwoEight { get; set; } = 128;
         public static int FiveHundred { get; set; } = 500;
     }
 

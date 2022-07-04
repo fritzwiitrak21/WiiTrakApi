@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.Repository.Contracts;
 using WiiTrakApi.Repository;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
 using WiiTrakApi.DTOs;
-using Microsoft.Extensions.Configuration;
 
 namespace WiiTrakApi.Helpers
 {
@@ -31,7 +34,7 @@ namespace WiiTrakApi.Helpers
         public static void ConfigureAddMailSetting(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MailSettingsDto>(configuration.GetSection("MailSettings"));
-           
+
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -55,6 +58,13 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<IAuthenticateRepository, AuthenticateRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ICountyCodeRepository, CountyCodeRepository>();
+            services.AddScoped<ISimCardsRepository, SimCardsRepository>();
+            services.AddScoped<IDevicesRepository, DevicesRepository>();
+            //services.AddScoped<ITrackSolidRepository, TrackSolidRepository>();
+            services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
+            services.AddScoped<ISimCardHistoryRepository, SimCardHistoryRepository>();
+            services.AddScoped<IMessagesRepository, MessagesRepository>();
+
         }
     }
 }

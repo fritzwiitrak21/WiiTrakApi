@@ -1,4 +1,8 @@
-﻿namespace WiiTrakApi.SPModels
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+namespace WiiTrakApi.SPModels
 {
     public class SpGetDriverAssignedStoresBySystemOwner
     {
@@ -29,5 +33,6 @@
         public bool DriverStoresIsActive { get; set; }
         public string AssignedDriver { get; set; } = string.Empty;
         public string CountyCode { get; set; } = string.Empty;
+        public bool IsConnectedStore { get; set; }
     }
 }

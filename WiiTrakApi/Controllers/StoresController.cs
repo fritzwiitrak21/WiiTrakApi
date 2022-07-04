@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using WiiTrakApi.DTOs;
@@ -11,25 +15,25 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class StoresController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IStoreRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly IStoreRepository Repository;
 
         public StoresController(IMapper mapper,
             IStoreRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
 
         [HttpGet("{id:guid}", Name = "GetStore")]
         public async Task<IActionResult> GetStore(Guid id)
         {
-            var result = await _repository.GetStoreByIdAsync(id);
+            var result = await Repository.GetStoreByIdAsync(id);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dto = _mapper.Map<StoreDto>(result.Store);
+            var dto = Mapper.Map<StoreDto>(result.Store);
             return Ok(dto);
         }
 
@@ -37,13 +41,12 @@ namespace WiiTrakApi.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetAllStores()
         {
-            var result = await _repository.GetAllStoresAsync();
-
+            var result = await Repository.GetAllStoresAsync();
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
 
@@ -51,73 +54,78 @@ namespace WiiTrakApi.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetStoresByServiceProviderId(Guid serviceProviderId)
         {
-            var result = await _repository
+            var result = await Repository
                 .GetStoresByConditionAsync(x => x.ServiceProviderId == serviceProviderId);
-
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
 
         [HttpGet("Corporate/{corporateId:guid}")]
         public async Task<IActionResult> GetStoresByCorporateId(Guid corporateId)
         {
-            var result = await _repository.GetStoresByCorporateId(corporateId);
-
+            var result = await Repository.GetStoresByCorporateId(corporateId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
 
         [HttpGet("Company/{companyId:guid}")]
         public async Task<IActionResult> GetStoresByCompanyId(Guid companyId)
         {
-            var result = await _repository.GetStoresByCompanyId(companyId);
-
+            var result = await Repository.GetStoresByCompanyId(companyId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
+            return Ok(dtoList);
+        }
+        [HttpGet("Technician/{technicianId:guid}")]
+        public async Task<IActionResult> GetStoresByTechnicianId(Guid technicianId)
+        {
+            var result = await Repository.GetStoresByTechnicianId(technicianId);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
         [HttpGet("Systemowner/{SystemownerId:guid}")]
         public async Task<IActionResult> GetStoresBySystemOwnerId(Guid SystemownerId)
         {
-            var result = await _repository.GetStoresBySystemOwnerId(SystemownerId);
-
+            var result = await Repository.GetStoresBySystemOwnerId(SystemownerId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
 
         [HttpGet("Driver/{driverId:guid}")]
         public async Task<IActionResult> GetStoresByDriverId(Guid driverId)
         {
-            var result = await _repository.GetStoresByDriverId(driverId);
-
+            var result = await Repository.GetStoresByDriverId(driverId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
             }
-            var dtoList = _mapper.Map<List<StoreDto>>(result.Stores);
+            var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             dtoList = dtoList.OrderBy(o => o.StoreName).ThenBy(p => p.StoreNumber).ToList();
             return Ok(dtoList);
         }
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetStoreReport(Guid id)
         {
-            var result = await _repository.GetStoreReportById(id);
-
+            var result = await Repository.GetStoreReportById(id);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -129,8 +137,7 @@ namespace WiiTrakApi.Controllers
         [HttpGet("report/driver/{driverId:guid}")]
         public async Task<IActionResult> GetAllStoreReportByDriver(Guid driverId)
         {
-            var result = await _repository.GetAllStoreReportByDriverId(driverId);
-
+            var result = await Repository.GetAllStoreReportByDriverId(driverId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -142,8 +149,7 @@ namespace WiiTrakApi.Controllers
         [HttpGet("report/corporate/{corporateId:guid}")]
         public async Task<IActionResult> GetAllStoreReportByCorporate(Guid corporateId)
         {
-            var result = await _repository.GetAllStoreReportByCorporateId(corporateId);
-
+            var result = await Repository.GetAllStoreReportByCorporateId(corporateId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -155,8 +161,7 @@ namespace WiiTrakApi.Controllers
         [HttpGet("report/company/{companyId:guid}")]
         public async Task<IActionResult> GetAllStoreReportByCompany(Guid companyId)
         {
-            var result = await _repository.GetAllStoreReportByCompanyId(companyId);
-
+            var result = await Repository.GetAllStoreReportByCompanyId(companyId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -172,18 +177,15 @@ namespace WiiTrakApi.Controllers
             // TODO
             // company Id to one-to-many
             // Corporate Id to one-to-many
-
-            var store = _mapper.Map<StoreModel>(storeCreation);
+            var store = Mapper.Map<StoreModel>(storeCreation);
             store.CreatedAt = DateTime.UtcNow;
-
-            var createResult = await _repository.CreateStoreAsync(store);
+            var createResult = await Repository.CreateStoreAsync(store);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-
-            var dto = _mapper.Map<StoreDto>(store);
+            var dto = Mapper.Map<StoreDto>(store);
             return CreatedAtRoute(nameof(GetStore), new { id = dto.Id }, dto);
         }
 
@@ -191,35 +193,30 @@ namespace WiiTrakApi.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateStore(Guid id, StoreUpdateDto storeUpdate)
         {
-            var result = await _repository.GetStoreByIdAsync(id);
-
+            var result = await Repository.GetStoreByIdAsync(id);
             if (!result.IsSuccess || result.Store is null)
             {
                 return NotFound(result.ErrorMessage);
             }
-            _mapper.Map(storeUpdate, result.Store);
+            Mapper.Map(storeUpdate, result.Store);
             result.Store.UpdatedAt = DateTime.UtcNow;
-
-            var updateResult = await _repository.UpdateStoreAsync(result.Store);
+            var updateResult = await Repository.UpdateStoreAsync(result.Store);
             if (updateResult.IsSuccess)
             {
                 return NoContent();
             }
-
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
 
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStore(Guid id)
         {
-            var result = await _repository.DeleteStoreAsync(id);
+            var result = await Repository.DeleteStoreAsync(id);
             if (result.IsSuccess)
             {
                 return NoContent();
             }
-
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

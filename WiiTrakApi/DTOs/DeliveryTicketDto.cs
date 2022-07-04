@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WiiTrakApi.Enums;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 
 namespace WiiTrakApi.DTOs
 {
@@ -21,11 +23,11 @@ namespace WiiTrakApi.DTOs
 
         public string SignaturePicUrl { get; set; } = string.Empty;
 
-        public string StoreName { get; set; }
+        public string StoreName { get; set; } = string.Empty;
 
-        public string StoreNumber { get; set; }
+        public string StoreNumber { get; set; } = string.Empty;
 
-        public string DriverName { get; set; }
+        public string DriverName { get; set; } = string.Empty;
 
         public DateTime DeliveredAt { get; set; }
 
@@ -40,20 +42,20 @@ namespace WiiTrakApi.DTOs
         public Guid DriverId { get; set; } = Guid.Empty;
 
         public string Signee { get; set; } = string.Empty;
-        public string StreetAddress1 { get; set; }
-        public string StreetAddress2 { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string PostalCode { get; set; }
+        public string StreetAddress1 { get; set; } = string.Empty;
+        public string StreetAddress2 { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = string.Empty;
 
         public int DriverNumber { get; set; }
         public bool IsActive { get; set; }
         public bool DriverStoresIsActive { get; set; }
         public bool StoresIsActive { get; set; }
         public Guid? UpdatedBy { get; set; }
-        public string TimezoneDiff { get; set; }
-        public string TimezoneName { get; set; }
+        public string TimezoneDiff { get; set; } = string.Empty;
+        public string TimezoneName { get; set; } = string.Empty;
         public DateTime? TimezoneDateTime { get; set; }
-        public string ServiceFrequency { get; set; }
+        public string ServiceFrequency { get; set; } = string.Empty;
     }
 }

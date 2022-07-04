@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using WiiTrakApi.Enums;
-using WiiTrakApi.Models;
 
 namespace WiiTrakApi.DTOs
 {
@@ -37,5 +39,8 @@ namespace WiiTrakApi.DTOs
         public double PickupLatitude { get; set; }
 
         public Guid CartId { get; set; }
+        public string IssueType { get; set; } = string.Empty;
+        public string IssueDescription { get; set; } = string.Empty;
+        public Guid? DeviceId { get; set; } = Guid.Empty;
     }
 }

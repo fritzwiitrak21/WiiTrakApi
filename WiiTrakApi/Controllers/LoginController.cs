@@ -1,16 +1,13 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Cores;
-using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.AspNetCore.OData.Query;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace WiiTrakApi.Controllers
 {
@@ -18,16 +15,16 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ILoginRepository _repository;
-        private readonly IAuthenticateRepository _authenticateRepository;
+        private readonly IMapper Mapper;
+        private readonly ILoginRepository Repository;
+        private readonly IAuthenticateRepository AuthenticateRepository;
 
         public LoginController(IMapper mapper,
-           ILoginRepository repository, IAuthenticateRepository AuthenticateRepository)
+           ILoginRepository repository, IAuthenticateRepository Authenticaterepository)
         {
-            _mapper = mapper;
-            _repository = repository;
-            _authenticateRepository = AuthenticateRepository;
+            Mapper = mapper;
+            Repository = repository;
+            AuthenticateRepository = Authenticaterepository;
         }
 
 
@@ -38,11 +35,12 @@ namespace WiiTrakApi.Controllers
             var login = new LoginDto();
             login.Username = Username;
             login.Password = Password;
-
-            var result = await _repository.GetUsersDetailsByLoginAsync(login);
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<UserDto>(result.Users);
+            var result = await Repository.GetUsersDetailsByLoginAsync(login);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<UserDto>(result.Users);
             return Ok(dtoList);
         }
 
@@ -52,32 +50,33 @@ namespace WiiTrakApi.Controllers
         {
             var forgot = new ForgotPasswordDto();
             forgot.Username = Username;
-
-
-            var result = await _repository.GetUsersDetailsByUserNameAsync(forgot);
-
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<UserDto>(result.Users);
+            var result = await Repository.GetUsersDetailsByUserNameAsync(forgot);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<UserDto>(result.Users);
             return Ok(dtoList);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUserPassword(Guid id, ResetPasswordDto reset)
         {
-
-
-            var result = await _repository.GetUserDetailByIdAsync(id);
-
-            if (!result.IsSuccess || result.User is null) return NotFound(result.ErrorMessage);
-
+            var result = await Repository.GetUserDetailByIdAsync(id);
+            if (!result.IsSuccess || result.User is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             result.User.Password = Core.EncryptText(Core.Base64Decrypt(reset.NewPassword));
             result.User.UpdatedAt =
             result.User.PasswordLastUpdatedAt = DateTime.UtcNow;
             result.User.IsFirstLogin = false;
 
-            var updateResult = await _repository.UpdateUserPasswordAsync(result.User);
-            if (updateResult.IsSuccess) return NoContent();
-
+            var updateResult = await Repository.UpdateUserPasswordAsync(result.User);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }

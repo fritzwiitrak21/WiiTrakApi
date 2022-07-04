@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WiiTrakApi.Models
@@ -81,5 +85,6 @@ namespace WiiTrakApi.Models
         public DateTime? StartDate { get; set; }
         public string? TimezoneDiff { get; set; } = string.Empty;
         public string? TimezoneName { get; set; } = string.Empty;
+        public bool IsConnectedStore { get;set; }
     }
 }

@@ -1,4 +1,8 @@
-﻿
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+
 namespace WiiTrakApi.DTOs
 {
     public class CorporateDto
@@ -34,7 +38,8 @@ namespace WiiTrakApi.DTOs
         public string PhoneSecondary { get; set; } = string.Empty;
 
         public Guid CompanyId { get; set; }
+        public Guid SystemOwnerId { get; set; }
 
-        public List<StoreDto> Stores { get; set; }
+        public List<StoreDto>? Stores { get; set; }
     }
 }

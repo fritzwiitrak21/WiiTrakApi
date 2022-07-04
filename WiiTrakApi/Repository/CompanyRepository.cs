@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -13,7 +17,7 @@ namespace WiiTrakApi.Repository
     public class CompanyRepository : ICompanyRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
+        const string ErrorMessage = "No companies found";
         public CompanyRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -27,9 +31,9 @@ namespace WiiTrakApi.Repository
 
             if (company is not null)
             {
-                return (true, (CompanyModel)company, null);
+                return (true, company, null);
             }
-            return (false, null, "No company found");
+            return (false, null, ErrorMessage);
         }
 
         public async Task<(bool IsSuccess, List<CompanyModel>? Companies, string? ErrorMessage)> GetAllCompaniesAsync()
@@ -45,7 +49,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, companies, null);
                 }
-                return (false, null, "No companies found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -67,14 +71,14 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, companies, null);
                 }
-                return (false, null, "No companies found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
                 return (false, null, ex.Message);
             }
         }
-        
+
 
         public async Task<(bool IsSuccess, CompanyModel? Company, string? ErrorMessage)> GetParentCompanyAsync(Guid subcompanyId)
         {
@@ -84,7 +88,7 @@ namespace WiiTrakApi.Repository
 
             if (company is not null)
             {
-                return (true, (CompanyModel)company, null);
+                return (true, company, null);
             }
             return (false, null, "No company found");
         }
@@ -92,8 +96,8 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-              
-                string sqlquery = "Exec SpGetCompaniesByCorporateId @CorporateId";
+
+                const string sqlquery = "Exec SpGetCompaniesByCorporateId @CorporateId";
 
                 List<SqlParameter> parms;
 
@@ -108,7 +112,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, companies, null);
                 }
-                return (false, null, "No companies found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -121,16 +125,16 @@ namespace WiiTrakApi.Repository
             {
                 var companies = await _dbContext.Companies
                     .Where(x => x.SystemOwnerId == systemownerId)
-                    .AsNoTracking().OrderBy(x=>x.Name)
+                    .AsNoTracking().OrderBy(x => x.Name)
                     .ToListAsync();
 
-                
+
 
                 if (companies.Any())
                 {
                     return (true, companies, null);
                 }
-                return (false, null, "No companies found");
+                return (false, null, ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -221,12 +225,12 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCompanyAsync( CompanyModel company)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateCompanyAsync(CompanyModel company)
         {
             try
             {
                 await _dbContext.Companies.AddAsync(company);
-                
+
 
                 #region Adding Company details to users table
                 UsersModel user = new UsersModel();
@@ -239,7 +243,7 @@ namespace WiiTrakApi.Repository
                 user.PasswordLastUpdatedAt = DateTime.UtcNow;
                 user.IsActive = true;
                 user.IsFirstLogin = true;
-                
+
                 await _dbContext.Users.AddAsync(user);
                 #endregion
 
@@ -262,8 +266,13 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                if (company.ParentId != null && company.SystemOwner == null)
+                {
+                    var ParrentCompany = await _dbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
+                    company.SystemOwnerId = ParrentCompany.SystemOwnerId;
+                }
                 #region Update company details to users table
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -293,7 +302,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Companies.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Customer not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Customer not found");
+                }
                 _dbContext.Companies.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

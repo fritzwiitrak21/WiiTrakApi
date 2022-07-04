@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using WiiTrakApi.Models;
 
 namespace WiiTrakApi.Repository.Contracts
@@ -12,10 +16,12 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, List<TechnicianModel>? Technicians, string? ErrorMessage)> GetTechniciansByConditionAsync(Expression<Func<TechnicianModel, bool>> expression);
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> TechnicianExistsAsync(Guid id);
+        Task<(bool IsSuccess, List<TechnicianModel>? Technicians, string? ErrorMessage)> GetTechniciansBySystemOwnerIdAsync(Guid SystemOwnerId);
+        Task<(bool IsSuccess, List<TechnicianModel>? Technicians, string? ErrorMessage)> GetTechniciansByCompanyIdAsync(Guid CompanyId);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> CreateTechnicianAsync(TechnicianModel technician);
+        Task<(bool IsSuccess, string? ErrorMessage)> CreateTechnicianAsync(TechnicianModel technician, int RoleId);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTechnicianAsync(TechnicianModel technician);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTechnicianAsync(TechnicianModel technician, int RoleId);
 
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteTechnicianAsync(Guid id);
 

@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WiiTrakApi.Enums;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 
 namespace WiiTrakApi.DTOs
 {

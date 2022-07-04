@@ -1,8 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
@@ -13,22 +15,25 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class CompaniesController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ICompanyRepository _repository;
+        private readonly IMapper Mapper;
+        private readonly ICompanyRepository Repository;
 
         public CompaniesController(IMapper mapper,
             ICompanyRepository repository)
         {
-            _mapper = mapper;
-            _repository = repository;
+            Mapper = mapper;
+            Repository = repository;
         }
 
         [HttpGet("{id:guid}", Name = "GetCompany")]
         public async Task<IActionResult> GetCompany(Guid id)
         {
-            var result = await _repository.GetCompanyByIdAsync(id);
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dto = _mapper.Map<CompanyDto>(result.Company);
+            var result = await Repository.GetCompanyByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<CompanyDto>(result.Company);
             return Ok(dto);
         }
 
@@ -36,10 +41,13 @@ namespace WiiTrakApi.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetAllCompanies()
         {
-            var result = await _repository.GetAllCompaniesAsync();
+            var result = await Repository.GetAllCompaniesAsync();
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CompanyDto>>(result.Companies);
             return Ok(dtoList);
         }
 
@@ -47,30 +55,38 @@ namespace WiiTrakApi.Controllers
         public async Task<IActionResult> GetChildCompanies(Guid companyId)
         {
             var result =
-                await _repository.GetCompaniesByConditionAsync(x => x.ParentId == companyId);
+                await Repository.GetCompaniesByConditionAsync(x => x.ParentId == companyId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CompanyDto>>(result.Companies);
             return Ok(dtoList);
         }
 
         [HttpGet("ParentCompany/{subcompanyId:guid}")]
         public async Task<IActionResult> GetParentCompany(Guid subcompanyId)
         {
-            var result =
-                await _repository.GetParentCompanyAsync(subcompanyId);
+            var result = await Repository.GetParentCompanyAsync(subcompanyId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dto = _mapper.Map<CompanyDto>(result.Company);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<CompanyDto>(result.Company);
             return Ok(dto);
         }
 
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetCompanyReport(Guid id)
         {
-            var result = await _repository.GetCompanyReportById(id);
+            var result = await Repository.GetCompanyReportById(id);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
             var reportDto = result.Report;
             return Ok(reportDto);
         }
@@ -78,52 +94,64 @@ namespace WiiTrakApi.Controllers
         [HttpGet("corporate/{corporateId:guid}")]
         public async Task<IActionResult> GetCompaniesByCorporateId(Guid corporateId)
         {
-            var result = await _repository.GetPrimaryCompaniesByCorporateIdAsync(corporateId);
+            var result = await Repository.GetPrimaryCompaniesByCorporateIdAsync(corporateId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CompanyDto>>(result.Companies);
             return Ok(dtoList);
         }
         [HttpGet("systemowner/{systemownerId:guid}")]
         public async Task<IActionResult> GetCompaniesBySystemOwnerId(Guid systemownerId)
         {
-            var result = await _repository.GetCompaniesBySystemOwnerId(systemownerId);
+            var result = await Repository.GetCompaniesBySystemOwnerId(systemownerId);
 
-            if (!result.IsSuccess) return NotFound(result.ErrorMessage);
-            var dtoList = _mapper.Map<List<CompanyDto>>(result.Companies);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<CompanyDto>>(result.Companies);
             return Ok(dtoList);
         }
 
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CompanyDto>> CreateCompany([FromBody] CompanyCreationDto companyCreation)
+        public async Task<ActionResult<CompanyDto>> CreateCompany([FromBody] CompanyDto companyCreation)
         {
-            var company = _mapper.Map<CompanyModel>(companyCreation);
+            var company = Mapper.Map<CompanyModel>(companyCreation);
             company.CreatedAt = DateTime.UtcNow;
-            var createResult = await _repository.CreateCompanyAsync(company);
+            var createResult = await Repository.CreateCompanyAsync(company);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
 
-            var dto = _mapper.Map<CompanyDto>(company);
+            var dto = Mapper.Map<CompanyDto>(company);
             return CreatedAtRoute(nameof(GetCompany), new { id = dto.Id }, dto);
         }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCompany(Guid id, CompanyUpdateDto companyUpdate)
+        public async Task<IActionResult> UpdateCompany(Guid id, CompanyDto companyUpdate)
         {
-            var result = await _repository.GetCompanyByIdAsync(id);
+            var result = await Repository.GetCompanyByIdAsync(id);
 
-            if (!result.IsSuccess || result.Company is null) return NotFound(result.ErrorMessage);
-            _mapper.Map(companyUpdate, result.Company);
+            if (!result.IsSuccess || result.Company is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            Mapper.Map(companyUpdate, result.Company);
             result.Company.UpdatedAt = DateTime.UtcNow;
 
-            var updateResult = await _repository.UpdateCompanyAsync(result.Company);
-            if (updateResult.IsSuccess) return NoContent();
+            var updateResult = await Repository.UpdateCompanyAsync(result.Company);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
 
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
@@ -133,8 +161,11 @@ namespace WiiTrakApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCompany(Guid id)
         {
-            var result = await _repository.DeleteCompanyAsync(id);
-            if (result.IsSuccess) return NoContent();
+            var result = await Repository.DeleteCompanyAsync(id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
 
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);

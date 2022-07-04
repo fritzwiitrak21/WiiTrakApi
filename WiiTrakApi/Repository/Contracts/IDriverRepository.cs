@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
 
@@ -14,7 +18,7 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByConditionAsync(Expression<Func<DriverModel, bool>> expression);
         Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversBySystemOwnerAsync(Guid Id);
-
+        Task<(bool IsSuccess, List<DriverModel>? Drivers, string? ErrorMessage)> GetDriversByStoreIdAsync(Guid StoreId);
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> DriverExistsAsync(Guid id);
 
         Task<(bool IsSuccess, string? ErrorMessage)> CreateDriverAsync(DriverModel driver);

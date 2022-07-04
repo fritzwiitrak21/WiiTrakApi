@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using NuGet.ContentModel;
-using System.Linq;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
@@ -133,7 +134,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.WorkOrders.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Work order not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Work order not found");
+                }
                 _dbContext.WorkOrders.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

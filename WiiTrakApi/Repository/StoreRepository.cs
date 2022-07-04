@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
 using WiiTrakApi.DTOs;
@@ -25,16 +28,16 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, StoreModel? Store, string? ErrorMessage)> GetStoreByIdAsync(Guid id)
         {
-                var store = await _dbContext.Stores
-                    .Include(x => x.Carts)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Id == id);
+            var store = await _dbContext.Stores
+                .Include(x => x.Carts)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-                if (store is not null)
-                {
-                    return (true, store, null);
-                }
-                return (false, null, "No store found");
+            if (store is not null)
+            {
+                return (true, store, null);
+            }
+            return (false, null, "No store found");
         }
 
         public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetAllStoresAsync()
@@ -63,7 +66,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                string sqlquery = "Exec SpGetDriverAssignedStores @DriverId";
+                const string sqlquery = "Exec SpGetDriverAssignedStores @DriverId";
 
                 List<SqlParameter> parms;
 
@@ -431,11 +434,39 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByTechnicianId(Guid technicianId)
+        {
+            try
+            {
+                var technician = await _dbContext.Technicians.Where(x => x.Id == technicianId).FirstOrDefaultAsync();
+                var company = await _dbContext.Companies.Where(x => x.SystemOwnerId == technician.SystemOwnerId).ToListAsync();
+                var StoreList = new List<StoreModel>();
+                if (company != null)
+                {
+                    foreach(var com in company)
+                    {
+                        var store= await _dbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
+                        StoreList.AddRange(store);
+                    }
+
+                }
+                if (StoreList.Any())
+                {
+                    return (true, StoreList,null);
+                }
+                    return (false, null, "No stores found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+        
         public async Task<(bool IsSuccess, List<SPGetStoresBySystemOwnerId>? Stores, string? ErrorMessage)> GetStoresBySystemOwnerId(Guid SystemownerId)
         {
             try
             {
-                string sqlquery = "Exec SPGetStoresBySystemOwnerId @SystemownerId";
+                const string sqlquery = "Exec SPGetStoresBySystemOwnerId @SystemownerId";
 
                 List<SqlParameter> parms;
 
@@ -485,7 +516,7 @@ namespace WiiTrakApi.Repository
                     store.Latitude = LatLong.Latitude;
                     store.Longitude = LatLong.Longitude;
                     store.TimezoneDiff = LatLong.TimezoneDiff;
-                    store.TimezoneName= LatLong.TimezoneName;
+                    store.TimezoneName = LatLong.TimezoneName;
                 }
                 #endregion
                 await _dbContext.Stores.AddAsync(store);
@@ -520,7 +551,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 #region Update store details to users table
-                string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
+                const string sqlquery = "Exec SpUpdateUserDetails @Id,@FirstName,@LastName,@IsActive,@Email";
 
                 List<SqlParameter> parms;
 
@@ -562,7 +593,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.Stores.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Store not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Store not found");
+                }
                 _dbContext.Stores.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -579,7 +613,7 @@ namespace WiiTrakApi.Repository
         }
         public LatitudeLongitude GetLatLong(string Address)
         {
-            string APIKey = "AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE";
+            const string APIKey = "AIzaSyAUc0IKnyHlqoltF0zEzVAIAz6NUCQdeDE";
             string url = "https://maps.googleapis.com/maps/api/geocode/xml?address=" + Address + "&key=" + APIKey + "";
             WebRequest request = WebRequest.Create(url);
             LatitudeLongitude LatLong = new();
@@ -609,7 +643,7 @@ namespace WiiTrakApi.Repository
 
                         {
 
-                            string geometry_id = dsResult.Tables["geometry"].Select("result_id = " + row["result_id"].ToString())[0]["geometry_id"].ToString();
+                            string geometry_id = dsResult.Tables["geometry"].Select("result_id = " + row["result_id"])[0]["geometry_id"].ToString();
 
                             DataRow location = dsResult.Tables["location"].Select("geometry_id = " + geometry_id)[0];
 
@@ -633,7 +667,7 @@ namespace WiiTrakApi.Repository
                                 {
                                     var raw_offset = row["raw_offset"].ToString();
                                     var dst_offset = row["dst_offset"].ToString();
-                                    LatLong.TimezoneDiff =(Convert.ToDouble(raw_offset) + Convert.ToDouble(dst_offset)).ToString();
+                                    LatLong.TimezoneDiff = (Convert.ToDouble(raw_offset) + Convert.ToDouble(dst_offset)).ToString();
                                     LatLong.TimezoneName = row["time_zone_name"].ToString();
                                 }
                             }
@@ -653,7 +687,7 @@ namespace WiiTrakApi.Repository
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public string TimezoneDiff { get; set; }
-        public string TimezoneName { get; set; }
+        public string TimezoneDiff { get; set; } = string.Empty;
+        public string TimezoneName { get; set; } = string.Empty;
     }
 }

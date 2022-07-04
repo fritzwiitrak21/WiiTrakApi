@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using WiiTrakApi.Models;
 
 namespace WiiTrakApi.Repository.Contracts
@@ -10,7 +14,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetAllCartsAsync();
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId);
-
+        
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid storeId);
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDriverIdAsync(Guid driverId);
@@ -18,7 +22,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCorporateIdAsync(Guid corporateId);
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCompanyIdAsync(Guid companyId);
-
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid technicianId);
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByConditionAsync(Expression<Func<CartModel, bool>> expression);
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CartExistsAsync(Guid id);

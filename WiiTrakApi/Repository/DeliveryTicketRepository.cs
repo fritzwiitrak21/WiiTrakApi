@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using WiiTrakApi.Data;
@@ -13,7 +17,7 @@ namespace WiiTrakApi.Repository
     public class DeliveryTicketRepository : IDeliveryTicketRepository
     {
         private readonly ApplicationDbContext _dbContext;
-
+        const string ExceptionMessage = "No delivery tickets found";
         public DeliveryTicketRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -29,7 +33,7 @@ namespace WiiTrakApi.Repository
             {
                 return (true, deliveryTicket, null);
             }
-            return (false, null, "No delivery ticket found");
+            return (false, null, ExceptionMessage);
         }
 
         public async Task<(bool IsSuccess, DeliveryTicketSummaryDto? DeliveryTicketSummary, string? ErrorMessage)> GetDeliveryTicketSummaryByIdAsync(Guid id)
@@ -56,7 +60,7 @@ namespace WiiTrakApi.Repository
             {
                 return (true, summary, null);
             }
-            return (false, null, "No delivery ticket found");
+            return (false, null, ExceptionMessage);
         }
 
         public async Task<(bool IsSuccess, long DeliveryTicketNumber, string? ErrorMessage)> GetDeliveryTicketNumberAsync(Guid serviceProviderId)
@@ -87,7 +91,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, deliveryTickets, null);
                 }
-                return (false, null, "No delivery tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
@@ -101,7 +105,7 @@ namespace WiiTrakApi.Repository
             {
                 var deliveryTickets = await _dbContext.DeliveryTickets
                     .Where(expression)
-                    .Select(x => x).Where(x => x.IsActive == true)
+                    .Select(x => x).Where(x => x.IsActive)
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -109,7 +113,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, deliveryTickets, null);
                 }
-                return (false, null, "No delivery tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
@@ -117,43 +121,13 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<DeliveryTicketModel>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsByPrimaryIdAsync(Guid Id, Enums.Role role)
-        {
-            try
-            {
-                List<DeliveryTicketModel> list = new List<DeliveryTicketModel>();
-                string sqlquery = "Exec SpGetDeliveryTickets @Id,@Role";
-                List<SqlParameter> parms;
 
-
-                parms = new List<SqlParameter>
-                {
-                    new SqlParameter { ParameterName = "@Id", Value =Id  },
-                    new SqlParameter { ParameterName = "@Role", Value =(int)role }
-
-                };
-
-                list = await _dbContext.DeliveryTickets.FromSqlRaw<DeliveryTicketModel>(sqlquery, parms.ToArray()).ToListAsync();
-
-
-
-                if (list.Any())
-                {
-                    return (true, list, null);
-                }
-                return (false, null, "No delivery  tickets found");
-            }
-            catch (Exception ex)
-            {
-                return (false, null, ex.Message);
-            }
-        }
         public async Task<(bool IsSuccess, List<SPGetDeliveryTicketsById>? DeliveryTickets, string? ErrorMessage)> GetDeliveryTicketsById(Guid Id, Enums.Role role, string FromDate, string ToDate)
         {
             try
             {
                 List<SqlParameter> parms;
-                string sqlquery = "Exec SPGetDeliveryTicketsById @Id,@RoleId,@FromDate,@ToDate";
+                const string sqlquery = "Exec SPGetDeliveryTicketsById @Id,@RoleId,@FromDate,@ToDate";
                 parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@Id", Value =Id  },
@@ -169,7 +143,7 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, DeliveryTickets, null);
                 }
-                return (false, null, "No delivery  tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
@@ -181,7 +155,7 @@ namespace WiiTrakApi.Repository
             try
             {
                 List<SqlParameter> parms;
-                string sqlquery = "Exec SPGetServiceBoardDetailsById @Id,@RoleId";
+                const string sqlquery = "Exec SPGetServiceBoardDetailsById @Id,@RoleId";
                 parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@Id", Value =Id  },
@@ -195,14 +169,14 @@ namespace WiiTrakApi.Repository
                 {
                     return (true, ServiceBoard, null);
                 }
-                return (false, null, "No delivery  tickets found");
+                return (false, null, ExceptionMessage);
             }
             catch (Exception ex)
             {
                 return (false, null, ex.Message);
             }
         }
-        
+
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateDeliveryTicketAsync(DeliveryTicketModel deliveryTicket)
         {
             try
@@ -227,12 +201,11 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                
+
                 var storedetails = await _dbContext.Stores
                  .AsNoTracking()
                  .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
                 deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
-                deliveryTicket.IsActive = true; 
                 _dbContext.DeliveryTickets.Update(deliveryTicket);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
@@ -248,7 +221,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.DeliveryTickets.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Delivery ticket not found");
+                if (recordToDelete is null)
+                {
+                    return (false, ExceptionMessage);
+                }
                 _dbContext.DeliveryTickets.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

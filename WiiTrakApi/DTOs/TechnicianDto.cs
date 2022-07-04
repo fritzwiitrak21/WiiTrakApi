@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 
 namespace WiiTrakApi.DTOs
 {
@@ -21,5 +24,6 @@ namespace WiiTrakApi.DTOs
         public string ProfilePic { get; set; } = string.Empty;
 
         public Guid SystemOwnerId { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

@@ -1,4 +1,8 @@
-﻿namespace WiiTrakApi.DTOs
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+namespace WiiTrakApi.DTOs
 {
     public record StoreCreationDto
     {
@@ -42,5 +46,6 @@
         public string CountyCode { get; set; } = string.Empty;
         public string ServiceFrequency { get; set; } = string.Empty;
         public DateTime? StartDate { get; set; }
+        public bool IsConnectedStore { get; set; }
     }
 }

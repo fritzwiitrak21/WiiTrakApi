@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Models;
 using WiiTrakApi.SPModels;
-using WiiTrakApi.DTOs;
-
 
 namespace WiiTrakApi.Data
 {
@@ -97,6 +98,12 @@ namespace WiiTrakApi.Data
         public DbSet<UsersModel> Users { get; set; } = default!;
         public DbSet<NotificationModel> Notification { get; set; } = default!;
         public DbSet<CountyCodeModel> CountyCode { get; set; } = default!;
+        public DbSet<SimCardModel> SimCards { get; set; } = default!;
+        public DbSet<DevicesModel> Devices { get; set; } = default!;
+        public DbSet<DeviceHistoryModel> DeviceHistory { get; set; } = default!;
+        public DbSet<SimCardHistoryModel> SimCardHistory { get; set; } = default!;
+        public DbSet<MessagesModel> Messages { get; set; } = default!;
+
 
         public DbSet<SpGetDriverAssignedStoresByCompany> SpGetDriverAssignedStoresByCompany { get; set; }
         public DbSet<SpGetDriverAssignedStoresBySystemOwner> SpGetDriverAssignedStoresBySystemOwner { get; set; }
@@ -104,8 +111,13 @@ namespace WiiTrakApi.Data
         public DbSet<SpGetNotification> SpGetNotifications { get; set; }
         public DbSet<SPGetStoresBySystemOwnerId> SPGetStoresBySystemOwnerId { get; set; }
         public DbSet<SPGetDeliveryTicketsById> SPGetDeliveryTicketsById { get; set; }
+        
 
         public DbSet<SPGetServiceBoardDetailsById> SPGetServiceBoardDetailsById { get; set; }
+        public DbSet<SPGetTrackingDeviceDetailsById> SPGetTrackingDeviceDetailsById { get; set; }
+
+        public DbSet<SpGetMessagesById> SpGetMessagesById { get; set; }
+
 
     }
 }

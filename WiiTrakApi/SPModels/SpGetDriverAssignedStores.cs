@@ -1,4 +1,8 @@
-﻿namespace WiiTrakApi.SPModels
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+namespace WiiTrakApi.SPModels
 {
     public class SpGetDriverAssignedStores
     {
@@ -49,6 +53,7 @@
         public DateTime? StartDate { get; set; }
         public bool DriverStoresIsActive { get; set; }
         public string? TimezoneDiff { get; set; } = string.Empty; 
-        public string? TimezoneName { get; set; } = string.Empty; 
+        public string? TimezoneName { get; set; } = string.Empty;
+        public bool IsConnectedStore { get; set; }
     }
 }

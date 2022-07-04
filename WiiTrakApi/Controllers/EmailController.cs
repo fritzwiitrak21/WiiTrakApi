@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using Microsoft.AspNetCore.Mvc;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Services.Contracts;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WiiTrakApi.Controllers
 {
@@ -33,7 +34,5 @@ namespace WiiTrakApi.Controllers
             }
             return Ok();
         }
-
-        
     }
 }

@@ -1,8 +1,14 @@
-﻿using System.Linq.Expressions;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
+using WiiTrakApi.SPModels;
+using Microsoft.Data.SqlClient;
 
 namespace WiiTrakApi.Repository
 {
@@ -23,7 +29,7 @@ namespace WiiTrakApi.Repository
 
             if (trackingDevice is not null)
             {
-                return (true, (TrackingDeviceModel)trackingDevice, null);
+                return (true, trackingDevice, null);
             }
             return (false, null, "No tracking device found");
         }
@@ -83,7 +89,32 @@ namespace WiiTrakApi.Repository
                 return (false, false, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<SPGetTrackingDeviceDetailsById>? TrackingDeviceDetails, string? ErrorMessage)> GetTrackingDeviceDetailsByIdAsync(Guid Id, Enums.Role role)
+        {
+            try
+            {
+                List<SqlParameter> parms;
+                const string sqlquery = "Exec SPGetTrackingDeviceDetailsById @Id,@RoleId";
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@Id", Value =Id  },
+                    new SqlParameter { ParameterName = "@RoleId", Value =(int)role },
 
+                };
+
+                var TrackingDeviceDetails = await _dbContext.SPGetTrackingDeviceDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (TrackingDeviceDetails != null)
+                {
+                    return (true, TrackingDeviceDetails, null);
+                }
+                return (false, null, "No Tracking Device found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
         public async Task<(bool IsSuccess, string? ErrorMessage)> CreateTrackingDeviceAsync(TrackingDeviceModel trackingDevice)
         {
             try
@@ -118,7 +149,10 @@ namespace WiiTrakApi.Repository
             try
             {
                 var recordToDelete = await _dbContext.TrackingDevices.FirstOrDefaultAsync(x => x.Id == id);
-                if (recordToDelete is null) return (false, "Tracking Device not found");
+                if (recordToDelete is null)
+                {
+                    return (false, "Tracking Device not found");
+                }
                 _dbContext.TrackingDevices.Remove(recordToDelete);
                 await _dbContext.SaveChangesAsync();
                 return (true, null);

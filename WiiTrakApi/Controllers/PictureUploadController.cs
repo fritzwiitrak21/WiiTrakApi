@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +14,12 @@ namespace WiiTrakApi.Controllers
     [ApiController]
     public class PictureUploadController : ControllerBase
     {
-        private readonly IUploadService uploadService;
+        private readonly IUploadService UploadService;
         private readonly string ImageBlobContainerName;
 
-        public PictureUploadController(IUploadService uploadService, IConfiguration configuration)
+        public PictureUploadController(IUploadService uploadservice, IConfiguration configuration)
         {
-            this.uploadService = uploadService;
+            this.UploadService = uploadservice;
             ImageBlobContainerName = configuration["ImageBlobContainerName"];
         }
 
@@ -32,16 +36,13 @@ namespace WiiTrakApi.Controllers
                     // use guid for file name
                     var fileExtension = Path.GetExtension(fileName);
                     var blobFileName = $"{ Guid.NewGuid() }{ fileExtension.ToLower() }";
-
                     var Latitude = formCollection.FirstOrDefault(x => x.Key.Equals("Latitude")).Value.ToString();
                     var Longitude = formCollection.FirstOrDefault(x => x.Key.Equals("Longitude")).Value.ToString();
                     var Date = formCollection.FirstOrDefault(x => x.Key.Equals("Date")).Value.ToString();
-
                     MemoryStream watermarkedStream;
                     using (var stream = new MemoryStream())
                     {
                         await file.CopyToAsync(stream);
-
                         // Add watermark
                         watermarkedStream = new MemoryStream();
                         using (var img = Image.FromStream(stream))
@@ -58,9 +59,7 @@ namespace WiiTrakApi.Controllers
                                 var datepoint = new Point(5, img.Height - 32);
                                 var latpoint = new Point(5, img.Height - 22);
                                 var longpoint = new Point(5, img.Height - 12);
-
                                 Rectangle rect = new Rectangle(0, height - 33, width, height - 33);
-
                                 graphic.FillRectangle(new SolidBrush(backcolor), rect);
                                 graphic.DrawString(Date, font, brush, datepoint);
                                 graphic.DrawString("LAT: " + Latitude, Coordfont, brush, latpoint);
@@ -70,8 +69,7 @@ namespace WiiTrakApi.Controllers
                             }
                         }
                     }
-
-                    string fileURL = await uploadService.UploadAsync(watermarkedStream, blobFileName, file.ContentType, ImageBlobContainerName, true);
+                    string fileURL = await UploadService.UploadAsync(watermarkedStream, blobFileName, file.ContentType, ImageBlobContainerName, true);
                     return Ok(new { fileURL });
                 }
                 else
@@ -83,7 +81,6 @@ namespace WiiTrakApi.Controllers
             {
                 return StatusCode(Cores.Numbers.FiveHundred, $"Internal server error: {ex}");
             }
-
         }
 
 
@@ -98,8 +95,7 @@ namespace WiiTrakApi.Controllers
                     // use guid for file name
                     var fileExtension = Path.GetExtension(fileName);
                     var blobFileName = $"{ Guid.NewGuid() }{ fileExtension.ToLower() }";
-
-                    string fileURL = await uploadService.UploadAsync(file.OpenReadStream(), blobFileName, file.ContentType, ImageBlobContainerName);
+                    string fileURL = await UploadService.UploadAsync(file.OpenReadStream(), blobFileName, file.ContentType, ImageBlobContainerName);
                     return Ok(new { fileURL });
                 }
                 else

@@ -1,12 +1,11 @@
+/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
 using Microsoft.AspNetCore.OData;
 using WiiTrakApi.Helpers;
-//using Hangfire;
-//using Hangfire.SqlServer;
-using System.Configuration;
 using WiiTrakApi.Services;
 using WiiTrakApi.Services.Contracts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,27 +29,6 @@ builder.Services.AddScoped<IUploadService, UploadService>();
 
 builder.Services.ConfigureAddMailSetting(builder.Configuration);
 
-
-
-
-
-
-
-// Add Hangfire services.
-//builder.Services.AddHangfire(configuration => configuration
-//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-//    .UseSimpleAssemblyNameTypeSerializer()
-//    .UseRecommendedSerializerSettings()
-//    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-//    {
-//        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-//        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-//        QueuePollInterval = TimeSpan.Zero,
-//        UseRecommendedIsolationLevel = true,
-//        DisableGlobalLocks = true
-//    }));
-
-//builder.Services.AddHangfireServer();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -112,11 +90,8 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseCors("CorsPolicy");
-
 app.UseAuthorization();
 
 app.MapControllers();
-
-//app.UseHangfireDashboard();
 
 app.Run();
