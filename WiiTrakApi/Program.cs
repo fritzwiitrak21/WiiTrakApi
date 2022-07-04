@@ -89,8 +89,7 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
-
-app.UseCors("no-cors");
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
