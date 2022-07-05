@@ -16,13 +16,27 @@ namespace WiiTrakApi.Helpers
     {
         public static void ConfigureCorsPolicy(this IServiceCollection services)
         {
-            services.AddCors(policy =>
+            //services.AddCors(policy =>
+            //{
+            //    policy.AddPolicy("CorsPolicy", options => options
+            //        .AllowAnyOrigin()
+            //        .AllowAnyHeader()
+            //        .AllowAnyMethod()
+            //        .WithExposedHeaders("totalAmountPages"));
+            //});
+            services.AddCors(options =>
             {
-                policy.AddPolicy("CorsPolicy", options => options
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
+                options.AddPolicy("CorsPolicy",
+                 builder => builder
+                 .SetIsOriginAllowedToAllowWildcardSubdomains()
+                 //.SetIsOriginAllowed((host) => true)
+                    .WithOrigins("https://black-hill-07a28510f.1.azurestaticapps.net/",
+                                 "https://wiitrakdemo.com/",
+                                 "https://localhost:7160/")//.WithMethods("GET", "POST", "PUT") // Allow API calls only for these method types.
                     .AllowAnyMethod()
-                    .WithExposedHeaders("totalAmountPages"));
+                    .AllowAnyHeader()
+                    .AllowCredentials() // To allow the credentials for windows authentication
+                    );
             });
         }
 
