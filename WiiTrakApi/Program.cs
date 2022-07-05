@@ -88,11 +88,12 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
-app.UseRouting();
-app.UseCors(options =>
-     options.WithOrigins("https://localhost:7160")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+app.UseCors(builder => builder
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .SetIsOriginAllowed((host) => true)
+               .AllowCredentials()
+           );
 
 app.UseAuthorization();
 

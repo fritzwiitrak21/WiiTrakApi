@@ -16,14 +16,7 @@ namespace WiiTrakApi.Helpers
     {
         public static void ConfigureCorsPolicy(this IServiceCollection services)
         {
-            services.AddCors(policy =>
-            {
-                policy.AddPolicy("CorsPolicy", options => options
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .WithExposedHeaders("totalAmountPages"));
-            });
+            services.AddCors();
         }
 
         public static void ConfigureAddDbContext(this IServiceCollection services, IConfiguration configuration)
