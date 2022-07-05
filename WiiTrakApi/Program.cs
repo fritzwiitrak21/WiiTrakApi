@@ -28,7 +28,7 @@ builder.Services.AddScoped<IBackgroundJobService, BackgroundJobService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 
 builder.Services.ConfigureAddMailSetting(builder.Configuration);
-
+builder.Services.AddCors();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -88,8 +88,12 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors(options =>
+     options.WithOrigins("https://localhost:7160")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 
-app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
