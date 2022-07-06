@@ -90,7 +90,7 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseCors("CorsPolicy");
+app.UseCors("WiiTrakPolicy");
 
 app.UseAuthorization();
 
