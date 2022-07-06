@@ -24,19 +24,19 @@ namespace WiiTrakApi.Helpers
             //        .AllowAnyMethod()
             //        .WithExposedHeaders("totalAmountPages"));
             //});
-            services.AddCors(policy =>
+            
+			services.AddCors(options =>
             {
-                policy.AddPolicy("WiiTrakPolicy",
-                 options => options
-                 .SetIsOriginAllowedToAllowWildcardSubdomains()
-                 //.SetIsOriginAllowed((host) => true)
-                    .WithOrigins("https://black-hill-07a28510f.1.azurestaticapps.net",
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("https://black-hill-07a28510f.1.azurestaticapps.net",
                                  "https://wiitrakdemo.com",
-                                 "https://localhost:7160")//.WithMethods("GET", "POST", "PUT") // Allow API calls only for these method types.
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials() // To allow the credentials for windows authentication
-                    );
+                                 "https://localhost:7160")
+                        .AllowAnyOrigin()
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
             });
         }
 
