@@ -11,7 +11,7 @@ namespace WiiTrakApi.DTOs
 
         public double Latitude { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+        public string DeviceName { get; set; } = string.Empty;
 
         public string Manufactor { get; set; } = string.Empty;
 

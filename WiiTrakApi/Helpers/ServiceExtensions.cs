@@ -26,17 +26,17 @@ namespace WiiTrakApi.Helpers
             });
             //services.AddCors(options =>
             //{
-              //  options.AddPolicy("CorsPolicy",
-                // builder => builder
-                 //.SetIsOriginAllowedToAllowWildcardSubdomains()
-                 //.SetIsOriginAllowed((host) => true)
-                   // .WithOrigins("https://black-hill-07a28510f.1.azurestaticapps.net/",
-                     //            "https://wiitrakdemo.com/",
-                      //           "https://localhost:7160/")//.WithMethods("GET", "POST", "PUT") // Allow API calls only for these method types.
-                   // .AllowAnyMethod()
-                    //.AllowAnyHeader()
-                    //.AllowCredentials() // To allow the credentials for windows authentication
-                    //);
+            //    options.AddPolicy("CorsPolicy",
+            //     builder => builder
+            //     .SetIsOriginAllowedToAllowWildcardSubdomains()
+            //     //.SetIsOriginAllowed((host) => true)
+            //        .WithOrigins("https://black-hill-07a28510f.1.azurestaticapps.net/",
+            //                     "https://wiitrakdemo.com/",
+            //                     "https://localhost:7160/")//.WithMethods("GET", "POST", "PUT") // Allow API calls only for these method types.
+            //        .AllowAnyMethod()
+            //        .AllowAnyHeader()
+            //        .AllowCredentials() // To allow the credentials for windows authentication
+            //        );
             //});
         }
 
@@ -78,6 +78,7 @@ namespace WiiTrakApi.Helpers
             services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
             services.AddScoped<ISimCardHistoryRepository, SimCardHistoryRepository>();
             services.AddScoped<IMessagesRepository, MessagesRepository>();
+            services.AddScoped<ITrackingDeviceHistoryRepository, TrackingDeviceHistoryRepository>();
 
         }
     }
