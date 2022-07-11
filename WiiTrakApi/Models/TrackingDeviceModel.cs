@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WiiTrakApi.Models
 {
+    [Table(name: "TrackingDevices")]
     public class TrackingDeviceModel: EntityModel
     {
         public double Longitude { get; set; }

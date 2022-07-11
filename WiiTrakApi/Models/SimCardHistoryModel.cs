@@ -2,8 +2,10 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
+using System.ComponentModel.DataAnnotations.Schema;
 namespace WiiTrakApi.Models
 {
+    [Table(name: "SIMCardHistory")]
     public class SimCardHistoryModel : EntityModel
     {
         public Guid SIMCardId { get; set; }
