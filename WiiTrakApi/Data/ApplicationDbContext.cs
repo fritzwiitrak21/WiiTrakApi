@@ -103,6 +103,7 @@ namespace WiiTrakApi.Data
         public DbSet<DeviceHistoryModel> DeviceHistory { get; set; } = default!;
         public DbSet<SimCardHistoryModel> SimCardHistory { get; set; } = default!;
         public DbSet<MessagesModel> Messages { get; set; } = default!;
+        public DbSet<TrackingDeviceHistoryModel> TrackingDeviceHistory { get; set; } = default!;
 
 
         public DbSet<SpGetDriverAssignedStoresByCompany> SpGetDriverAssignedStoresByCompany { get; set; }
@@ -115,7 +116,8 @@ namespace WiiTrakApi.Data
 
         public DbSet<SPGetServiceBoardDetailsById> SPGetServiceBoardDetailsById { get; set; }
         public DbSet<SPGetTrackingDeviceDetailsById> SPGetTrackingDeviceDetailsById { get; set; }
-
+        public DbSet<TrackingDeviceModel> SPGetTrackingDeviceDetailsByDriverId { get; set; }
+        
         public DbSet<SpGetMessagesById> SpGetMessagesById { get; set; }
 
 

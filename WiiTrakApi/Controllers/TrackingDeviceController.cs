@@ -18,12 +18,14 @@ namespace WiiTrakApi.Controllers
     {
         private readonly IMapper Mapper;
         private readonly ITrackingDeviceRepository Repository;
+        private readonly ITrackingDeviceHistoryRepository HistoryRepository;
         //private readonly ITrackSolidRepository _trackSolidRepository;
 
-        public TrackingDeviceController(IMapper mapper, ITrackingDeviceRepository repository)//, ITrackSolidRepository trackSolidRepositor)
+        public TrackingDeviceController(IMapper mapper, ITrackingDeviceRepository repository, ITrackingDeviceHistoryRepository historyrepository)//, ITrackSolidRepository trackSolidRepositor)
         {
             Mapper = mapper;
             Repository = repository;
+            HistoryRepository = historyrepository;
             //_trackSolidRepository = trackSolidRepositor;
         }
 
@@ -38,6 +40,18 @@ namespace WiiTrakApi.Controllers
             var dto = Mapper.Map<TrackingDeviceDto>(result.TrackingDevice);
             return Ok(dto);
         }
+        [HttpGet("IMEI")]
+        public async Task<IActionResult> GetTrackingDevicebyIMEI(string IMEI)
+        {
+            var result = await Repository.GetTrackingDevicebyIMEIAsync(IMEI);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<TrackingDeviceDto>(result.TrackingDevice);
+            return Ok(dto);
+        }
+
 
         [HttpGet]
         [EnableQuery]
@@ -64,7 +78,19 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<TrackingDeviceDetailsDto>>(result.TrackingDeviceDetails);
             return Ok(dtoList);
         }
-        
+        [HttpGet("CartDetails/{id:guid}")]
+        public async Task<IActionResult> GetTrackingDeviceDetailsByDriverId(Guid id)
+        {
+            var result = await Repository.GetTrackingDeviceDetailsByIdDriverAsync(id);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dtoList = Mapper.Map<List<TrackingDeviceDetailsDto>>(result.TrackingDeviceDetails);
+            return Ok(dtoList);
+        }
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<TrackingDeviceDto>> CreateTrackingDevice([FromBody] TrackingDeviceCreationDto trackingDeviceCreation)
@@ -78,6 +104,16 @@ namespace WiiTrakApi.Controllers
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
             var dto = Mapper.Map<TrackingDeviceDto>(trackingDevice);
+            var TrackingDeviceHistory = new TrackingDeviceHistoryModel
+            {
+                TrackingDeviceId=dto.Id,
+                Longitude=dto.Longitude,
+                Latitude=dto.Latitude,
+                SIMCardId=new Guid(dto.SIMCardId),
+                CartId=dto.CartId,
+                CreatedAt=DateTime.UtcNow
+            };
+            await HistoryRepository.CreateTrackingDeviceHistoryAsync(TrackingDeviceHistory);
             return CreatedAtRoute(nameof(GetTrackingDevice), new { id = dto.Id }, dto);
         }
 
@@ -100,19 +136,27 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
-        [HttpPut("GetCoordinatesOfDevices")]
-        public async Task<IActionResult> GetCoordinatesOfDevices()
+        [HttpPut]
+        public async Task<IActionResult> UpdateCoordinatesOfDevices(TrackingDeviceUpdateDto trackingDeviceUpdate)
         {
-            //_trackSolidRepository.GetDataFromTrackSolidAsync();
-            //var result = await _repository.GetTrackingDeviceByIdAsync(id);
-            //if (!result.IsSuccess || result.TrackingDevice is null) return NotFound(result.ErrorMessage);
-            //_mapper.Map(trackingDeviceUpdate, result.TrackingDevice);
-            //result.TrackingDevice.UpdatedAt = DateTime.UtcNow;
-            //var updateResult = await _repository.UpdateTrackingDeviceAsync(result.TrackingDevice);
-            //if (updateResult.IsSuccess) return NoContent();
-            //error
+            var TrackingDevice = new TrackingDeviceModel();
+            Mapper.Map(trackingDeviceUpdate, TrackingDevice);
+            var updateResult = await Repository.UpdateTrackingDeviceCoOrdinatesAsync(TrackingDevice);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+
+            //  _trackSolidRepository.GetDataFromTrackSolidAsync();
+            //var result = await Repository.GetTrackingDeviceByIdAsync(id);
+            //if (!result.IsSuccess || result.TrackingDevice is null) return NotFound(result.ErrorMessage);
+            //Mapper.Map(trackingDeviceUpdate, result.TrackingDevice);
+            //result.TrackingDevice.UpdatedAt = DateTime.UtcNow;
+            //var updateResult = await Repository.UpdateTrackingDeviceAsync(result.TrackingDevice);
+            //if (updateResult.IsSuccess) return NoContent();
+            //error
         }
 
         [HttpDelete("{id}")]

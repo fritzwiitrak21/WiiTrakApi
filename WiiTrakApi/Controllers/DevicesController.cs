@@ -20,12 +20,18 @@ namespace WiiTrakApi.Controllers
         private readonly IDevicesRepository Repository;
         private readonly ISimCardsRepository SimCardsRepository;
         private readonly ISimCardHistoryRepository SimCardHistoryRepository;
-        public DevicesController(IMapper mapper, IDevicesRepository repository, ISimCardsRepository simrepository, ISimCardHistoryRepository simcardhistory)
+        private readonly ITrackingDeviceRepository TrackingDeviceRepository;
+        private readonly ITrackingDeviceHistoryRepository TrackingDeviceHistoryRepository;
+        private readonly ITechnicianRepository TechnicianRepository;
+        public DevicesController(IMapper mapper, IDevicesRepository repository, ISimCardsRepository simrepository, ISimCardHistoryRepository simcardhistory, ITrackingDeviceRepository Trackingdevicerepository, ITrackingDeviceHistoryRepository Trackingdevicehistoryrepository, ITechnicianRepository Technicianrepository)
         {
             Mapper = mapper;
             Repository = repository;
             SimCardsRepository = simrepository;
             SimCardHistoryRepository = simcardhistory;
+            TrackingDeviceRepository = Trackingdevicerepository;
+            TrackingDeviceHistoryRepository = Trackingdevicehistoryrepository;
+            TechnicianRepository = Technicianrepository;
         }
         [HttpGet]
         [EnableQuery]
@@ -78,6 +84,34 @@ namespace WiiTrakApi.Controllers
             CurrentSim.SimCardList.IsMapped = true;
             CurrentSim.SimCardList.UpdatedAt = DateTime.UtcNow;
             await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
+            var TechnicianDetails = await TechnicianRepository.GetTechnicianByIdAsync(DeviceCreation.TechnicianId);
+            var TrackingDevice = new TrackingDeviceModel
+            {
+                DeviceName = DeviceCreation.DeviceName,
+                Manufactor = "Jimi IOT",
+                TelecomCompanyName = CurrentSim.SimCardList.TelecomCompany,
+                SIMCardId = (CurrentSim.SimCardList.Id).ToString(),
+                SIMCardPhoneNumber = CurrentSim.SimCardList.PhoneNumber,
+                IMEINumber = DeviceCreation.IMEI,
+                ModelNumber = DeviceCreation.DeviceModel,
+                CartId = Guid.Empty,
+                Latitude = 0,
+                Longitude = 0,
+                CreatedAt = DateTime.UtcNow,
+                SystemOwnerId = new Guid(TechnicianDetails.Technician.SystemOwnerId.ToString()),
+                IsActive=true
+            };
+            await TrackingDeviceRepository.CreateTrackingDeviceAsync(TrackingDevice);
+            var TrackingDeviceHistory = new TrackingDeviceHistoryModel
+            {
+                TrackingDeviceId = TrackingDevice.Id,
+                Longitude = TrackingDevice.Longitude,
+                Latitude = TrackingDevice.Latitude,
+                SIMCardId = new Guid(TrackingDevice.SIMCardId),
+                CartId = TrackingDevice.CartId,
+                CreatedAt = DateTime.UtcNow
+            };
+            await TrackingDeviceHistoryRepository.CreateTrackingDeviceHistoryAsync(TrackingDeviceHistory);
             var dto = Mapper.Map<DevicesDto>(Device);
             return CreatedAtRoute(nameof(GetDeviceById), new { id = dto.Id }, dto);
         }
@@ -96,6 +130,36 @@ namespace WiiTrakApi.Controllers
             Mapper.Map(DeviceUpdate, result.DeviceList);
             result.DeviceList.UpdatedAt = DateTime.UtcNow;
             var updateResult = await Repository.UpdateDeviceAsync(result.DeviceList);
+            #region Update Tracking Device
+            var TrackingDevice = await TrackingDeviceRepository.GetTrackingDevicebyIMEIAsync(DeviceUpdate.IMEI);
+            if (TrackingDevice.TrackingDevice != null)
+            {
+                TrackingDevice.TrackingDevice.SIMCardId = DeviceUpdate.SIMCardId.ToString();
+                TrackingDevice.TrackingDevice.UpdatedAt = DateTime.UtcNow;
+                if (CurrentSim.SimCardList != null)
+                {
+                    TrackingDevice.TrackingDevice.SIMCardPhoneNumber = CurrentSim.SimCardList.PhoneNumber;
+                    TrackingDevice.TrackingDevice.TelecomCompanyName = CurrentSim.SimCardList.TelecomCompany;
+                }
+                else
+                {
+                    TrackingDevice.TrackingDevice.SIMCardPhoneNumber = "";
+                    TrackingDevice.TrackingDevice.TelecomCompanyName = "";
+                }
+                await TrackingDeviceRepository.UpdateTrackingDeviceAsync(TrackingDevice.TrackingDevice);
+                var TrackingDeviceHistory = new TrackingDeviceHistoryModel
+                {
+                    TrackingDeviceId = TrackingDevice.TrackingDevice.Id,
+                    Longitude = TrackingDevice.TrackingDevice.Longitude,
+                    Latitude = TrackingDevice.TrackingDevice.Latitude,
+                    SIMCardId = new Guid(TrackingDevice.TrackingDevice.SIMCardId),
+                    CartId = TrackingDevice.TrackingDevice.CartId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await TrackingDeviceHistoryRepository.CreateTrackingDeviceHistoryAsync(TrackingDeviceHistory);
+            }
+            
+            #endregion
             if (updateResult.IsSuccess)
             {
 
@@ -119,7 +183,7 @@ namespace WiiTrakApi.Controllers
                 }
                 if (DeviceUpdate.SIMCardId != Guid.Empty)
                 {
-                   
+
                     if (PreviousSim.SimCardList != null && CurrentSim.SimCardList != null && CurrentSim.SimCardList.Id != PreviousSim.SimCardList.Id)
                     {
                         PreviousSim.SimCardList.IsMapped = false;
@@ -131,7 +195,7 @@ namespace WiiTrakApi.Controllers
                         await SimCardsRepository.UpdateSimCardAsync(PreviousSim.SimCardList);
                         await SimCardsRepository.UpdateSimCardAsync(CurrentSim.SimCardList);
                     }
-                   else if (PreviousSim.SimCardList != null)
+                    else if (PreviousSim.SimCardList != null)
                     {
                         PreviousSim.SimCardList.IsMapped = false;
                         PreviousSim.SimCardList.UpdatedAt = DateTime.UtcNow;

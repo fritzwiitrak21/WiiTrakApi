@@ -32,7 +32,7 @@ namespace WiiTrakApi.Controllers
             {
                 await MailService.SendLoginCredentialsMailAsync(Request);
             }
-            return Ok();
+            return NoContent();
         }
     }
 }
