@@ -230,7 +230,7 @@ namespace WiiTrakApi.Controllers
                 cart.IssueDescription = cartUpdate.IssueDescription;
                 cart.DeviceId = cartUpdate.DeviceId;
                 var updateResult = await Repository.UpdateCartAsync(cart);
-                if (updateResult.IsSuccess)
+                if (updateResult.IsSuccess  && cartUpdate.CartHistory.DriverId == Guid.Empty)
                 {
                     try
                     {
