@@ -20,14 +20,18 @@ namespace WiiTrakApi.Controllers
         private readonly ICartHistoryRepository CartHistoryRepository;
         private readonly IDevicesRepository DevicesRepository;
         private readonly IDeviceHistoryRepository DeviceHistoryRepository;
+        private readonly ITrackingDeviceRepository TrackingDeviceRepository;
+        private readonly ITrackingDeviceHistoryRepository TrackingDeviceHistoryRepository;
         public CartsController(IMapper mapper,
-            ICartRepository repository, ICartHistoryRepository Carthistoryrepository, IDevicesRepository Devicesrepository, IDeviceHistoryRepository Devicehistoryrepository)
+            ICartRepository repository, ICartHistoryRepository Carthistoryrepository, IDevicesRepository Devicesrepository, IDeviceHistoryRepository Devicehistoryrepository, ITrackingDeviceRepository Trackingdevicerepository, ITrackingDeviceHistoryRepository Trackingdevicehistoryrepository)
         {
             Mapper = mapper;
             Repository = repository;
             CartHistoryRepository = Carthistoryrepository;
             DevicesRepository = Devicesrepository;
             DeviceHistoryRepository = Devicehistoryrepository;
+            TrackingDeviceRepository = Trackingdevicerepository;
+            TrackingDeviceHistoryRepository = Trackingdevicehistoryrepository;
         }
 
         [HttpGet("{id:guid}", Name = "GetCart")]
@@ -149,8 +153,25 @@ namespace WiiTrakApi.Controllers
             if (!createResult.IsSuccess)
             {
                 var CurrentDevice = await DevicesRepository.GetDeviceByIdAsync(cart.DeviceId);
+                var Trackingdevice = await TrackingDeviceRepository.GetTrackingDevicebyIMEIAsync(CurrentDevice.DeviceList.IMEI);
                 CurrentDevice.DeviceList.IsMapped = true;
                 CurrentDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
+                if (Trackingdevice.TrackingDevice != null)
+                {
+                    Trackingdevice.TrackingDevice.CartId = cart.Id;
+                    Trackingdevice.TrackingDevice.UpdatedAt = DateTime.UtcNow;
+                    var TrackingDeviceHistory = new TrackingDeviceHistoryModel
+                    {
+                        TrackingDeviceId = Trackingdevice.TrackingDevice.Id,
+                        Longitude = Trackingdevice.TrackingDevice.Longitude,
+                        Latitude = Trackingdevice.TrackingDevice.Latitude,
+                        SIMCardId = new Guid(Trackingdevice.TrackingDevice.SIMCardId),
+                        CartId = Trackingdevice.TrackingDevice.CartId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    await TrackingDeviceHistoryRepository.CreateTrackingDeviceHistoryAsync(TrackingDeviceHistory);
+                    await TrackingDeviceRepository.UpdateTrackingDeviceAsync(Trackingdevice.TrackingDevice);
+                }
                 var DeviceHistory = new DeviceHistoryModel
                 {
                     DeviceId = cart.DeviceId,
@@ -158,7 +179,6 @@ namespace WiiTrakApi.Controllers
                     MappedAt = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     TechnicianId = cartCreation.CreatedBy
-
                 };
                 await DeviceHistoryRepository.CreateDeviceHistoryAsync(DeviceHistory);
                 await DevicesRepository.UpdateDeviceAsync(CurrentDevice.DeviceList);
@@ -208,10 +228,46 @@ namespace WiiTrakApi.Controllers
                 cart.UpdatedAt = DateTime.UtcNow;
                 cart.IssueType = cartUpdate.IssueType;
                 cart.IssueDescription = cartUpdate.IssueDescription;
-                cart.DeviceId=cartUpdate.DeviceId;
+                cart.DeviceId = cartUpdate.DeviceId;
                 var updateResult = await Repository.UpdateCartAsync(cart);
                 if (updateResult.IsSuccess)
                 {
+                    try
+                    {
+                        var Trackingdevice = await TrackingDeviceRepository.GetTrackingDeviceByIdAsync(cartUpdate.DeviceId);
+                        if (CurrentDevice.DeviceList != null)
+                        {
+
+                            Trackingdevice = await TrackingDeviceRepository.GetTrackingDevicebyIMEIAsync(CurrentDevice.DeviceList.IMEI);
+                            Trackingdevice.TrackingDevice.CartId = cart.Id;
+                        }
+                        else if (PreviousDevice.DeviceList != null)
+                        {
+                            Trackingdevice = await TrackingDeviceRepository.GetTrackingDevicebyIMEIAsync(PreviousDevice.DeviceList.IMEI);
+                            Trackingdevice.TrackingDevice.CartId = Guid.Empty;
+                        }
+                        if (Trackingdevice.TrackingDevice != null)
+                        {
+                            Trackingdevice.TrackingDevice.UpdatedAt = DateTime.UtcNow;
+                            var TrackingDeviceHistory = new TrackingDeviceHistoryModel
+                            {
+                                TrackingDeviceId = Trackingdevice.TrackingDevice.Id,
+                                Longitude = Trackingdevice.TrackingDevice.Longitude,
+                                Latitude = Trackingdevice.TrackingDevice.Latitude,
+                                SIMCardId = new Guid(Trackingdevice.TrackingDevice.SIMCardId),
+                                CartId = Trackingdevice.TrackingDevice.CartId,
+                                CreatedAt = DateTime.UtcNow
+                            };
+                            await TrackingDeviceHistoryRepository.CreateTrackingDeviceHistoryAsync(TrackingDeviceHistory);
+                            await TrackingDeviceRepository.UpdateTrackingDeviceAsync(Trackingdevice.TrackingDevice);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+
                     if (PreviousDevice.DeviceList != null)
                     {
                         PreviousDeviceHistory.DeviceId = PreviousDevice.DeviceList.Id;
@@ -229,6 +285,7 @@ namespace WiiTrakApi.Controllers
                         CurrentDeviceHistory.CreatedAt = DateTime.UtcNow;
                         CurrentDeviceHistory.TechnicianId = cartUpdate.CreatedBy;
                         CurrentDeviceHistory.IsActive = true;
+
                     }
                     if (cartUpdate.DeviceId != Guid.Empty)
                     {

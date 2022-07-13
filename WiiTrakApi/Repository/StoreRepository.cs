@@ -19,16 +19,16 @@ namespace WiiTrakApi.Repository
 {
     public class StoreRepository : IStoreRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext DbContext;
 
         public StoreRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
         }
 
         public async Task<(bool IsSuccess, StoreModel? Store, string? ErrorMessage)> GetStoreByIdAsync(Guid id)
         {
-            var store = await _dbContext.Stores
+            var store = await DbContext.Stores
                 .Include(x => x.Carts)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -44,7 +44,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var stores = await _dbContext.Stores
+                var stores = await DbContext.Stores
                     //.Include(x => x.Carts)
                     .Select(x => x)
                     .AsNoTracking()
@@ -76,7 +76,7 @@ namespace WiiTrakApi.Repository
 
                 };
 
-                var Stores = await _dbContext.SpGetDriverAssignedStores.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var Stores = await DbContext.SpGetDriverAssignedStores.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (Stores != null)
                 {
@@ -94,7 +94,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var stores = await _dbContext.Stores
+                var stores = await DbContext.Stores
                     .Where(expression)
                     .Select(x => x)
                     .AsNoTracking()
@@ -122,7 +122,7 @@ namespace WiiTrakApi.Repository
                 //var carts = new List<CartModel>();
                 var carts = new List<CartModel>();
 
-                var storeCarts = await _dbContext.Stores
+                var storeCarts = await DbContext.Stores
                     .Include(x => x.Carts)
                     .FirstOrDefaultAsync(x => x.Id == Id);
                 carts = storeCarts.Carts;
@@ -177,7 +177,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByDriverId(Guid driverId)
+        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByDriverId(Guid DriverId)
         {
             try
             {
@@ -186,16 +186,16 @@ namespace WiiTrakApi.Repository
 
                 //var carts = new List<CartModel>();
                 var carts = new List<CartModel>();
-                var driverStores = await _dbContext.DriverStores
+                var driverStores = await DbContext.DriverStores
                    .Include(x => x.Store)
-                   .Where(x => x.DriverId == driverId)
+                   .Where(x => x.DriverId == DriverId)
                    .AsNoTracking()
                    .ToListAsync();
 
                 var stores = driverStores.Select(x => x.Store).ToList();
                 foreach (var store in stores)
                 {
-                    var storeCarts = await _dbContext.Stores
+                    var storeCarts = await DbContext.Stores
                         .Include(x => x.Carts)
                         .FirstOrDefaultAsync(x => x.Id == store.Id);
                     carts.AddRange(storeCarts.Carts);
@@ -251,7 +251,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByCorporateId(Guid corporateId)
+        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByCorporateId(Guid CorporateId)
         {
             try
             {
@@ -259,14 +259,14 @@ namespace WiiTrakApi.Repository
 
                 var carts = new List<CartModel>();
                 var corporate =
-                    await _dbContext.Corporates
+                    await DbContext.Corporates
                         .Include(x => x.Stores)
-                        .FirstOrDefaultAsync(x => x.Id == corporateId);
+                        .FirstOrDefaultAsync(x => x.Id == CorporateId);
 
                 //var stores = corporate.Stores;
                 foreach (var store in corporate.Stores)
                 {
-                    var storeCarts = await _dbContext.Stores
+                    var storeCarts = await DbContext.Stores
                         .Include(x => x.Carts)
                         .FirstOrDefaultAsync(x => x.Id == store.Id);
                     carts.AddRange(storeCarts.Carts);
@@ -322,7 +322,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByCompanyId(Guid companyId)
+        public async Task<(bool IsSuccess, StoreReportDto? Report, string? ErrorMessage)> GetAllStoreReportByCompanyId(Guid CompanyId)
         {
             try
             {
@@ -330,14 +330,14 @@ namespace WiiTrakApi.Repository
 
                 var carts = new List<CartModel>();
                 var company =
-                    await _dbContext.Companies
+                    await DbContext.Companies
                         .Include(x => x.Stores)
-                        .FirstOrDefaultAsync(x => x.Id == companyId);
+                        .FirstOrDefaultAsync(x => x.Id == CompanyId);
 
                 //var stores = corporate.Stores;
                 foreach (var store in company.Stores)
                 {
-                    var storeCarts = await _dbContext.Stores
+                    var storeCarts = await DbContext.Stores
                         .Include(x => x.Carts)
                         .FirstOrDefaultAsync(x => x.Id == store.Id);
                     carts.AddRange(storeCarts.Carts);
@@ -393,14 +393,14 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCorporateId(Guid corporateId)
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCorporateId(Guid CorporateId)
         {
             try
             {
                 var corporate =
-                    await _dbContext.Corporates
+                    await DbContext.Corporates
                         .Include(x => x.Stores)
-                        .FirstOrDefaultAsync(x => x.Id == corporateId);
+                        .FirstOrDefaultAsync(x => x.Id == CorporateId);
 
                 if (corporate is not null && corporate.Stores.Any())
                 {
@@ -414,14 +414,14 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCompanyId(Guid companyId)
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByCompanyId(Guid CompanyId)
         {
             try
             {
                 var company =
-                    await _dbContext.Companies
+                    await DbContext.Companies
                         .Include(x => x.Stores)
-                        .FirstOrDefaultAsync(x => x.Id == companyId);
+                        .FirstOrDefaultAsync(x => x.Id == CompanyId);
 
                 if (company is not null && company.Stores.Any())
                 {
@@ -434,18 +434,18 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByTechnicianId(Guid technicianId)
+        public async Task<(bool IsSuccess, List<StoreModel>? Stores, string? ErrorMessage)> GetStoresByTechnicianId(Guid TechnicianId)
         {
             try
             {
-                var technician = await _dbContext.Technicians.Where(x => x.Id == technicianId).FirstOrDefaultAsync();
-                var company = await _dbContext.Companies.Where(x => x.SystemOwnerId == technician.SystemOwnerId).ToListAsync();
+                var technician = await DbContext.Technicians.Where(x => x.Id == TechnicianId).FirstOrDefaultAsync();
+                var company = await DbContext.Companies.Where(x => x.SystemOwnerId == technician.SystemOwnerId).ToListAsync();
                 var StoreList = new List<StoreModel>();
                 if (company != null)
                 {
                     foreach(var com in company)
                     {
-                        var store= await _dbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
+                        var store= await DbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
                         StoreList.AddRange(store);
                     }
 
@@ -476,7 +476,7 @@ namespace WiiTrakApi.Repository
 
                 };
 
-                var Stores = await _dbContext.SPGetStoresBySystemOwnerId.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var Stores = await DbContext.SPGetStoresBySystemOwnerId.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (Stores != null)
                 {
@@ -495,7 +495,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var exists = await _dbContext.Stores.AnyAsync(x => x.Id.Equals(id));
+                var exists = await DbContext.Stores.AnyAsync(x => x.Id.Equals(id));
                 return (true, exists, null);
             }
             catch (Exception ex)
@@ -519,7 +519,7 @@ namespace WiiTrakApi.Repository
                     store.TimezoneName = LatLong.TimezoneName;
                 }
                 #endregion
-                await _dbContext.Stores.AddAsync(store);
+                await DbContext.Stores.AddAsync(store);
 
                 #region Adding Store details to users table
                 UsersModel user = new UsersModel();
@@ -533,11 +533,11 @@ namespace WiiTrakApi.Repository
                 user.IsActive = true;
                 user.IsFirstLogin = true;
 
-                await _dbContext.Users.AddAsync(user);
+                await DbContext.Users.AddAsync(user);
                 #endregion
 
 
-                await _dbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -563,7 +563,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@IsActive", Value = store.IsActive },
                      new SqlParameter { ParameterName = "@Email", Value = store.Email }
                 };
-                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
 
                 #region Get Lat Long from Address
@@ -578,8 +578,8 @@ namespace WiiTrakApi.Repository
                 }
                 #endregion
 
-                _dbContext.Stores.Update(store);
-                await _dbContext.SaveChangesAsync();
+                DbContext.Stores.Update(store);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -592,13 +592,13 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var recordToDelete = await _dbContext.Stores.FirstOrDefaultAsync(x => x.Id == id);
+                var recordToDelete = await DbContext.Stores.FirstOrDefaultAsync(x => x.Id == id);
                 if (recordToDelete is null)
                 {
                     return (false, "Store not found");
                 }
-                _dbContext.Stores.Remove(recordToDelete);
-                await _dbContext.SaveChangesAsync();
+                DbContext.Stores.Remove(recordToDelete);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -609,7 +609,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<bool> SaveAsync()
         {
-            return await _dbContext.SaveChangesAsync() >= 0;
+            return await DbContext.SaveChangesAsync() >= 0;
         }
         public LatitudeLongitude GetLatLong(string Address)
         {

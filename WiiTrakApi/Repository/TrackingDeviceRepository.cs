@@ -33,7 +33,19 @@ namespace WiiTrakApi.Repository
             }
             return (false, null, "No tracking device found");
         }
+        public async Task<(bool IsSuccess, TrackingDeviceModel? TrackingDevice, string? ErrorMessage)> GetTrackingDevicebyIMEIAsync(string IMEI)
+        {
+            var trackingDevice = await _dbContext.TrackingDevices
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.IMEINumber == IMEI);
 
+            if (trackingDevice is not null)
+            {
+                return (true, trackingDevice, null);
+            }
+            return (false, null, "No tracking device found");
+        }
+        
         public async Task<(bool IsSuccess, List<TrackingDeviceModel>? TrackingDevices, string? ErrorMessage)> GetAllTrackingDevicesAsync()
         {
             try

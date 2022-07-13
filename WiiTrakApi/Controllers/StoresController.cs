@@ -50,12 +50,12 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("ServiceProvider/{serviceProviderId:guid}")]
+        [HttpGet("ServiceProvider/{ServiceProviderId:guid}")]
         [EnableQuery]
-        public async Task<IActionResult> GetStoresByServiceProviderId(Guid serviceProviderId)
+        public async Task<IActionResult> GetStoresByServiceProviderId(Guid ServiceProviderId)
         {
             var result = await Repository
-                .GetStoresByConditionAsync(x => x.ServiceProviderId == serviceProviderId);
+                .GetStoresByConditionAsync(x => x.ServiceProviderId == ServiceProviderId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -64,10 +64,10 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("Corporate/{corporateId:guid}")]
-        public async Task<IActionResult> GetStoresByCorporateId(Guid corporateId)
+        [HttpGet("Corporate/{CorporateId:guid}")]
+        public async Task<IActionResult> GetStoresByCorporateId(Guid CorporateId)
         {
-            var result = await Repository.GetStoresByCorporateId(corporateId);
+            var result = await Repository.GetStoresByCorporateId(CorporateId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -76,10 +76,10 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("Company/{companyId:guid}")]
-        public async Task<IActionResult> GetStoresByCompanyId(Guid companyId)
+        [HttpGet("Company/{CompanyId:guid}")]
+        public async Task<IActionResult> GetStoresByCompanyId(Guid CompanyId)
         {
-            var result = await Repository.GetStoresByCompanyId(companyId);
+            var result = await Repository.GetStoresByCompanyId(CompanyId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -87,10 +87,10 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<StoreDto>>(result.Stores);
             return Ok(dtoList);
         }
-        [HttpGet("Technician/{technicianId:guid}")]
-        public async Task<IActionResult> GetStoresByTechnicianId(Guid technicianId)
+        [HttpGet("Technician/{TechnicianId:guid}")]
+        public async Task<IActionResult> GetStoresByTechnicianId(Guid TechnicianId)
         {
-            var result = await Repository.GetStoresByTechnicianId(technicianId);
+            var result = await Repository.GetStoresByTechnicianId(TechnicianId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -110,10 +110,10 @@ namespace WiiTrakApi.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("Driver/{driverId:guid}")]
-        public async Task<IActionResult> GetStoresByDriverId(Guid driverId)
+        [HttpGet("Driver/{DriverId:guid}")]
+        public async Task<IActionResult> GetStoresByDriverId(Guid DriverId)
         {
-            var result = await Repository.GetStoresByDriverId(driverId);
+            var result = await Repository.GetStoresByDriverId(DriverId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -134,10 +134,10 @@ namespace WiiTrakApi.Controllers
             return Ok(reportDto);
         }
 
-        [HttpGet("report/driver/{driverId:guid}")]
-        public async Task<IActionResult> GetAllStoreReportByDriver(Guid driverId)
+        [HttpGet("report/driver/{DriverId:guid}")]
+        public async Task<IActionResult> GetAllStoreReportByDriver(Guid DriverId)
         {
-            var result = await Repository.GetAllStoreReportByDriverId(driverId);
+            var result = await Repository.GetAllStoreReportByDriverId(DriverId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -146,10 +146,10 @@ namespace WiiTrakApi.Controllers
             return Ok(reportDto);
         }
 
-        [HttpGet("report/corporate/{corporateId:guid}")]
-        public async Task<IActionResult> GetAllStoreReportByCorporate(Guid corporateId)
+        [HttpGet("report/corporate/{CorporateId:guid}")]
+        public async Task<IActionResult> GetAllStoreReportByCorporate(Guid CorporateId)
         {
-            var result = await Repository.GetAllStoreReportByCorporateId(corporateId);
+            var result = await Repository.GetAllStoreReportByCorporateId(CorporateId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -158,10 +158,10 @@ namespace WiiTrakApi.Controllers
             return Ok(reportDto);
         }
 
-        [HttpGet("report/company/{companyId:guid}")]
-        public async Task<IActionResult> GetAllStoreReportByCompany(Guid companyId)
+        [HttpGet("report/company/{CompanyId:guid}")]
+        public async Task<IActionResult> GetAllStoreReportByCompany(Guid CompanyId)
         {
-            var result = await Repository.GetAllStoreReportByCompanyId(companyId);
+            var result = await Repository.GetAllStoreReportByCompanyId(CompanyId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -172,12 +172,12 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StoreDto>> CreateStore([FromBody] StoreCreationDto storeCreation)
+        public async Task<ActionResult<StoreDto>> CreateStore([FromBody] StoreDto StoreCreation)
         {
             // TODO
             // company Id to one-to-many
             // Corporate Id to one-to-many
-            var store = Mapper.Map<StoreModel>(storeCreation);
+            var store = Mapper.Map<StoreModel>(StoreCreation);
             store.CreatedAt = DateTime.UtcNow;
             var createResult = await Repository.CreateStoreAsync(store);
             if (!createResult.IsSuccess)
@@ -191,14 +191,14 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateStore(Guid id, StoreUpdateDto storeUpdate)
+        public async Task<IActionResult> UpdateStore(Guid id, StoreDto StoreUpdate)
         {
             var result = await Repository.GetStoreByIdAsync(id);
             if (!result.IsSuccess || result.Store is null)
             {
                 return NotFound(result.ErrorMessage);
             }
-            Mapper.Map(storeUpdate, result.Store);
+            Mapper.Map(StoreUpdate, result.Store);
             result.Store.UpdatedAt = DateTime.UtcNow;
             var updateResult = await Repository.UpdateStoreAsync(result.Store);
             if (updateResult.IsSuccess)

@@ -40,6 +40,18 @@ namespace WiiTrakApi.Controllers
             var dto = Mapper.Map<TrackingDeviceDto>(result.TrackingDevice);
             return Ok(dto);
         }
+        [HttpGet("IMEI")]
+        public async Task<IActionResult> GetTrackingDevicebyIMEI(string IMEI)
+        {
+            var result = await Repository.GetTrackingDevicebyIMEIAsync(IMEI);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            var dto = Mapper.Map<TrackingDeviceDto>(result.TrackingDevice);
+            return Ok(dto);
+        }
+
 
         [HttpGet]
         [EnableQuery]
