@@ -320,8 +320,9 @@ namespace WiiTrakApi.Controllers
                     {
                         PreviousDevice.DeviceList.IsMapped = false;
                         PreviousDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
-                        await DeviceHistoryRepository.CreateDeviceHistoryAsync(PreviousDeviceHistory);
                         await DevicesRepository.UpdateDeviceAsync(PreviousDevice.DeviceList);
+                        await DeviceHistoryRepository.CreateDeviceHistoryAsync(PreviousDeviceHistory);
+                        
                     }
 
                     return NoContent();
