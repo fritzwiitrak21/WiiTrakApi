@@ -195,7 +195,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@Latitude", Value = trackingDevice.Latitude },
                      new SqlParameter { ParameterName = "@Longitude", Value = trackingDevice.Longitude }
                 };
-                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 await _dbContext.SaveChangesAsync();
                 return (true, null);
             }

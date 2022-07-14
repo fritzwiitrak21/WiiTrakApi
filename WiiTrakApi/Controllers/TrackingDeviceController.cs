@@ -19,14 +19,13 @@ namespace WiiTrakApi.Controllers
         private readonly IMapper Mapper;
         private readonly ITrackingDeviceRepository Repository;
         private readonly ITrackingDeviceHistoryRepository HistoryRepository;
-        //private readonly ITrackSolidRepository _trackSolidRepository;
+       
 
-        public TrackingDeviceController(IMapper mapper, ITrackingDeviceRepository repository, ITrackingDeviceHistoryRepository historyrepository)//, ITrackSolidRepository trackSolidRepositor)
+        public TrackingDeviceController(IMapper mapper, ITrackingDeviceRepository repository, ITrackingDeviceHistoryRepository historyrepository)
         {
             Mapper = mapper;
             Repository = repository;
             HistoryRepository = historyrepository;
-            //_trackSolidRepository = trackSolidRepositor;
         }
 
         [HttpGet("{id:guid}", Name = "GetTrackingDevice")]
@@ -148,15 +147,6 @@ namespace WiiTrakApi.Controllers
             }
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
-
-            //  _trackSolidRepository.GetDataFromTrackSolidAsync();
-            //var result = await Repository.GetTrackingDeviceByIdAsync(id);
-            //if (!result.IsSuccess || result.TrackingDevice is null) return NotFound(result.ErrorMessage);
-            //Mapper.Map(trackingDeviceUpdate, result.TrackingDevice);
-            //result.TrackingDevice.UpdatedAt = DateTime.UtcNow;
-            //var updateResult = await Repository.UpdateTrackingDeviceAsync(result.TrackingDevice);
-            //if (updateResult.IsSuccess) return NoContent();
-            //error
         }
 
         [HttpDelete("{id}")]
