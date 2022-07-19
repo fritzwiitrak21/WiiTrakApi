@@ -23,7 +23,6 @@ namespace WiiTrakApi.Controllers
             Mapper = mapper;
             Repository = repository;
         }
-
         [HttpGet("{id:guid}", Name = "GetCorporate")]
         public async Task<IActionResult> GetCorporate(Guid id)
         {
@@ -35,7 +34,6 @@ namespace WiiTrakApi.Controllers
             var dto = Mapper.Map<CorporateDto>(result.Corporate);
             return Ok(dto);
         }
-
         [HttpGet]
         [EnableQuery]
         public async Task<IActionResult> GetAllCorporates()
@@ -48,8 +46,6 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<CorporateDto>>(result.Corporates);
             return Ok(dtoList);
         }
-
-
         [HttpGet("report/{id:guid}")]
         public async Task<IActionResult> GetCorporateReport(Guid id)
         {
@@ -61,11 +57,10 @@ namespace WiiTrakApi.Controllers
             var reportDto = result.Report;
             return Ok(reportDto);
         }
-
-        [HttpGet("company/{companyId:guid}")]
-        public async Task<IActionResult> GetCorporatesByCompanyId(Guid companyId)
+        [HttpGet("company/{CompanyId:guid}")]
+        public async Task<IActionResult> GetCorporatesByCompanyId(Guid CompanyId)
         {
-            var result = await Repository.GetCorporatesByCompanyIdAsync(companyId);
+            var result = await Repository.GetCorporatesByCompanyIdAsync(CompanyId);
             if (!result.IsSuccess)
             {
                 return NotFound(result.ErrorMessage);
@@ -85,12 +80,11 @@ namespace WiiTrakApi.Controllers
             var dtoList = Mapper.Map<List<CorporateDto>>(result.Corporates);
             return Ok(dtoList);
         }
-
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("{companyid:guid}/{roleid:int}")]
-        public async Task<ActionResult<CorporateDto>> CreateCorporate(Guid CompanyId, int RoleId,[FromBody] CorporateDto corporateCreation)
+        public async Task<ActionResult<CorporateDto>> CreateCorporate(Guid CompanyId, int RoleId,[FromBody] CorporateDto CorporateCreation)
         {
-            var corporate = Mapper.Map<CorporateModel>(corporateCreation);
+            var corporate = Mapper.Map<CorporateModel>(CorporateCreation);
             corporate.CreatedAt = DateTime.UtcNow;
            //TODO company id
             var createResult = await Repository.CreateCorporateAsync(corporate,CompanyId,RoleId);
@@ -102,17 +96,16 @@ namespace WiiTrakApi.Controllers
             var dto = Mapper.Map<CorporateDto>(corporate);
             return CreatedAtRoute(nameof(GetCorporate), new { id = dto.Id }, dto);
         }
-
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCorporate(Guid id, CorporateDto corporateUpdate)
+        public async Task<IActionResult> UpdateCorporate(Guid id, CorporateDto CorporateUpdate)
         {
             var result = await Repository.GetCorporateByIdAsync(id);
             if (!result.IsSuccess || result.Corporate is null)
             {
                 return NotFound(result.ErrorMessage);
             }
-            Mapper.Map(corporateUpdate, result.Corporate);
+            Mapper.Map(CorporateUpdate, result.Corporate);
             result.Corporate.UpdatedAt = DateTime.UtcNow;
             var updateResult = await Repository.UpdateCorporateAsync(result.Corporate);
             if (updateResult.IsSuccess)
@@ -122,7 +115,6 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCorporate(Guid id)
         {

@@ -49,9 +49,9 @@ namespace WiiTrakApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<RepairIssueDto>> CreateRepairIssue([FromBody] RepairIssueCreationDto repairIssueCreation)
+        public async Task<ActionResult<RepairIssueDto>> CreateRepairIssue([FromBody] RepairIssueDto RepairIssueCreation)
         {
-            var repairIssue = Mapper.Map<RepairIssueModel>(repairIssueCreation);
+            var repairIssue = Mapper.Map<RepairIssueModel>(RepairIssueCreation);
             repairIssue.CreatedAt = DateTime.UtcNow;
             var createResult = await Repository.CreateRepairIssueAsync(repairIssue);
             if (!createResult.IsSuccess)
@@ -65,14 +65,14 @@ namespace WiiTrakApi.Controllers
 
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateRepairIssue(Guid id, RepairIssueUpdateDto repairIssueUpdate)
+        public async Task<IActionResult> UpdateRepairIssue(Guid id, RepairIssueDto RepairIssueUpdate)
         {
             var result = await Repository.GetRepairIssueByIdAsync(id);
             if (!result.IsSuccess || result.RepairIssue is null)
             {
                 return NotFound(result.ErrorMessage);
             }
-            Mapper.Map(repairIssueUpdate, result.RepairIssue);
+            Mapper.Map(RepairIssueUpdate, result.RepairIssue);
             result.RepairIssue.UpdatedAt = DateTime.UtcNow;
             var updateResult = await Repository.UpdateRepairIssueAsync(result.RepairIssue);
             if (updateResult.IsSuccess)
