@@ -14,16 +14,16 @@ namespace WiiTrakApi.Repository
 {
     public class TrackingDeviceRepository : ITrackingDeviceRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext DbContext;
 
         public TrackingDeviceRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
         }
 
         public async Task<(bool IsSuccess, TrackingDeviceModel? TrackingDevice, string? ErrorMessage)> GetTrackingDeviceByIdAsync(Guid id)
         {
-            var trackingDevice = await _dbContext.TrackingDevices
+            var trackingDevice = await DbContext.TrackingDevices
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -35,7 +35,7 @@ namespace WiiTrakApi.Repository
         }
         public async Task<(bool IsSuccess, TrackingDeviceModel? TrackingDevice, string? ErrorMessage)> GetTrackingDevicebyIMEIAsync(string IMEI)
         {
-            var trackingDevice = await _dbContext.TrackingDevices
+            var trackingDevice = await DbContext.TrackingDevices
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.IMEINumber == IMEI);
 
@@ -50,7 +50,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var trackingDevices = await _dbContext.TrackingDevices
+                var trackingDevices = await DbContext.TrackingDevices
                     .Select(x => x)
                     .AsNoTracking()
                     .ToListAsync();
@@ -71,7 +71,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var trackingDevices = await _dbContext.TrackingDevices
+                var trackingDevices = await DbContext.TrackingDevices
                     .Where(expression)
                     .Select(x => x)
                     .AsNoTracking()
@@ -93,7 +93,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var exists = await _dbContext.TrackingDevices.AnyAsync(x => x.Id.Equals(id));
+                var exists = await DbContext.TrackingDevices.AnyAsync(x => x.Id.Equals(id));
                 return (true, exists, null);
             }
             catch (Exception ex)
@@ -114,7 +114,7 @@ namespace WiiTrakApi.Repository
 
                 };
 
-                var TrackingDeviceDetails = await _dbContext.SPGetTrackingDeviceDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var TrackingDeviceDetails = await DbContext.SPGetTrackingDeviceDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (TrackingDeviceDetails != null)
                 {
@@ -139,7 +139,7 @@ namespace WiiTrakApi.Repository
                     new SqlParameter { ParameterName = "@DriverId", Value =Id  },
                 };
 
-                var TrackingDeviceDetails = await _dbContext.SPGetTrackingDeviceDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var TrackingDeviceDetails = await DbContext.SPGetTrackingDeviceDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (TrackingDeviceDetails != null)
                 {
@@ -152,12 +152,12 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateTrackingDeviceAsync(TrackingDeviceModel trackingDevice)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateTrackingDeviceAsync(TrackingDeviceModel TrackingDevice)
         {
             try
             {
-                await _dbContext.TrackingDevices.AddAsync(trackingDevice);
-                await _dbContext.SaveChangesAsync();
+                await DbContext.TrackingDevices.AddAsync(TrackingDevice);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -166,12 +166,12 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceAsync(TrackingDeviceModel trackingDevice)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceAsync(TrackingDeviceModel TrackingDevice)
         {
             try
             {
-                _dbContext.TrackingDevices.Update(trackingDevice);
-                await _dbContext.SaveChangesAsync();
+                DbContext.TrackingDevices.Update(TrackingDevice);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -180,7 +180,7 @@ namespace WiiTrakApi.Repository
 
             }
         }
-        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceCoOrdinatesAsync(TrackingDeviceModel trackingDevice)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceCoOrdinatesAsync(TrackingDeviceModel TrackingDevice)
         {
             try
             {
@@ -190,13 +190,13 @@ namespace WiiTrakApi.Repository
 
                 parms = new List<SqlParameter>
                 {
-                     new SqlParameter { ParameterName = "@IMEINumber", Value = trackingDevice.IMEINumber},
-                     new SqlParameter { ParameterName = "@DeviceName", Value = trackingDevice.DeviceName },
-                     new SqlParameter { ParameterName = "@Latitude", Value = trackingDevice.Latitude },
-                     new SqlParameter { ParameterName = "@Longitude", Value = trackingDevice.Longitude }
+                     new SqlParameter { ParameterName = "@IMEINumber", Value = TrackingDevice.IMEINumber},
+                     new SqlParameter { ParameterName = "@DeviceName", Value = TrackingDevice.DeviceName },
+                     new SqlParameter { ParameterName = "@Latitude", Value = TrackingDevice.Latitude },
+                     new SqlParameter { ParameterName = "@Longitude", Value = TrackingDevice.Longitude }
                 };
-                await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
-                await _dbContext.SaveChangesAsync();
+                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -210,13 +210,13 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var recordToDelete = await _dbContext.TrackingDevices.FirstOrDefaultAsync(x => x.Id == id);
+                var recordToDelete = await DbContext.TrackingDevices.FirstOrDefaultAsync(x => x.Id == id);
                 if (recordToDelete is null)
                 {
                     return (false, "Tracking Device not found");
                 }
-                _dbContext.TrackingDevices.Remove(recordToDelete);
-                await _dbContext.SaveChangesAsync();
+                DbContext.TrackingDevices.Remove(recordToDelete);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -227,7 +227,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<bool> SaveAsync()
         {
-            return await _dbContext.SaveChangesAsync() >= 0;
+            return await DbContext.SaveChangesAsync() >= 0;
         }
     }
 }

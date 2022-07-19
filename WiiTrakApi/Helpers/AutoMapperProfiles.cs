@@ -30,8 +30,6 @@ namespace WiiTrakApi.Helpers
             CreateMap<StoreModel, StoreDto>().ReverseMap();
 
             CreateMap<TrackingDeviceModel, TrackingDeviceDto>().ReverseMap();
-            CreateMap<TrackingDeviceModel, TrackingDeviceCreationDto>().ReverseMap();
-            CreateMap<TrackingDeviceModel, TrackingDeviceUpdateDto>().ReverseMap();
 
             CreateMap<CompanyModel, CompanyDto>().ReverseMap();
             
@@ -41,8 +39,6 @@ namespace WiiTrakApi.Helpers
             CreateMap<DeliveryTicketModel, DeliveryTicketUpdateDto>().ReverseMap();
             CreateMap<DeliveryTicketModel, DeliveryTicketCreationDto>().ReverseMap();
 
-            CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
-            CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
             CreateMap<RepairIssueModel, RepairIssueDto>().ReverseMap();
 
             CreateMap<CartHistoryModel, CartHistoryDto>().ReverseMap();

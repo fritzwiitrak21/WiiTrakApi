@@ -92,17 +92,17 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TrackingDeviceDto>> CreateTrackingDevice([FromBody] TrackingDeviceCreationDto trackingDeviceCreation)
+        public async Task<ActionResult<TrackingDeviceDto>> CreateTrackingDevice([FromBody] TrackingDeviceDto TrackingDeviceCreation)
         {
-            var trackingDevice = Mapper.Map<TrackingDeviceModel>(trackingDeviceCreation);
-            trackingDevice.CreatedAt = DateTime.UtcNow;
-            var createResult = await Repository.CreateTrackingDeviceAsync(trackingDevice);
+            var TrackingDevice = Mapper.Map<TrackingDeviceModel>(TrackingDeviceCreation);
+            TrackingDevice.CreatedAt = DateTime.UtcNow;
+            var createResult = await Repository.CreateTrackingDeviceAsync(TrackingDevice);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-            var dto = Mapper.Map<TrackingDeviceDto>(trackingDevice);
+            var dto = Mapper.Map<TrackingDeviceDto>(TrackingDevice);
             var TrackingDeviceHistory = new TrackingDeviceHistoryModel
             {
                 TrackingDeviceId=dto.Id,
@@ -118,14 +118,14 @@ namespace WiiTrakApi.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateTrackingDevice(Guid id, TrackingDeviceUpdateDto trackingDeviceUpdate)
+        public async Task<IActionResult> UpdateTrackingDevice(Guid id, TrackingDeviceDto TrackingDeviceUpdate)
         {
             var result = await Repository.GetTrackingDeviceByIdAsync(id);
             if (!result.IsSuccess || result.TrackingDevice is null)
             {
                 return NotFound(result.ErrorMessage);
             }
-            Mapper.Map(trackingDeviceUpdate, result.TrackingDevice);
+            Mapper.Map(TrackingDeviceUpdate, result.TrackingDevice);
             result.TrackingDevice.UpdatedAt = DateTime.UtcNow;
             var updateResult = await Repository.UpdateTrackingDeviceAsync(result.TrackingDevice);
             if (updateResult.IsSuccess)
@@ -136,10 +136,10 @@ namespace WiiTrakApi.Controllers
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateCoordinatesOfDevices(TrackingDeviceUpdateDto trackingDeviceUpdate)
+        public async Task<IActionResult> UpdateCoordinatesOfDevices(TrackingDeviceDto TrackingDeviceUpdate)
         {
             var TrackingDevice = new TrackingDeviceModel();
-            Mapper.Map(trackingDeviceUpdate, TrackingDevice);
+            Mapper.Map(TrackingDeviceUpdate, TrackingDevice);
             var updateResult = await Repository.UpdateTrackingDeviceCoOrdinatesAsync(TrackingDevice);
             if (updateResult.IsSuccess)
             {

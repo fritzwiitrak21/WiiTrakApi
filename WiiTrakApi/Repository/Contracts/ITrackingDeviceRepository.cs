@@ -19,10 +19,10 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> TrackingDeviceExistsAsync(Guid id);
         Task<(bool IsSuccess, List<SPGetTrackingDeviceDetailsById>? TrackingDeviceDetails, string? ErrorMessage)> GetTrackingDeviceDetailsByIdAsync(Guid Id, Enums.Role role);
         Task<(bool IsSuccess, List<SPGetTrackingDeviceDetailsById>? TrackingDeviceDetails, string? ErrorMessage)> GetTrackingDeviceDetailsByIdDriverAsync(Guid Id);
-        Task<(bool IsSuccess, string? ErrorMessage)> CreateTrackingDeviceAsync(TrackingDeviceModel trackingDevice);
+        Task<(bool IsSuccess, string? ErrorMessage)> CreateTrackingDeviceAsync(TrackingDeviceModel TrackingDevice);
 
-        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceAsync(TrackingDeviceModel trackingDevice);
-        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceCoOrdinatesAsync(TrackingDeviceModel trackingDevice);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceAsync(TrackingDeviceModel TrackingDevice);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateTrackingDeviceCoOrdinatesAsync(TrackingDeviceModel TrackingDevice);
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteTrackingDeviceAsync(Guid id);
 
         Task<bool> SaveAsync();
