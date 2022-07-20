@@ -208,7 +208,25 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateStoreFenceCoords(StoreDto StoreUpdate)
+        {
+            var result = await Repository.GetStoreByIdAsync(StoreUpdate.Id);
+            if (!result.IsSuccess || result.Store is null)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+            Mapper.Map(StoreUpdate, result.Store);
+            result.Store.UpdatedAt = DateTime.UtcNow;
+            var updateResult = await Repository.UpdateStoreFenceCoordsAsync(result.Store);
+            if (updateResult.IsSuccess)
+            {
+                return NoContent();
+            }
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
 
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStore(Guid id)
         {
@@ -220,5 +238,6 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.DeleteErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
+        
     }
 }

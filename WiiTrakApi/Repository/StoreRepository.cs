@@ -587,7 +587,30 @@ namespace WiiTrakApi.Repository
                 return (false, ex.Message);
             }
         }
+       public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreModel store)
+        {
+            try
+            {
+                const string sqlquery = "Exec SPUpdateFenceCoordsByStroeId @StoreId,@FenceCoords";
 
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@StoreId", Value = store.Id},
+                     new SqlParameter { ParameterName = "@FenceCoords", Value = store.FenceCoords }
+                };
+
+                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+
+            }
+        }
         public async Task<(bool IsSuccess, string? ErrorMessage)> DeleteStoreAsync(Guid id)
         {
             try
