@@ -39,6 +39,6 @@ namespace WiiTrakApi.SPModels
         public DateTime? TimezoneDateTime { get; set; }
         public string ServiceFrequency { get; set; }
         public bool IsConnectedStore { get; set; }
-        public string FenceCoords { get; set; } = string.Empty;
+        public string? FenceCoords { get; set; } = string.Empty;
     }
 }
