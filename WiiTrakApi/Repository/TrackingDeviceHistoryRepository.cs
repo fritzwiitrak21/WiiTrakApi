@@ -2,13 +2,9 @@
 * 06.06.2022
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using WiiTrakApi.Data;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
-using WiiTrakApi.SPModels;
-using Microsoft.Data.SqlClient;
 
 namespace WiiTrakApi.Repository
 {

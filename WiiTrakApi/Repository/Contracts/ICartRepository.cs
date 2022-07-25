@@ -30,7 +30,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> CreateCartAsync(CartModel cart);
 
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateCartAsync(CartModel cart);
-
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateCartStatusByIdAsync(CartModel StoreCart);
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteCartAsync(Guid id);
 
         Task<bool> SaveAsync();

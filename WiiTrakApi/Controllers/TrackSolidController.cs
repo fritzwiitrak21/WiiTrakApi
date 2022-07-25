@@ -19,6 +19,17 @@ namespace WiiTrakApi.Controllers
             Mapper = mapper;
             Repository = repository;
         }
+        [HttpGet]
+
+        public async Task<IActionResult> GetDeviceForStoreId()
+        {
+            var Result = await Repository.GetDeviceForStoreIdAsync();
+            if (Result.IsSuccess)
+            {
+                return Ok(Result.connectedstorelist);
+            }
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+        }
         [HttpPut]
         public async Task<IActionResult> UpdateCoordinatesOfDevices()
         {
@@ -30,5 +41,5 @@ namespace WiiTrakApi.Controllers
             ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
-        }
     }
+}

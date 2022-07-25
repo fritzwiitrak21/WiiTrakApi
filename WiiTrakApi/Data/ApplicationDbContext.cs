@@ -75,7 +75,7 @@ namespace WiiTrakApi.Data
             modelBuilder.Entity<SPGetStoresBySystemOwnerId>().HasNoKey();
             modelBuilder.Entity<SpGetDriverAssignedStores>().HasNoKey();
             modelBuilder.Entity<SPGetServiceBoardDetailsById>().HasNoKey();
-
+            modelBuilder.Entity<SpGetDeviceForStoreId>().HasNoKey();
             base.OnModelCreating(modelBuilder);
         }
 
@@ -119,6 +119,7 @@ namespace WiiTrakApi.Data
         public DbSet<TrackingDeviceModel> SPGetTrackingDeviceDetailsByDriverId { get; set; }
         
         public DbSet<SpGetMessagesById> SpGetMessagesById { get; set; }
+        public DbSet<SpGetDeviceForStoreId> SpGetDeviceForStoreId { get; set; }
 
 
     }

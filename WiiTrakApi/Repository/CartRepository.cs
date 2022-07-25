@@ -316,6 +316,36 @@ namespace WiiTrakApi.Repository
                 return (false, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateCartStatusByIdAsync(CartModel StoreCart)
+        {
+            try
+            {
+                StoreCart.Status = Enums.CartStatus.OutsideGeofence;
+                StoreCart.UpdatedAt = DateTime.UtcNow;
+
+                var NewCartHistry = new CartHistoryModel
+                {
+                    StoreId = StoreCart.StoreId,
+                    Status = Enums.CartStatus.OutsideGeofence,
+                    CartId = StoreCart.Id,
+                    DeviceId = StoreCart.DeviceId,
+                    Condition = StoreCart.Condition,
+                    IsDelivered = false,
+                    IssueType = StoreCart.IssueType,
+                    IssueDescription = StoreCart.IssueDescription,
+                    CreatedAt = DateTime.UtcNow,
+                };
+
+                DbContext.Carts.Update(StoreCart);
+                await DbContext.CartHistory.AddAsync(NewCartHistry);
+                await DbContext.SaveChangesAsync();
+                return (true, null);
+            }
+            catch(Exception ex)
+            {
+                return (false, ex.Message);
+            }
+            }
 
         public async Task<(bool IsSuccess, string? ErrorMessage)> DeleteCartAsync(Guid id)
         {

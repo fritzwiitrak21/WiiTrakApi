@@ -211,14 +211,8 @@ namespace WiiTrakApi.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateStoreFenceCoords(StoreDto StoreUpdate)
         {
-            var result = await Repository.GetStoreByIdAsync(StoreUpdate.Id);
-            if (!result.IsSuccess || result.Store is null)
-            {
-                return NotFound(result.ErrorMessage);
-            }
-            Mapper.Map(StoreUpdate, result.Store);
-            result.Store.UpdatedAt = DateTime.UtcNow;
-            var updateResult = await Repository.UpdateStoreFenceCoordsAsync(result.Store);
+          
+            var updateResult = await Repository.UpdateStoreFenceCoordsAsync(StoreUpdate);
             if (updateResult.IsSuccess)
             {
                 return NoContent();

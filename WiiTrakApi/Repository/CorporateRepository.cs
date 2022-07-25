@@ -143,8 +143,8 @@ namespace WiiTrakApi.Repository
                     carts.AddRange(storeCarts.Carts);
                 }
 
-                int totalStores = corporateStores.Count();
-                int totalCarts = carts.Count();
+                int totalStores = corporateStores.Count;
+                int totalCarts = carts.Count;
                 int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
                 int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
                 int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);

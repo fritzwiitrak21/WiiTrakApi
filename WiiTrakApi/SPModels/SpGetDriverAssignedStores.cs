@@ -35,6 +35,6 @@ namespace WiiTrakApi.SPModels
         public string? TimezoneDiff { get; set; } = string.Empty; 
         public string? TimezoneName { get; set; } = string.Empty;
         public bool IsConnectedStore { get; set; }
-        public string? FenceCoords { get; set; } = string.Empty;
+        public string FenceCoords { get; set; } = string.Empty;
     }
 }

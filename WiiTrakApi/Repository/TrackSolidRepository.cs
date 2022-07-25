@@ -1,10 +1,13 @@
-﻿using WiiTrakApi.Repository.Contracts;
+﻿/*
+* 06.06.2022
+* Copyright (c) 2022 WiiTrak, All Rights Reserved.
+*/
+using WiiTrakApi.Repository.Contracts;
 using WiiTrakApi.DTOs;
 using WiiTrakApi.Models;
-using System.Net.Http.Headers;
+using WiiTrakApi.SPModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Data;
 using Microsoft.Data.SqlClient;
 using WiiTrakApi.Data;
 using Microsoft.EntityFrameworkCore;
@@ -208,7 +211,33 @@ namespace WiiTrakApi.Repository
             }
         }
         #endregion
+        public async Task<(bool IsSuccess, List<SpGetDeviceForStoreId>? connectedstorelist, string? ErrorMessage)> GetDeviceForStoreIdAsync()
+        {
+            try
+            {
+                List<SqlParameter> parms;
+                const string sqlquery = "Exec SpGetDeviceForStoreId @StoreId";
+                parms = new List<SqlParameter>
+                {
+                    new SqlParameter { ParameterName = "@StoreId", Value =DBNull.Value },
+                };
+
+                var connectedstorelist = await DbContext.SpGetDeviceForStoreId.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+
+                if (connectedstorelist != null)
+                {
+                    return (true, connectedstorelist, null);
+                }
+                return (false, null, "No Store Found");
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
     }
+
+
     public class AccessTokenResponse
     {
         public string code { get; set; } = string.Empty;

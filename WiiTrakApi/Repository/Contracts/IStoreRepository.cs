@@ -35,7 +35,7 @@ namespace WiiTrakApi.Repository.Contracts
         Task<(bool IsSuccess, string? ErrorMessage)> CreateStoreAsync(StoreModel store);
 
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreAsync(StoreModel store);
-        Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreModel store);
+        Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreDto store);
         
         Task<(bool IsSuccess, string? ErrorMessage)> DeleteStoreAsync(Guid id);
 

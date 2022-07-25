@@ -3,9 +3,7 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using WiiTrakApi.Data;
-using WiiTrakApi.Enums;
 using WiiTrakApi.Models;
 using WiiTrakApi.Repository.Contracts;
 using Microsoft.Data.SqlClient;

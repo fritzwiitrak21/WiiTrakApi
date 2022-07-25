@@ -128,8 +128,8 @@ namespace WiiTrakApi.Repository
                 carts = storeCarts.Carts;
 
 
-                //int totalStores = storeCarts.Count();
-                int totalCarts = carts.Count();
+                //int totalStores = storeCarts.Count;
+                int totalCarts = carts.Count;
                 int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
                 int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
                 int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
@@ -202,8 +202,8 @@ namespace WiiTrakApi.Repository
                 }
 
 
-                //int totalStores = storeCarts.Count();
-                int totalCarts = carts.Count();
+                //int totalStores = storeCarts.Count;
+                int totalCarts = carts.Count;
                 int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
                 int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
                 int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
@@ -273,8 +273,8 @@ namespace WiiTrakApi.Repository
                 }
 
 
-                //int totalStores = storeCarts.Count();
-                int totalCarts = carts.Count();
+                //int totalStores = storeCarts.Count;
+                int totalCarts = carts.Count;
                 int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
                 int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
                 int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
@@ -344,8 +344,8 @@ namespace WiiTrakApi.Repository
                 }
 
 
-                //int totalStores = storeCarts.Count();
-                int totalCarts = carts.Count();
+                //int totalStores = storeCarts.Count;
+                int totalCarts = carts.Count;
                 int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
                 int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
                 int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);
@@ -587,7 +587,7 @@ namespace WiiTrakApi.Repository
                 return (false, ex.Message);
             }
         }
-       public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreModel store)
+       public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreDto store)
         {
             try
             {

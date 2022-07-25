@@ -23,6 +23,6 @@ namespace WiiTrakApi.SPModels
         public string AssignedDriver { get; set; } = string.Empty;
         public string CountyCode { get; set; } = string.Empty;
         public bool IsConnectedStore { get; set; }
-        public string FenceCoords { get; set; } = string.Empty;
+        public string? FenceCoords { get; set; } = string.Empty;
     }
 }

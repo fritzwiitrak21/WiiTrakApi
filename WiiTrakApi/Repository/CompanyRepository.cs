@@ -170,12 +170,12 @@ namespace WiiTrakApi.Repository
                 {
                     var storeCarts = await _dbContext.Stores
                         .Include(x => x.Carts)
-                        .FirstOrDefaultAsync(x => x.Id == store.Id);
+                        .FirstOrDefaultAsync(x => x.Id== store.Id);
                     carts.AddRange(storeCarts.Carts);
                 }
 
-                int totalStores = companyStores.Count();
-                int totalCarts = carts.Count();
+                int totalStores = companyStores.Count;
+                int totalCarts = carts.Count;
                 int totalCartsAtStore = carts.Count(x => x.Status == CartStatus.InsideGeofence);
                 int totalCartsOutsideStore = carts.Count(x => x.Status == CartStatus.OutsideGeofence);
                 int totalCartsNeedingRepair = carts.Count(x => x.Condition == CartCondition.Damage);

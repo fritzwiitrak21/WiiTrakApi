@@ -230,7 +230,7 @@ namespace WiiTrakApi.Controllers
                 cart.IssueDescription = cartUpdate.IssueDescription;
                 cart.DeviceId = cartUpdate.DeviceId;
                 var updateResult = await Repository.UpdateCartAsync(cart);
-                if (updateResult.IsSuccess  && cartUpdate.CartHistory.DriverId == Guid.Empty)
+                if (updateResult.IsSuccess && cartUpdate.CartHistory.DriverId == Guid.Empty)
                 {
                     try
                     {
@@ -322,7 +322,7 @@ namespace WiiTrakApi.Controllers
                         PreviousDevice.DeviceList.UpdatedAt = DateTime.UtcNow;
                         await DevicesRepository.UpdateDeviceAsync(PreviousDevice.DeviceList);
                         await DeviceHistoryRepository.CreateDeviceHistoryAsync(PreviousDeviceHistory);
-                        
+
                     }
 
                     return NoContent();
@@ -335,7 +335,19 @@ namespace WiiTrakApi.Controllers
                 throw ex;
             }
         }
-
+        [HttpPut("CartStatus/{CartId:guid}")]
+        public async Task<IActionResult> UpdateCartStatusById(Guid CartId)
+        {
+            var CartDetails = await Repository.GetCartByIdAsync(CartId);
+            var Cart = Mapper.Map<CartModel>(CartDetails.Cart);
+            var result = await Repository.UpdateCartStatusByIdAsync(Cart);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
+            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCart(Guid id)
         {
