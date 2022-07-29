@@ -205,7 +205,7 @@ namespace WiiTrakApi.Repository
                 }
                 return null;
             }
-            catch (Exception)
+            catch
             {
                 return null;
             }

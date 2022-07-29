@@ -18,9 +18,9 @@ namespace WiiTrakApi.Repository
     {
         private readonly ApplicationDbContext DbContext;
         const string ErrorMessage = "No Corporate found";
-        public CorporateRepository(ApplicationDbContext dbContext)
+        public CorporateRepository(ApplicationDbContext DBContext)
         {
-            DbContext = dbContext;
+            DbContext = DBContext;
         }
         public async Task<(bool IsSuccess, CorporateModel? Corporate, string? ErrorMessage)> GetCorporateByIdAsync(Guid id)
         {
@@ -261,7 +261,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@IsActive", Value = true },
                      new SqlParameter { ParameterName = "@Email", Value = corporate.Email }
                 };
-                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
                 DbContext.Corporates.Update(corporate);
                 await DbContext.SaveChangesAsync();

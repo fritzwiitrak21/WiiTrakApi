@@ -13,16 +13,16 @@ namespace WiiTrakApi.Repository.Contracts
 
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetAllCartsAsync();
 
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId);
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid DeliveryTicketId);
         
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid storeId);
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid StoreId);
 
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDriverIdAsync(Guid driverId);
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDriverIdAsync(Guid DriverId);
 
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCorporateIdAsync(Guid corporateId);
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCorporateIdAsync(Guid CorporateId);
 
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCompanyIdAsync(Guid companyId);
-        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid technicianId);
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCompanyIdAsync(Guid CompanyId);
+        Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid TechnicianId);
         Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByConditionAsync(Expression<Func<CartModel, bool>> expression);
 
         Task<(bool IsSuccess, bool Exists, string? ErrorMessage)> CartExistsAsync(Guid id);

@@ -16,9 +16,9 @@ namespace WiiTrakApi.Repository
     {
         private readonly ApplicationDbContext DbContext;
 
-        public TrackingDeviceRepository(ApplicationDbContext dbContext)
+        public TrackingDeviceRepository(ApplicationDbContext DBContext)
         {
-            DbContext = dbContext;
+            DbContext = DBContext;
         }
 
         public async Task<(bool IsSuccess, TrackingDeviceModel? TrackingDevice, string? ErrorMessage)> GetTrackingDeviceByIdAsync(Guid id)
@@ -195,7 +195,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@Latitude", Value = TrackingDevice.Latitude },
                      new SqlParameter { ParameterName = "@Longitude", Value = TrackingDevice.Longitude }
                 };
-                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 await DbContext.SaveChangesAsync();
                 return (true, null);
             }

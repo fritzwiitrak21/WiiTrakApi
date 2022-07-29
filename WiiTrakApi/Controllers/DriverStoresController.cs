@@ -35,6 +35,18 @@ namespace WiiTrakApi.Controllers
 
             return Ok(dtoList);
         }
+        [HttpGet("DriverAssignHistory/{UserId:guid}/{Role:int}")]
+        public async Task<ActionResult> GetDriverAssignHistoryById(Guid UserId,int Role)
+        {
+            var result = await Repository.GetDriverAssignHistoryByIdAsync(UserId, Role);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+
+            return Ok(result.DriverStoreHistory);
+        }
 
         [HttpGet("SystemOwner/{SystemOwnerId:guid}/{DriverId:guid}")]
         public async Task<ActionResult> GetDriverStoresBySystemOwnerId(Guid SystemOwnerId, Guid DriverId)

@@ -76,6 +76,9 @@ namespace WiiTrakApi.Data
             modelBuilder.Entity<SpGetDriverAssignedStores>().HasNoKey();
             modelBuilder.Entity<SPGetServiceBoardDetailsById>().HasNoKey();
             modelBuilder.Entity<SpGetDeviceForStoreId>().HasNoKey();
+            modelBuilder.Entity<SpGetDriverAssignHistoryById>().HasNoKey();
+            modelBuilder.Entity<SPGetStoreUpdateHistoryById>().HasNoKey();
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -89,6 +92,7 @@ namespace WiiTrakApi.Data
         public DbSet<TrackingDeviceModel> TrackingDevices { get; set; } = default!;
         public DbSet<ServiceProviderModel> ServiceProviders { get; set; } = default!;
         public DbSet<StoreModel> Stores { get; set; } = default!;
+        public DbSet<StoreHistoryModel> StoresHistory { get; set; } = default!;
         public DbSet<TechnicianModel> Technicians { get; set; } = default!;
         public DbSet<DriverModel> Drivers { get; set; } = default!;
         public DbSet<DriverStoreModel> DriverStores { get; set; } = default!;
@@ -120,7 +124,9 @@ namespace WiiTrakApi.Data
         
         public DbSet<SpGetMessagesById> SpGetMessagesById { get; set; }
         public DbSet<SpGetDeviceForStoreId> SpGetDeviceForStoreId { get; set; }
-
+        public DbSet<SpGetDriverAssignHistoryById> SpGetDriverAssignHistoryById { get; set; }
+        public DbSet<SPGetStoreUpdateHistoryById> SPGetStoreUpdateHistoryById { get; set; }
+        
 
     }
 }

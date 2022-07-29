@@ -4,10 +4,7 @@
 */
 
 using WiiTrakApi.Models;
-using System.Linq.Expressions;
 using WiiTrakApi.SPModels;
-
-
 namespace WiiTrakApi.Repository.Contracts
 {
     public interface IMessagesRepository

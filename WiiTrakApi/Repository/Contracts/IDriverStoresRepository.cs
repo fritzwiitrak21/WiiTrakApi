@@ -11,6 +11,7 @@ namespace WiiTrakApi.Repository.Contracts
     {
         Task<(bool IsSuccess, List<SpGetDriverAssignedStoresByCompany>? DriverStores, string? ErrorMessage)> GetDriverStoresByCompanyIdAsync(Guid DriverId, Guid CompanyId);
         Task<(bool IsSuccess, List<SpGetDriverAssignedStoresBySystemOwner>? DriverStores, string? ErrorMessage)> GetDriverStoresBySystemOwnerIdAsync(Guid DriverId, Guid SystemOwnerId);
+        Task<(bool IsSuccess, List<SpGetDriverAssignHistoryById>? DriverStoreHistory, string? ErrorMessage)> GetDriverAssignHistoryByIdAsync(Guid UserId, int RoleId);
         Task<(bool IsSuccess, string? ErrorMessage)> UpdateDriverStoresAsync(DriverStoreDetailsDto DriverStoreDetailsDto);
     }
 }

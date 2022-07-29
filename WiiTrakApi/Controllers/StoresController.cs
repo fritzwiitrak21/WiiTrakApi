@@ -169,6 +169,18 @@ namespace WiiTrakApi.Controllers
             var reportDto = result.Report;
             return Ok(reportDto);
         }
+        [HttpGet("StoreUpdateHistory/{UserId:guid}/{Role:int}")]
+        public async Task<ActionResult> GetStoreUpdateHistoryById(Guid UserId, int Role)
+        {
+            var result = await Repository.GetStoreUpdateHistoryByIdAsync(UserId, Role);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+
+            return Ok(result.StoreUpdateHistory);
+        }
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -179,7 +191,7 @@ namespace WiiTrakApi.Controllers
             // Corporate Id to one-to-many
             var store = Mapper.Map<StoreModel>(StoreCreation);
             store.CreatedAt = DateTime.UtcNow;
-            var createResult = await Repository.CreateStoreAsync(store);
+            var createResult = await Repository.CreateStoreAsync(store,(Guid)StoreCreation.CreatedBy);
             if (!createResult.IsSuccess)
             {
                 ModelState.AddModelError("", Cores.Core.SaveErrorMessage);
@@ -200,7 +212,7 @@ namespace WiiTrakApi.Controllers
             }
             Mapper.Map(StoreUpdate, result.Store);
             result.Store.UpdatedAt = DateTime.UtcNow;
-            var updateResult = await Repository.UpdateStoreAsync(result.Store);
+            var updateResult = await Repository.UpdateStoreAsync(result.Store,(Guid)StoreUpdate.CreatedBy);
             if (updateResult.IsSuccess)
             {
                 return NoContent();

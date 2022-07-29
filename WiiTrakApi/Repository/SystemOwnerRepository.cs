@@ -147,7 +147,10 @@ namespace WiiTrakApi.Repository
             {
                 return (false, "Email not exists");
             }
-            else return (true, "Email already Exists");
+            else
+            {
+                return (true, "Email already Exists");
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ namespace WiiTrakApi.DTOs
         public Guid Id { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Guid? CreatedBy { get; set; }
         public string StoreName { get; set; } = string.Empty;
         public string StoreNumber { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

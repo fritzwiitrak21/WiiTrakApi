@@ -195,7 +195,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@Email", Value = technician.Email }
                 };
 
-                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
                 await DbContext.SaveChangesAsync();
                 return (true, null);

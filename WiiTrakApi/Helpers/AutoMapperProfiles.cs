@@ -28,6 +28,7 @@ namespace WiiTrakApi.Helpers
             CreateMap<TechnicianModel, TechnicianDto>().ReverseMap();
 
             CreateMap<StoreModel, StoreDto>().ReverseMap();
+            CreateMap<StoreHistoryModel, StoreModel>().ReverseMap();
 
             CreateMap<TrackingDeviceModel, TrackingDeviceDto>().ReverseMap();
 

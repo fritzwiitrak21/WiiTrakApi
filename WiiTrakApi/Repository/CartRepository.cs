@@ -16,9 +16,9 @@ namespace WiiTrakApi.Repository
     {
         private readonly ApplicationDbContext DbContext;
         const string ErrorMessage = "No carts found";
-        public CartRepository(ApplicationDbContext dbContext)
+        public CartRepository(ApplicationDbContext DBContext)
         {
-            DbContext = dbContext;
+            DbContext = DBContext;
         }
 
         public async Task<(bool IsSuccess, CartModel? Cart, string? ErrorMessage)> GetCartByIdAsync(Guid id)
@@ -56,16 +56,12 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid deliveryTicketId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDeliveryTicketIdAsync(Guid DeliveryTicketId)
         {
             try
             {
-                var deliveryTicket = await DbContext.DeliveryTickets
-                    .Where(x => x.Id == deliveryTicketId)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
                 var cartHistory = await DbContext.CartHistory
-                    .Where(x => x.DeliveryTicketId == deliveryTicketId)
+                    .Where(x => x.DeliveryTicketId == DeliveryTicketId)
                     .AsNoTracking()
                     .ToListAsync();
                 var carts = new List<CartModel>();
@@ -94,13 +90,13 @@ namespace WiiTrakApi.Repository
             }
         }
      
-        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid storeId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByStoreIdAsync(Guid StoreId)
         {
             try
             {
                 var carts = await DbContext.Carts
                     .Include(x => x.Store)
-                    .Where(x => x.StoreId == storeId) 
+                    .Where(x => x.StoreId == StoreId) 
                     .AsNoTracking().OrderByDescending(x => x.CreatedAt)
                     .ToListAsync();
                 if (carts.Any())
@@ -116,12 +112,12 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDriverIdAsync(Guid driverId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByDriverIdAsync(Guid DriverId)
         {
             try
             {
                 var driverStores = await DbContext.DriverStores
-                    .Where(x => x.DriverId == driverId && x.IsActive)
+                    .Where(x => x.DriverId == DriverId && x.IsActive)
                     .AsNoTracking()
                     .ToListAsync();
                 var cartList = new List<CartModel>();
@@ -151,11 +147,11 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCorporateIdAsync(Guid corporateId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCorporateIdAsync(Guid CorporateId)
         {
             try
             {
-                var corporateStores = await DbContext.Stores.Where(x => x.CorporateId == corporateId).ToListAsync();
+                var corporateStores = await DbContext.Stores.Where(x => x.CorporateId == CorporateId).ToListAsync();
                 var cartList = new List<CartModel>();
                 foreach (var store in corporateStores)
                 {
@@ -179,11 +175,11 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCompanyIdAsync(Guid companyId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByCompanyIdAsync(Guid CompanyId)
         {
             try
             {
-                var companyStores = await DbContext.Stores.Where(x => x.CompanyId == companyId).ToListAsync();
+                var companyStores = await DbContext.Stores.Where(x => x.CompanyId == CompanyId).ToListAsync();
                 var cartList = new List<CartModel>();
                 foreach (var store in companyStores)
                 {
@@ -206,11 +202,11 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
-        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid technicianId)
+        public async Task<(bool IsSuccess, List<CartModel>? Carts, string? ErrorMessage)> GetCartsByTechnicianIdAsync(Guid TechnicianId)
         {
             try
             {
-                var technician=await DbContext.Technicians.Where(x=>x.Id == technicianId).FirstOrDefaultAsync();
+                var technician=await DbContext.Technicians.Where(x=>x.Id == TechnicianId).FirstOrDefaultAsync();
                 var company = await DbContext.Companies.Where(x => x.SystemOwnerId == technician.SystemOwnerId).ToListAsync();
                 var companyStores = new List<StoreModel>();
                 if (company != null)

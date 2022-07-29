@@ -16,16 +16,16 @@ namespace WiiTrakApi.Repository
 {
     public class CompanyRepository : ICompanyRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext DbContext;
         const string ErrorMessage = "No companies found";
-        public CompanyRepository(ApplicationDbContext dbContext)
+        public CompanyRepository(ApplicationDbContext DBContext)
         {
-            _dbContext = dbContext;
+            DbContext = DBContext;
         }
 
         public async Task<(bool IsSuccess, CompanyModel? Company, string? ErrorMessage)> GetCompanyByIdAsync(Guid id)
         {
-            var company = await _dbContext.Companies
+            var company = await DbContext.Companies
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -40,7 +40,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var companies = await _dbContext.Companies
+                var companies = await DbContext.Companies
                     .Select(x => x)
                     .AsNoTracking()
                     .ToListAsync();
@@ -61,7 +61,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var companies = await _dbContext.Companies
+                var companies = await DbContext.Companies
                     .Where(expression)
                     .Select(x => x)
                     .AsNoTracking()
@@ -82,7 +82,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, CompanyModel? Company, string? ErrorMessage)> GetParentCompanyAsync(Guid subcompanyId)
         {
-            var company = await _dbContext.Companies
+            var company = await DbContext.Companies
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == subcompanyId);
 
@@ -106,7 +106,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@CorporateId", Value = corporateId },
                 };
 
-                var companies = await _dbContext.Companies.FromSqlRaw<CompanyModel>(sqlquery, parms.ToArray()).ToListAsync();
+                var companies = await DbContext.Companies.FromSqlRaw<CompanyModel>(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (companies.Any())
                 {
@@ -123,7 +123,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var companies = await _dbContext.Companies
+                var companies = await DbContext.Companies
                     .Where(x => x.SystemOwnerId == systemownerId)
                     .AsNoTracking().OrderBy(x => x.Name)
                     .ToListAsync();
@@ -146,7 +146,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var exists = await _dbContext.Companies.AnyAsync(x => x.Id.Equals(id));
+                var exists = await DbContext.Companies.AnyAsync(x => x.Id.Equals(id));
                 return (true, exists, null);
             }
             catch (Exception ex)
@@ -161,14 +161,14 @@ namespace WiiTrakApi.Repository
             {
                 var report = new CompanyReportDto();
 
-                var companyStores = await _dbContext.Stores.Where(x => x.CompanyId == id).ToListAsync();
+                var companyStores = await DbContext.Stores.Where(x => x.CompanyId == id).ToListAsync();
 
 
                 var carts = new List<CartModel>();
 
                 foreach (var store in companyStores)
                 {
-                    var storeCarts = await _dbContext.Stores
+                    var storeCarts = await DbContext.Stores
                         .Include(x => x.Carts)
                         .FirstOrDefaultAsync(x => x.Id== store.Id);
                     carts.AddRange(storeCarts.Carts);
@@ -229,7 +229,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                await _dbContext.Companies.AddAsync(company);
+                await DbContext.Companies.AddAsync(company);
 
 
                 #region Adding Company details to users table
@@ -244,16 +244,16 @@ namespace WiiTrakApi.Repository
                 user.IsActive = true;
                 user.IsFirstLogin = true;
 
-                await _dbContext.Users.AddAsync(user);
+                await DbContext.Users.AddAsync(user);
                 #endregion
 
                 if (company.ParentId != null && company.SystemOwner == null)
                 {
-                    var ParrentCompany = await _dbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
+                    var ParrentCompany = await DbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
                     company.SystemOwnerId = ParrentCompany.SystemOwnerId;
                 }
 
-                await _dbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -268,7 +268,7 @@ namespace WiiTrakApi.Repository
             {
                 if (company.ParentId != null && company.SystemOwner == null)
                 {
-                    var ParrentCompany = await _dbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
+                    var ParrentCompany = await DbContext.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == company.ParentId);
                     company.SystemOwnerId = ParrentCompany.SystemOwnerId;
                 }
                 #region Update company details to users table
@@ -284,10 +284,10 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@IsActive", Value = true },
                      new SqlParameter { ParameterName = "@Email", Value = company.Email }
                 };
-                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
-                _dbContext.Companies.Update(company);
-                await _dbContext.SaveChangesAsync();
+                DbContext.Companies.Update(company);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -301,13 +301,13 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var recordToDelete = await _dbContext.Companies.FirstOrDefaultAsync(x => x.Id == id);
+                var recordToDelete = await DbContext.Companies.FirstOrDefaultAsync(x => x.Id == id);
                 if (recordToDelete is null)
                 {
                     return (false, "Customer not found");
                 }
-                _dbContext.Companies.Remove(recordToDelete);
-                await _dbContext.SaveChangesAsync();
+                DbContext.Companies.Remove(recordToDelete);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -318,7 +318,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<bool> SaveAsync()
         {
-            return await _dbContext.SaveChangesAsync() >= 0;
+            return await DbContext.SaveChangesAsync() >= 0;
         }
 
     }

@@ -16,16 +16,16 @@ namespace WiiTrakApi.Repository
 {
     public class DeliveryTicketRepository : IDeliveryTicketRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext DbContext;
         const string ExceptionMessage = "No delivery tickets found";
         public DeliveryTicketRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
         }
 
         public async Task<(bool IsSuccess, DeliveryTicketModel? DeliveryTicket, string? ErrorMessage)> GetDeliveryTicketByIdAsync(Guid id)
         {
-            var deliveryTicket = await _dbContext.DeliveryTickets
+            var deliveryTicket = await DbContext.DeliveryTickets
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -38,12 +38,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, DeliveryTicketSummaryDto? DeliveryTicketSummary, string? ErrorMessage)> GetDeliveryTicketSummaryByIdAsync(Guid id)
         {
-            var deliveryTicket = await _dbContext.DeliveryTickets
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-
-            var cartHistory = await _dbContext.CartHistory
+            var cartHistory = await DbContext.CartHistory
                 .Where(x => x.DeliveryTicketId == id)
                 .AsNoTracking()
                 .ToListAsync();
@@ -65,13 +60,13 @@ namespace WiiTrakApi.Repository
 
         public async Task<(bool IsSuccess, long DeliveryTicketNumber, string? ErrorMessage)> GetDeliveryTicketNumberAsync(Guid serviceProviderId)
         {
-            bool anyExists = await _dbContext.DeliveryTickets.AnyAsync(x => x.ServiceProviderId == serviceProviderId);
+            bool anyExists = await DbContext.DeliveryTickets.AnyAsync(x => x.ServiceProviderId == serviceProviderId);
             if (!anyExists)
             {
                 return (true, 1, null);
             }
 
-            var maxTicketNumber = await _dbContext.DeliveryTickets
+            var maxTicketNumber = await DbContext.DeliveryTickets
                 .MaxAsync(x => x.DeliveryTicketNumber);
 
             return (true, (maxTicketNumber + 1), null);
@@ -82,7 +77,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var deliveryTickets = await _dbContext.DeliveryTickets
+                var deliveryTickets = await DbContext.DeliveryTickets
                     .Select(x => x)
                     .AsNoTracking()
                     .ToListAsync();
@@ -103,7 +98,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var deliveryTickets = await _dbContext.DeliveryTickets
+                var deliveryTickets = await DbContext.DeliveryTickets
                     .Where(expression)
                     .Select(x => x).Where(x => x.IsActive)
                     .AsNoTracking()
@@ -137,7 +132,7 @@ namespace WiiTrakApi.Repository
 
                 };
 
-                var DeliveryTickets = await _dbContext.SPGetDeliveryTicketsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var DeliveryTickets = await DbContext.SPGetDeliveryTicketsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (DeliveryTickets != null)
                 {
@@ -163,7 +158,7 @@ namespace WiiTrakApi.Repository
 
                 };
 
-                var ServiceBoard = await _dbContext.SPGetServiceBoardDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var ServiceBoard = await DbContext.SPGetServiceBoardDetailsById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (ServiceBoard != null)
                 {
@@ -181,14 +176,14 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var storedetails = await _dbContext.Stores
+                var storedetails = await DbContext.Stores
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
                 deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
                 deliveryTicket.IsActive = true;
 
-                await _dbContext.DeliveryTickets.AddAsync(deliveryTicket);
-                await _dbContext.SaveChangesAsync();
+                await DbContext.DeliveryTickets.AddAsync(deliveryTicket);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -202,12 +197,12 @@ namespace WiiTrakApi.Repository
             try
             {
 
-                var storedetails = await _dbContext.Stores
+                var storedetails = await DbContext.Stores
                  .AsNoTracking()
                  .FirstOrDefaultAsync(x => x.Id == deliveryTicket.StoreId);
                 deliveryTicket.SignOffRequired = storedetails.IsSignatureRequired;
-                _dbContext.DeliveryTickets.Update(deliveryTicket);
-                await _dbContext.SaveChangesAsync();
+                DbContext.DeliveryTickets.Update(deliveryTicket);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -220,13 +215,13 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var recordToDelete = await _dbContext.DeliveryTickets.FirstOrDefaultAsync(x => x.Id == id);
+                var recordToDelete = await DbContext.DeliveryTickets.FirstOrDefaultAsync(x => x.Id == id);
                 if (recordToDelete is null)
                 {
                     return (false, ExceptionMessage);
                 }
-                _dbContext.DeliveryTickets.Remove(recordToDelete);
-                await _dbContext.SaveChangesAsync();
+                DbContext.DeliveryTickets.Remove(recordToDelete);
+                await DbContext.SaveChangesAsync();
                 return (true, null);
             }
             catch (Exception ex)
@@ -237,7 +232,7 @@ namespace WiiTrakApi.Repository
 
         public async Task<bool> SaveAsync()
         {
-            return await _dbContext.SaveChangesAsync() >= 0;
+            return await DbContext.SaveChangesAsync() >= 0;
         }
     }
 }

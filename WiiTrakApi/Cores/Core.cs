@@ -123,8 +123,12 @@ namespace WiiTrakApi.Cores
     }
     public static class Numbers
     {
-        public static int OneTwoEight { get; set; } = 128;
+        public const int OneTwoEight = 128;
+        public const int TwoFiveSix = 256;
+        public const int TwoFifty = 250;
+        public const int Thousand = 1000;
         public static int FiveHundred { get; set; } = 500;
+
     }
 
 

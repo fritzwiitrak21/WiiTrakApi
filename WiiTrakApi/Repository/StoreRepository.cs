@@ -15,27 +15,38 @@ using System.Net;
 using System.Data;
 using System.Text;
 using WiiTrakApi.SPModels;
+using AutoMapper;
 namespace WiiTrakApi.Repository
 {
     public class StoreRepository : IStoreRepository
     {
         private readonly ApplicationDbContext DbContext;
-
-        public StoreRepository(ApplicationDbContext dbContext)
+        private readonly IMapper Mapper;
+        public StoreRepository(ApplicationDbContext dbContext, IMapper mapper)
         {
             DbContext = dbContext;
+            Mapper = mapper;
         }
 
         public async Task<(bool IsSuccess, StoreModel? Store, string? ErrorMessage)> GetStoreByIdAsync(Guid id)
         {
-            var store = await DbContext.Stores
-                .Include(x => x.Carts)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            if (store is not null)
+            try
             {
-                return (true, store, null);
+                var store = await DbContext.Stores
+                      .Include(x => x.Carts)
+                      //.Select(x => x)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (store is not null)
+                {
+                    return (true, store, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+
             }
             return (false, null, "No store found");
         }
@@ -120,12 +131,10 @@ namespace WiiTrakApi.Repository
 
 
                 //var carts = new List<CartModel>();
-                var carts = new List<CartModel>();
-
                 var storeCarts = await DbContext.Stores
                     .Include(x => x.Carts)
                     .FirstOrDefaultAsync(x => x.Id == Id);
-                carts = storeCarts.Carts;
+                var carts = storeCarts.Carts;
 
 
                 //int totalStores = storeCarts.Count;
@@ -443,25 +452,25 @@ namespace WiiTrakApi.Repository
                 var StoreList = new List<StoreModel>();
                 if (company != null)
                 {
-                    foreach(var com in company)
+                    foreach (var com in company)
                     {
-                        var store= await DbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
+                        var store = await DbContext.Stores.Where(x => x.CompanyId == com.Id && x.IsConnectedStore).ToListAsync();
                         StoreList.AddRange(store);
                     }
 
                 }
                 if (StoreList.Any())
                 {
-                    return (true, StoreList,null);
+                    return (true, StoreList, null);
                 }
-                    return (false, null, "No stores found");
+                return (false, null, "No stores found");
             }
             catch (Exception ex)
             {
                 return (false, null, ex.Message);
             }
         }
-        
+
         public async Task<(bool IsSuccess, List<SPGetStoresBySystemOwnerId>? Stores, string? ErrorMessage)> GetStoresBySystemOwnerId(Guid SystemownerId)
         {
             try
@@ -503,8 +512,33 @@ namespace WiiTrakApi.Repository
                 return (false, false, ex.Message);
             }
         }
+        public async Task<(bool IsSuccess, List<SPGetStoreUpdateHistoryById>? StoreUpdateHistory, string? ErrorMessage)> GetStoreUpdateHistoryByIdAsync(Guid UserId, int RoleId)
+        {
+            try
+            {
+                const string sqlquery = "Exec SPGetStoreUpdateHistoryById @UserId,@RoleId";
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateStoreAsync(StoreModel store)
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@UserId", Value = UserId},
+                     new SqlParameter { ParameterName = "@RoleId", Value =RoleId }
+                };
+                var StoreUpdateHistory = await DbContext.SPGetStoreUpdateHistoryById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                if (StoreUpdateHistory != null)
+                {
+                    return (true, StoreUpdateHistory, null);
+                }
+                return (true, null, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+
+            }
+        }
+        public async Task<(bool IsSuccess, string? ErrorMessage)> CreateStoreAsync(StoreModel store, Guid CreatedBy)
         {
             try
             {
@@ -535,7 +569,15 @@ namespace WiiTrakApi.Repository
 
                 await DbContext.Users.AddAsync(user);
                 #endregion
-
+                #region Add StoreHistory
+                var StoreHistory = Mapper.Map<StoreHistoryModel>(store);
+                StoreHistory.StoreId = store.Id;
+                StoreHistory.CreatedBy = CreatedBy;
+                StoreHistory.IsNew = true;
+                StoreHistory.Id = new Guid();
+                StoreHistory.CreatedAt = DateTime.UtcNow;
+                DbContext.StoresHistory.Add(StoreHistory);
+                #endregion
 
                 await DbContext.SaveChangesAsync();
                 return (true, null);
@@ -546,7 +588,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
-        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreAsync(StoreModel store)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreAsync(StoreModel store, Guid CreatedBy)
         {
             try
             {
@@ -563,7 +605,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@IsActive", Value = store.IsActive },
                      new SqlParameter { ParameterName = "@Email", Value = store.Email }
                 };
-                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
 
                 #region Get Lat Long from Address
@@ -577,7 +619,15 @@ namespace WiiTrakApi.Repository
                     store.TimezoneName = LatLong.TimezoneName;
                 }
                 #endregion
-
+                #region Add StoreHistory
+                var StoreHistory = Mapper.Map<StoreHistoryModel>(store);
+                StoreHistory.StoreId = store.Id;
+                StoreHistory.CreatedBy = CreatedBy;
+                StoreHistory.IsNew = false;
+                StoreHistory.Id = new Guid();
+                StoreHistory.CreatedAt = DateTime.UtcNow;
+                DbContext.StoresHistory.Add(StoreHistory);
+                #endregion
                 DbContext.Stores.Update(store);
                 await DbContext.SaveChangesAsync();
                 return (true, null);
@@ -587,7 +637,7 @@ namespace WiiTrakApi.Repository
                 return (false, ex.Message);
             }
         }
-       public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreDto store)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> UpdateStoreFenceCoordsAsync(StoreDto store)
         {
             try
             {
@@ -601,7 +651,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@FenceCoords", Value = store.FenceCoords }
                 };
 
-                var Result = await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await DbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 await DbContext.SaveChangesAsync();
                 return (true, null);
             }
@@ -698,10 +748,9 @@ namespace WiiTrakApi.Repository
                     }
                     return LatLong;
                 }
-                catch (Exception ex)
+                catch
                 {
                     return null;
-
                 }
             }
         }

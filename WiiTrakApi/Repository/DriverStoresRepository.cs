@@ -19,7 +19,7 @@ namespace WiiTrakApi.Repository
         {
             _dbContext = dbContext;
         }
-        public async Task<(bool IsSuccess, List<SpGetDriverAssignedStoresByCompany>? DriverStores, string? ErrorMessage)> GetDriverStoresByCompanyIdAsync(Guid DriverId,Guid CompanyId)
+        public async Task<(bool IsSuccess, List<SpGetDriverAssignedStoresByCompany>? DriverStores, string? ErrorMessage)> GetDriverStoresByCompanyIdAsync(Guid DriverId, Guid CompanyId)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@CompanyId", Value = CompanyId }
                 };
 
-                var DriverStores= await _dbContext.SpGetDriverAssignedStoresByCompany.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                var DriverStores = await _dbContext.SpGetDriverAssignedStoresByCompany.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
 
                 if (DriverStores != null)
                 {
@@ -97,6 +97,32 @@ namespace WiiTrakApi.Repository
             catch (Exception ex)
             {
                 return (false, ex.Message);
+            }
+        }
+        public async Task<(bool IsSuccess, List<SpGetDriverAssignHistoryById>? DriverStoreHistory, string? ErrorMessage)> GetDriverAssignHistoryByIdAsync(Guid UserId, int RoleId)
+        {
+            try
+            {
+                const string sqlquery = "Exec SpGetDriverAssignHistoryById @UserId,@RoleId";
+
+                List<SqlParameter> parms;
+
+                parms = new List<SqlParameter>
+                {
+                     new SqlParameter { ParameterName = "@UserId", Value = UserId},
+                     new SqlParameter { ParameterName = "@RoleId", Value =RoleId }
+                };
+                var DriverStoreHistory = await _dbContext.SpGetDriverAssignHistoryById.FromSqlRaw(sqlquery, parms.ToArray()).ToListAsync();
+                if (DriverStoreHistory != null)
+                {
+                    return (true, DriverStoreHistory, null);
+                }
+                return (true, null, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+
             }
         }
     }

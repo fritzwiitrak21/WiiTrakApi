@@ -85,7 +85,6 @@ namespace WiiTrakApi.Repository
             {
                 var drivers = new List<DriverModel>();
                 const string sqlquery = "Exec SpGetDriversBySystemOwner @Id";
-
                 List<SqlParameter> parms;
 
 
@@ -191,11 +190,11 @@ namespace WiiTrakApi.Repository
                 #region Update Driver details to users table
                
                 var isactive = true;
-                if (driver.IsActive == false)
+                if (!driver.IsActive)
                 {
                     isactive = false;
                 }
-                else if (driver.IsSuspended == true && driver.IsActive == true)
+                else if (driver.IsSuspended && driver.IsActive)
                 {
                     isactive = false;
                 }
@@ -217,7 +216,7 @@ namespace WiiTrakApi.Repository
                      new SqlParameter { ParameterName = "@Email", Value = driver.Email }
                 };
 
-                var Result = await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
+                await _dbContext.Database.ExecuteSqlRawAsync(sqlquery, parms.ToArray());
                 #endregion
 
                 _dbContext.Drivers.Update(driver);

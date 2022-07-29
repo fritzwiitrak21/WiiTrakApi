@@ -3,7 +3,6 @@
 * Copyright (c) 2022 WiiTrak, All Rights Reserved.
 */
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace WiiTrakApi.Models
 {
     [Table(name: "Devices")]

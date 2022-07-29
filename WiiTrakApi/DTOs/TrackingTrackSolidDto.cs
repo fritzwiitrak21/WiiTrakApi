@@ -7,7 +7,7 @@ namespace WiiTrakApi.DTOs
     public class TrackingTrackSolidDto
     {
         public static string RequestUrl { get; set; } = "https://us-open.tracksolidpro.com/route/rest";
-        public string method { get; set; }
+        public string method { get; set; } = string.Empty;
         public string timestamp { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:sss");//UTC Time (Format 2022-05-20 05:57:003)
         public string app_key { get; set; } = "8FB345B8693CCD0090F9BB773BFECBEF";
         public string sign { get; set; } = "15F71EB259DBA10498405C0DBD0390C8";

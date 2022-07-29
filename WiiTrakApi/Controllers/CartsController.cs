@@ -262,9 +262,9 @@ namespace WiiTrakApi.Controllers
                             await TrackingDeviceRepository.UpdateTrackingDeviceAsync(Trackingdevice.TrackingDevice);
                         }
                     }
-                    catch (Exception ex)
+                    catch 
                     {
-
+                        //Exception
                     }
 
 
@@ -330,9 +330,9 @@ namespace WiiTrakApi.Controllers
                 ModelState.AddModelError("", Cores.Core.UpdateErrorMessage);
                 return StatusCode(Cores.Numbers.FiveHundred, ModelState);
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                return null;
             }
         }
         [HttpPut("CartStatus/{CartId:guid}")]

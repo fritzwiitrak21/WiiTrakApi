@@ -13,18 +13,18 @@ namespace WiiTrakApi.Repository
 {
     public class LoginRepository : ILoginRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext DbContext;
 
         public LoginRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
         }
 
         public async Task<(bool IsSuccess, List<UsersModel>? Users, string? ErrorMessage)> GetAllUserDetailsAsync()
         {
             try
             {
-                var Users = await _dbContext.Users
+                var Users = await DbContext.Users
                             .Select(x => x)
                             .AsNoTracking().ToListAsync();
 
@@ -43,7 +43,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var User = await _dbContext.Users
+                var User = await DbContext.Users
                             .AsNoTracking()
                             .FirstOrDefaultAsync(x => x.Id == Id);
 
@@ -68,7 +68,7 @@ namespace WiiTrakApi.Repository
                 var Password = Core.Base64Decrypt(login.Password);
                 var EnPassword = Core.EncryptText(Password);
 
-                var Users = await _dbContext.Users
+                var Users = await DbContext.Users
                             .AsNoTracking()
                             .FirstOrDefaultAsync(x => x.Email == Username && x.Password == EnPassword && x.IsActive );
 
@@ -88,9 +88,9 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                var Users = await _dbContext.Users
+                var Users = await DbContext.Users
                             .AsNoTracking()
-                            .FirstOrDefaultAsync(x => x.Email == forgot.Username && x.IsActive == true);
+                            .FirstOrDefaultAsync(x => x.Email == forgot.Username && x.IsActive);
 
                 if (Users != null)
                 {
@@ -108,8 +108,8 @@ namespace WiiTrakApi.Repository
         {
             try
             {
-                _dbContext.Users.Update(user);
-                await _dbContext.SaveChangesAsync();
+                DbContext.Users.Update(user);
+                await DbContext.SaveChangesAsync();
 
                 return (true, null);
             }

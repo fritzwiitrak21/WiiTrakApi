@@ -4,17 +4,16 @@
 */
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using WiiTrakApi.Cores;
 namespace WiiTrakApi.Models
 {
     [Table(name: "RepairIssues")]
     public class RepairIssueModel: EntityModel
     {
-        [MaxLength(250)]
+        [MaxLength(Numbers.TwoFifty)]
         [Required(ErrorMessage = "{0} is required.")]
         public string? Issue { get; set; } = string.Empty;
-
-        [MaxLength(1000)]
+        [MaxLength(Numbers.Thousand)]
         public string? Description { get; set; } = string.Empty;
     }
 }

@@ -59,9 +59,8 @@ namespace WiiTrakApi.Repository
                 }
                 return default;
             }
-            catch (Exception ex)
+            catch
             {
-
                 return default;
             }
         }
