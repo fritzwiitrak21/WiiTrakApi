@@ -30,7 +30,7 @@ namespace WiiTrakApi.Controllers
             }
             return StatusCode(Cores.Numbers.FiveHundred, ModelState);
         }
-        [HttpPut]
+        [HttpPut("UpdateStatus")]
         public async Task<IActionResult> UpdateCoordinatesOfDevices()
         {
             var updateResult = await Repository.GetDataFromTrackSolidAsync();
