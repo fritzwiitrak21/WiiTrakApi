@@ -5,6 +5,8 @@
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using WiiTrakApi.Repository.Contracts;
+using WiiTrakApi.SPModels;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace WiiTrakApi.Controllers
 {
@@ -20,15 +22,17 @@ namespace WiiTrakApi.Controllers
             Repository = repository;
         }
         [HttpGet]
-
+        [EnableQuery]
         public async Task<IActionResult> GetDeviceForStoreId()
         {
-            var Result = await Repository.GetDeviceForStoreIdAsync();
-            if (Result.IsSuccess)
+            var result = await Repository.GetDeviceForStoreIdAsync();
+            
+            if (!result.IsSuccess)
             {
-                return Ok(Result.connectedstorelist);
+                return NotFound(result.ErrorMessage);
             }
-            return StatusCode(Cores.Numbers.FiveHundred, ModelState);
+            var dtoList = Mapper.Map<List<SpGetDeviceForStoreId>>(result.connectedstorelist);
+            return Ok(dtoList);
         }
         [HttpPut("UpdateStatus")]
         public async Task<IActionResult> UpdateCoordinatesOfDevices()
