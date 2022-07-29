@@ -26,6 +26,7 @@ namespace WiiTrakApi.Repository
         {
             try
             {
+                #region Part - 1
                 var AccessToken = await GetAccessToken();
 
                 if (!string.IsNullOrEmpty(AccessToken))
@@ -39,6 +40,19 @@ namespace WiiTrakApi.Repository
                         }
                     }
                 }
+                #endregion
+
+                #region Part - 2 
+                var connectedstorelist = await GetDeviceForStoreIdAsync();
+                var CartDeviceList = connectedstorelist.connectedstorelist;
+                if (CartDeviceList != null)
+                {
+                    foreach (var item in CartDeviceList)
+                    {
+                        await CheckCartStatus(item);
+                    }
+                }
+                #endregion
 
                 return (true, null);
             }
@@ -48,6 +62,7 @@ namespace WiiTrakApi.Repository
             }
         }
 
+        #region Data from TrackSolid - Part 1
         #region GetAccessToken
         private async Task<string> GetAccessToken()
         {
@@ -150,13 +165,13 @@ namespace WiiTrakApi.Repository
                 {
                     foreach (var item in devicelocationresponse["result"])
                     {
-
                         TrackingDeviceModel trackingDeviceModel = new TrackingDeviceModel();
                         trackingDeviceModel.IMEINumber = item["imei"].ToString();
                         trackingDeviceModel.DeviceName = item["deviceName"].ToString();
                         trackingDeviceModel.Latitude = Convert.ToDouble(item["lat"].ToString());
                         trackingDeviceModel.Longitude = Convert.ToDouble(item["lng"].ToString());
                         await UpdateTrackingDeviceCoOrdinatesAsync(trackingDeviceModel);
+
                     }
                 }
             }
@@ -198,7 +213,7 @@ namespace WiiTrakApi.Repository
                 {
                     var responsestring = await res.Content.ReadAsStringAsync();
                     var jsonobj = JsonConvert.DeserializeObject<AccessTokenResponse>(responsestring);
-                    if (jsonobj.code.Equals("0") && jsonobj.message.Equals("success"))
+                    if (jsonobj.code == "0" && jsonobj.message == "success")
                     {
                         return JObject.Parse(responsestring);
                     }
@@ -211,6 +226,11 @@ namespace WiiTrakApi.Repository
             }
         }
         #endregion
+        #endregion
+
+        #region Update Cart Status - Part 2
+
+        #region GetDeviceForStoreIdAsync - SP
         public async Task<(bool IsSuccess, List<SpGetDeviceForStoreId>? connectedstorelist, string? ErrorMessage)> GetDeviceForStoreIdAsync()
         {
             try
@@ -235,6 +255,83 @@ namespace WiiTrakApi.Repository
                 return (false, null, ex.Message);
             }
         }
+        #endregion
+
+        #region CheckCartStatus
+        public async Task CheckCartStatus(SpGetDeviceForStoreId item)
+        {
+            try
+            {
+                var CartId = item.CartId;
+                var FenceCoords = item.FenceCoords;
+                FenceCoordsPoint DeviceCoords = new FenceCoordsPoint();
+                DeviceCoords.Lat = item.DeviceLatitude;
+                DeviceCoords.Lng = item.DeviceLongitude;
+                var FenceCoordsList = JsonConvert.DeserializeObject<List<FenceCoordsPoint>>(FenceCoords).ToArray();
+                var CartIsInside = IsPointInPolygon(FenceCoordsList, DeviceCoords);
+                if (!CartIsInside)
+                {
+                    var Cart = await DbContext.Carts.AsNoTracking().FirstOrDefaultAsync(x => x.Id == CartId);
+
+                    if (Cart != null)
+                    {
+                        await UpdateCartStatusByIdAsync(Cart);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
+        public async Task UpdateCartStatusByIdAsync(CartModel StoreCart)
+        {
+            try
+            {
+                StoreCart.Status = Enums.CartStatus.OutsideGeofence;
+                StoreCart.UpdatedAt = DateTime.UtcNow;
+
+                var NewCartHistry = new CartHistoryModel
+                {
+                    StoreId = StoreCart.StoreId,
+                    Status = Enums.CartStatus.OutsideGeofence,
+                    CartId = StoreCart.Id,
+                    DeviceId = StoreCart.DeviceId,
+                    Condition = StoreCart.Condition,
+                    IsDelivered = false,
+                    IssueType = StoreCart.IssueType,
+                    IssueDescription = StoreCart.IssueDescription,
+                    CreatedAt = DateTime.UtcNow,
+                };
+
+                DbContext.Carts.Update(StoreCart);
+                await DbContext.CartHistory.AddAsync(NewCartHistry);
+                await DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                //Exception
+            }
+        }
+        public static bool IsPointInPolygon(FenceCoordsPoint[] polygon, FenceCoordsPoint testPoint)
+        {
+            bool result = false;
+            int j = polygon.Count() - 1;
+            for (int i = 0; i < polygon.Count(); i++)
+            {
+                if (polygon[i].Lng < testPoint.Lng && polygon[j].Lng >= testPoint.Lng || polygon[j].Lng < testPoint.Lng && polygon[i].Lng >= testPoint.Lng)
+                {
+                    if (polygon[i].Lat + (testPoint.Lng - polygon[i].Lng) / (polygon[j].Lng - polygon[i].Lng) * (polygon[j].Lat - polygon[i].Lat) < testPoint.Lat)
+                    {
+                        result = !result;
+                    }
+                }
+                j = i;
+            }
+            return result;
+        }
+        #endregion
+        #endregion
     }
 
 
@@ -243,4 +340,10 @@ namespace WiiTrakApi.Repository
         public string code { get; set; } = string.Empty;
         public string message { get; set; } = string.Empty;
     }
+    public class FenceCoordsPoint
+    {
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+    }
+
 }

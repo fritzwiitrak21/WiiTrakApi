@@ -19,8 +19,6 @@ namespace WiiTrakApi.Models
         public DateTime SubscriptionExpiration { get; set; }
         public string Type { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; }
         public Guid TechnicianId { get; set; }
         public bool IsMapped { get; set; }
     }

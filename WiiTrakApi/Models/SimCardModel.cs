@@ -17,8 +17,6 @@ namespace WiiTrakApi.Models
         public string SIMNo { get; set; } = string.Empty;
         public string IMSI { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime? CreatedAt { get; set; }
         public bool IsMapped { get; set; }
         public Guid TechnicianId { get; set; }
     }
